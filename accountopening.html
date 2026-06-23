@@ -802,7 +802,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             Accounts must be adequately funded before trading. Any debit balance must be cleared within 3 business days. Balances not cleared within 3 days attract interest at 2.5× the prevailing treasury-bill rate or 22% per annum, whichever is higher. If a balance remains uncleaned after 14 days, Anchoria Securities may liquidate portfolio positions to recover the outstanding balance and accrued interest.
           </div>
 
-          <div class="check" role="group">
+          <div class="check">
             <input type="checkbox" name="declTrue" id="declTrue" aria-required="true">
             <label for="declTrue" class="ctext">I confirm that all information provided in this form is true, accurate and complete.</label>
           </div>
@@ -1473,9 +1473,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   document.getElementById("nextBtn").addEventListener("click", function () {
     if (current < STEPS - 1) {
       if (!validateStep(current)) {
-        // Focus first invalid element
-        var bad = form.querySelector(".has-error input, .has-error select, .has-error textarea, .invalid");
-        if (bad && bad.focus) bad.focus();
+        var bad = form.querySelector(".has-error input, .has-error select, .has-error textarea, .invalid, [role='alert'][style*='block']");
+        if (bad) { bad.scrollIntoView({ behavior: "smooth", block: "center" }); if (bad.focus) bad.focus(); }
         return;
       }
       current++;
@@ -1763,7 +1762,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * WINDOW RESIZE — refit canvas if on sig step
    * ================================================================ */
   window.addEventListener("resize", function () {
-    if (ctx && current === 5) {
+    if (ctx && current === 4) {
       // Preserve signature before refit
       var img = sigDirty ? canvas.toDataURL() : null;
       fitCanvas();
