@@ -927,7 +927,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * Also set AIRTABLE_TOKEN and AIRTABLE_BASE_ID there.
    * ================================================================ */
   var ENDPOINT_URL  = "/.netlify/functions/submit";
-  var SHARED_SECRET = "";   // set this + matching SHARED_SECRET Netlify env var
+  var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
   /* ================================================================
    * CONSTANTS
@@ -1676,7 +1676,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * ================================================================ */
   function submitApplication() {
     // Re-validate declarations step before final submit
-    if (!validateStep(5)) { current = 5; showStep(5); return; }
+    if (!validateStep(4)) { current = 4; showStep(4); return; }
 
     var btn = document.getElementById("nextBtn");
     var ref = "ASL-" + Date.now().toString(36).toUpperCase().slice(-6);
