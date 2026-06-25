@@ -45,24 +45,37 @@ exports.handler = async (event) => {
 
   /* ── Upload documents to Netlify Blobs ── */
   const docLinks = [];
-  if (Array.isArray(payload.documents) && payload.documents.length > 0) {
-    const store = getStore("documents");
-    for (const doc of payload.documents) {
-      if (!doc.data) continue;
-      try {
-        // Strip base64 header e.g. "data:image/jpeg;base64,..."
-        const base64 = doc.data.includes(",") ? doc.data.split(",")[1] : doc.data;
-        const mimeType = doc.data.includes(";") ? doc.data.split(";")[0].replace("data:", "") : "application/octet-stream";
-        const buffer = Buffer.from(base64, "base64");
-        const key = `${ref}/${doc.key}`;
-        await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
-        const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
-        const downloadUrl = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
-        // (siteUrl reused below for PDF link)
-        docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
-        console.log("Stored document:", key);
-      } catch (err) {
-        console.error("Failed to store document", doc.key, err.message);
+  const SITE_ID    = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
+  const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
+  const blobsReady = !!(SITE_ID && BLOB_TOKEN);
+
+  if (!blobsReady) {
+    console.warn("Netlify Blobs not configured (missing NETLIFY_TOKEN). Documents will not be stored.");
+  }
+
+  if (blobsReady && Array.isArray(payload.documents) && payload.documents.length > 0) {
+    let store;
+    try {
+      store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+    } catch (err) {
+      console.error("Failed to init Blobs store:", err.message);
+    }
+    if (store) {
+      for (const doc of payload.documents) {
+        if (!doc.data) continue;
+        try {
+          const base64 = doc.data.includes(",") ? doc.data.split(",")[1] : doc.data;
+          const mimeType = doc.data.includes(";") ? doc.data.split(";")[0].replace("data:", "") : "application/octet-stream";
+          const buffer = Buffer.from(base64, "base64");
+          const key = `${ref}/${doc.key}`;
+          await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
+          const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
+          const downloadUrl = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
+          docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
+          console.log("Stored document:", key);
+        } catch (err) {
+          console.error("Failed to store document", doc.key, err.message);
+        }
       }
     }
   }
