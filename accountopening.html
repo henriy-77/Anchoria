@@ -192,7 +192,12 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 .decl-box{border:1px solid var(--line);border-radius:10px;background:#FDFCF8;padding:14px 16px;font-size:12.5px;color:#4A453B;line-height:1.6;margin-bottom:14px;}
 .decl-box h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--black);}
 .check{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line);}
-.check input[type=checkbox]{width:17px;height:17px;margin-top:2px;flex-shrink:0;accent-color:var(--gold-2);cursor:pointer;}
+.check input[type=checkbox]{
+  -webkit-appearance:auto;appearance:auto;
+  width:18px;height:18px;margin-top:3px;flex-shrink:0;
+  padding:0;border:none;border-radius:0;background:transparent;
+  accent-color:var(--gold-2);cursor:pointer;
+}
 .check .ctext{font-size:13px;color:#3B362E;cursor:pointer;}
 .check a{color:var(--gold-2);}
 
@@ -309,9 +314,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Contact &amp; next of kin</span></li>
       <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Identification &amp; documents</span></li>
       <li data-step="3" role="listitem"><span class="dot" aria-hidden="true">4</span><span class="t-label">Financial &amp; investment</span></li>
-      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Products &amp; funding</span></li>
-      <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Declarations &amp; signature</span></li>
-      <li data-step="6" role="listitem"><span class="dot" aria-hidden="true">7</span><span class="t-label">Review &amp; submit</span></li>
+      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Declarations &amp; signature</span></li>
+      <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Review &amp; submit</span></li>
     </ul>
     <div class="trust">
       <strong>Anchoria Securities Limited</strong><br>
@@ -369,9 +373,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             </div>
 
             <div class="field">
-              <label class="lab" for="f-middleName">Middle name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-middleName" name="middleName" aria-required="true" aria-describedby="e-middleName">
-              <div class="err-msg" id="e-middleName" role="alert">Required.</div>
+              <label class="lab" for="f-middleName">Middle name</label>
+              <input id="f-middleName" name="middleName">
             </div>
 
             <div class="field">
@@ -431,7 +434,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
             <div class="field">
               <label class="lab" for="f-lga">Local Government Area<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-lga" name="lga" aria-required="true" aria-describedby="e-lga">
+              <select id="f-lga" name="lga" aria-required="true" aria-describedby="e-lga" disabled>
+                <option value="">Select state first</option>
+              </select>
               <div class="err-msg" id="e-lga" role="alert">Required.</div>
             </div>
 
@@ -441,9 +446,10 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             </div>
 
             <div class="field">
-              <label class="lab" for="f-motherMaiden">Mother's maiden name</label>
-              <input id="f-motherMaiden" name="motherMaiden" aria-describedby="h-motherMaiden">
+              <label class="lab" for="f-motherMaiden">Mother's maiden name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-motherMaiden" name="motherMaiden" aria-required="true" aria-describedby="h-motherMaiden e-motherMaiden">
               <div class="help" id="h-motherMaiden">Used as a security question.</div>
+              <div class="err-msg" id="e-motherMaiden" role="alert">Required.</div>
             </div>
 
             <hr class="rule">
@@ -495,7 +501,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             <div class="field">
               <label class="lab" for="f-mobile">Mobile number<span class="req" aria-hidden="true">*</span></label>
               <input id="f-mobile" name="mobile" inputmode="tel" type="tel" placeholder="0803 000 0000" autocomplete="tel" aria-required="true" aria-describedby="e-mobile">
-              <div class="err-msg" id="e-mobile" role="alert">Enter a valid phone number.</div>
+              <div class="err-msg" id="e-mobile" role="alert">Enter a valid 11-digit Nigerian number (e.g. 08012345678).</div>
             </div>
 
             <div class="field">
@@ -770,6 +776,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
                 <label class="choice"><input type="checkbox" value="NASD">NASD</label>
                 <label class="choice"><input type="checkbox" value="LCFE">LCFE</label>
               </div>
+              <button type="button" id="investmentSelectAll" style="margin-top:8px;padding:5px 14px;font-size:12px;border-radius:7px;border:1.5px solid var(--line-strong);background:#fff;cursor:pointer;font-family:var(--serif);color:var(--ink);">Select all exchanges</button>
             </div>
 
             <div class="field full">
@@ -787,14 +794,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
           </div>
         </section>
 
-        <!-- ===== STEP 5: PRODUCTS & FUNDING ===== -->
+        <!-- ===== STEP 5: DECLARATIONS & SIGNATURE ===== -->
         <section class="step hidden" data-step="4" aria-labelledby="cardTitle">
-          <p class="step-hint">Select the account(s) you want to open. If you'd like to fund your stockbroking account now, enter the amount — or skip and fund it later.</p>
-          <div id="products"></div>
-        </section>
-
-        <!-- ===== STEP 6: DECLARATIONS & SIGNATURE ===== -->
-        <section class="step hidden" data-step="5" aria-labelledby="cardTitle">
           <p class="step-hint">Please read and accept the declarations below before you sign.</p>
 
           <div class="decl-box">
@@ -806,7 +807,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             Accounts must be adequately funded before trading. Any debit balance must be cleared within 3 business days. Balances not cleared within 3 days attract interest at 2.5× the prevailing treasury-bill rate or 22% per annum, whichever is higher. If a balance remains uncleaned after 14 days, Anchoria Securities may liquidate portfolio positions to recover the outstanding balance and accrued interest.
           </div>
 
-          <div class="check" role="group">
+          <div class="check">
             <input type="checkbox" name="declTrue" id="declTrue" aria-required="true">
             <label for="declTrue" class="ctext">I confirm that all information provided in this form is true, accurate and complete.</label>
           </div>
@@ -873,8 +874,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
           </div>
         </section>
 
-        <!-- ===== STEP 7: REVIEW & SUBMIT ===== -->
-        <section class="step hidden" data-step="6" aria-labelledby="cardTitle">
+        <!-- ===== STEP 6: REVIEW & SUBMIT ===== -->
+        <section class="step hidden" data-step="5" aria-labelledby="cardTitle">
           <p class="step-hint">Check everything before you submit. Tap <strong>Edit</strong> on any section to make changes.</p>
           <div id="review" aria-live="polite"></div>
         </section>
@@ -926,12 +927,12 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * Also set AIRTABLE_TOKEN and AIRTABLE_BASE_ID there.
    * ================================================================ */
   var ENDPOINT_URL  = "/.netlify/functions/submit";
-  var SHARED_SECRET = "";   // set this + matching SHARED_SECRET Netlify env var
+  var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
   /* ================================================================
    * CONSTANTS
    * ================================================================ */
-  var STEPS = 7;
+  var STEPS = 6;
   var MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
 
   var STEP_NAMES = [
@@ -939,7 +940,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     "Contact & next of kin",
     "Identification & documents",
     "Financial & investment",
-    "Products & funding",
     "Declarations & signature",
     "Review & submit"
   ];
@@ -951,6 +951,46 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     "Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto",
     "Taraba","Yobe","Zamfara"
   ];
+
+  var LGA_BY_STATE = {
+    "Abia": ["Aba North","Aba South","Arochukwu","Bende","Ikwuano","Isiala Ngwa North","Isiala Ngwa South","Isuikwuato","Obi Ngwa","Ohafia","Osisioma","Ugwunagbo","Ukwa East","Ukwa West","Umuahia North","Umuahia South","Umu Nneochi"],
+    "Adamawa": ["Demsa","Fufure","Ganye","Gayuk","Gombi","Guyuk","Hong","Jada","Lamurde","Madagali","Maiha","Mayo-Belwa","Michika","Mubi North","Mubi South","Numan","Shelleng","Song","Toungo","Yola North","Yola South"],
+    "Akwa Ibom": ["Abak","Eastern Obolo","Eket","Esit Eket","Essien Udim","Etim Ekpo","Etinan","Ibeno","Ibesikpo Asutan","Ibiono Ibom","Ika","Ikono","Ikot Abasi","Ikot Ekpene","Ini","Itu","Mbo","Mkpat Enin","Nsit Atai","Nsit Ibom","Nsit Ubium","Obot Akara","Okobo","Onna","Oron","Oruk Anam","Udung Uko","Ukanafun","Uruan","Urue-Offong/Oruko","Uyo"],
+    "Anambra": ["Aguata","Anambra East","Anambra West","Anaocha","Awka North","Awka South","Ayamelum","Dunukofia","Ekwusigo","Idemili North","Idemili South","Ihiala","Njikoka","Nnewi North","Nnewi South","Ogbaru","Onitsha North","Onitsha South","Orumba North","Orumba South","Oyi"],
+    "Bauchi": ["Alkaleri","Bauchi","Bogoro","Damban","Darazo","Dass","Gamawa","Ganjuwa","Giade","Itas/Gadau","Jama'are","Katagum","Kirfi","Misau","Ningi","Shira","Tafawa Balewa","Toro","Warji","Zaki"],
+    "Bayelsa": ["Brass","Ekeremor","Kolokuma/Opokuma","Nembe","Ogbia","Sagbama","Southern Ijaw","Yenagoa"],
+    "Benue": ["Ado","Agatu","Apa","Buruku","Gboko","Guma","Gwer East","Gwer West","Katsina-Ala","Konshisha","Kwande","Logo","Makurdi","Obi","Ogbadibo","Ohimini","Oju","Okpokwu","Otukpo","Tarka","Ukum","Ushongo","Vandeikya"],
+    "Borno": ["Abadam","Askira/Uba","Bama","Bayo","Biu","Chibok","Damboa","Dikwa","Gubio","Guzamala","Gwoza","Hawul","Jere","Kaga","Kala/Balge","Konduga","Kukawa","Kwaya Kusar","Mafa","Magumeri","Maiduguri","Marte","Mobbar","Monguno","Ngala","Nganzai","Shani"],
+    "Cross River": ["Abi","Akamkpa","Akpabuyo","Bakassi","Bekwarra","Biase","Boki","Calabar Municipal","Calabar South","Etung","Ikom","Obanliku","Obubra","Obudu","Odukpani","Ogoja","Yakuur","Yala"],
+    "Delta": ["Aniocha North","Aniocha South","Bomadi","Burutu","Ethiope East","Ethiope West","Ika North East","Ika South","Isoko North","Isoko South","Ndokwa East","Ndokwa West","Okpe","Oshimili North","Oshimili South","Patani","Sapele","Udu","Ughelli North","Ughelli South","Ukwuani","Uvwie","Warri North","Warri South","Warri South West"],
+    "Ebonyi": ["Abakaliki","Afikpo North","Afikpo South","Ebonyi","Ezza North","Ezza South","Ikwo","Ishielu","Ivo","Izzi","Ohaozara","Ohaukwu","Onicha"],
+    "Edo": ["Akoko-Edo","Egor","Esan Central","Esan North-East","Esan South-East","Esan West","Etsako Central","Etsako East","Etsako West","Igueben","Ikpoba-Okha","Oredo","Orhionmwon","Ovia North-East","Ovia South-West","Owan East","Owan West","Uhunmwonde"],
+    "Ekiti": ["Ado Ekiti","Efon","Ekiti East","Ekiti South-West","Ekiti West","Emure","Gbonyin","Ido/Osi","Ijero","Ikere","Ikole","Ilejemeje","Irepodun/Ifelodun","Ise/Orun","Moba","Oye"],
+    "Enugu": ["Aninri","Awgu","Enugu East","Enugu North","Enugu South","Ezeagu","Igbo Etiti","Igbo Eze North","Igbo Eze South","Isi Uzo","Nkanu East","Nkanu West","Nsukka","Oji River","Udenu","Udi","Uzo-Uwani"],
+    "FCT (Abuja)": ["Abaji","Abuja Municipal","Bwari","Gwagwalada","Kuje","Kwali"],
+    "Gombe": ["Akko","Balanga","Billiri","Dukku","Funakaye","Gombe","Kaltungo","Kwami","Nafada","Shongom","Yamaltu/Deba"],
+    "Imo": ["Aboh Mbaise","Ahiazu Mbaise","Ehime Mbano","Ezinihitte","Ideato North","Ideato South","Ihitte/Uboma","Ikeduru","Isiala Mbano","Isu","Mbaitoli","Ngor Okpala","Njaba","Nkwerre","Nwangele","Obowo","Oguta","Ohaji/Egbema","Okigwe","Onuimo","Orlu","Orsu","Oru East","Oru West","Owerri Municipal","Owerri North","Owerri West"],
+    "Jigawa": ["Auyo","Babura","Biriniwa","Birnin Kudu","Buji","Dutse","Gagarawa","Garki","Gumel","Guri","Gwaram","Gwiwa","Hadejia","Jahun","Kafin Hausa","Kaugama","Kazaure","Kiri Kasama","Kiyawa","Maigatari","Malam Madori","Miga","Ringim","Roni","Sule Tankarkar","Taura","Yankwashi"],
+    "Kaduna": ["Birnin Gwari","Chikun","Giwa","Igabi","Ikara","Jaba","Jema'a","Kachia","Kaduna North","Kaduna South","Kagarko","Kajuru","Kaura","Kauru","Kubau","Kudan","Lere","Makarfi","Sabon Gari","Sanga","Soba","Zangon Kataf","Zaria"],
+    "Kano": ["Ajingi","Albasu","Bagwai","Bebeji","Bichi","Bunkure","Dala","Dambatta","Dawakin Kudu","Dawakin Tofa","Doguwa","Fagge","Gabasawa","Garko","Garun Mallam","Gaya","Gezawa","Gwale","Gwarzo","Kabo","Kano Municipal","Karaye","Kibiya","Kiru","Kumbotso","Kunchi","Kura","Madobi","Makoda","Minjibir","Nasarawa","Rano","Rimin Gado","Rogo","Shanono","Sumaila","Takai","Tarauni","Tofa","Tsanyawa","Tudun Wada","Ungogo","Warawa","Wudil"],
+    "Katsina": ["Bakori","Batagarawa","Batsari","Baure","Bindawa","Charanchi","Dan Musa","Dandume","Danja","Daura","Dutsi","Dutsin Ma","Faskari","Funtua","Ingawa","Jibia","Kafur","Kaita","Kankara","Kankia","Katsina","Kurfi","Kusada","Mai'Adua","Malumfashi","Mani","Mashi","Matazu","Musawa","Rimi","Sabuwa","Safana","Sandamu","Zango"],
+    "Kebbi": ["Aleiro","Arewa Dandi","Argungu","Augie","Bagudo","Birnin Kebbi","Bunza","Dandi","Fakai","Gwandu","Jega","Kalgo","Koko/Besse","Maiyama","Ngaski","Sakaba","Shanga","Suru","Wasagu/Danko","Yauri","Zuru"],
+    "Kogi": ["Adavi","Ajaokuta","Ankpa","Bassa","Dekina","Ibaji","Idah","Igalamela Odolu","Ijumu","Kabba/Bunu","Kogi","Lokoja","Mopa-Muro","Ofu","Ogori/Magongo","Okehi","Okene","Olamaboro","Omala","Yagba East","Yagba West"],
+    "Kwara": ["Asa","Baruten","Edu","Ekiti","Ifelodun","Ilorin East","Ilorin South","Ilorin West","Irepodun","Isin","Kaiama","Moro","Offa","Oke Ero","Oyun","Pategi"],
+    "Lagos": ["Agege","Ajeromi-Ifelodun","Alimosho","Amuwo-Odofin","Apapa","Badagry","Epe","Eti-Osa","Ibeju-Lekki","Ifako-Ijaiye","Ikeja","Ikorodu","Kosofe","Lagos Island","Lagos Mainland","Mushin","Ojo","Oshodi-Isolo","Somolu","Surulere"],
+    "Nasarawa": ["Akwanga","Awe","Doma","Karu","Keana","Keffi","Kokona","Lafia","Nasarawa","Nasarawa Egon","Obi","Toto","Wamba"],
+    "Niger": ["Agaie","Agwara","Bida","Borgu","Bosso","Chanchaga","Edati","Gbako","Gurara","Katcha","Kontagora","Lapai","Lavun","Magama","Mariga","Mashegu","Mokwa","Moya","Paikoro","Rafi","Rijau","Shiroro","Suleja","Tafa","Wushishi"],
+    "Ogun": ["Abeokuta North","Abeokuta South","Ado-Odo/Ota","Egbado North","Egbado South","Ewekoro","Ifo","Ijebu East","Ijebu North","Ijebu North East","Ijebu Ode","Ikenne","Imeko Afon","Ipokia","Obafemi Owode","Odeda","Odogbolu","Ogun Waterside","Remo North","Sagamu"],
+    "Ondo": ["Akoko North-East","Akoko North-West","Akoko South-East","Akoko South-West","Akure North","Akure South","Ese Odo","Idanre","Ifedore","Ilaje","Ile Oluji/Okeigbo","Irele","Odigbo","Okitipupa","Ondo East","Ondo West","Ose","Owo"],
+    "Osun": ["Aiyedaade","Aiyedire","Atakumosa East","Atakumosa West","Boluwaduro","Boripe","Ede North","Ede South","Egbedore","Ejigbo","Ife Central","Ife East","Ife North","Ife South","Ifedayo","Ifelodun","Ila","Ilesa East","Ilesa West","Irepodun","Irewole","Isokan","Iwo","Obokun","Odo Otin","Ola Oluwa","Olorunda","Oriade","Orolu","Osogbo"],
+    "Oyo": ["Afijio","Akinyele","Atiba","Atisbo","Egbeda","Ibadan North","Ibadan North-East","Ibadan North-West","Ibadan South-East","Ibadan South-West","Ibarapa Central","Ibarapa East","Ibarapa North","Ido","Irepo","Iseyin","Itesiwaju","Iwajowa","Kajola","Lagelu","Ogbomosho North","Ogbomosho South","Ogo Oluwa","Olorunsogo","Oluyole","Ona Ara","Orelope","Ori Ire","Oyo East","Oyo West","Saki East","Saki West","Surulere"],
+    "Plateau": ["Barkin Ladi","Bassa","Bokkos","Jos East","Jos North","Jos South","Kanam","Kanke","Langtang North","Langtang South","Mangu","Mikang","Pankshin","Qua'an Pan","Riyom","Shendam","Wase"],
+    "Rivers": ["Abua/Odual","Ahoada East","Ahoada West","Akuku-Toru","Andoni","Asari-Toru","Bonny","Degema","Eleme","Emohua","Etche","Gokana","Ikwerre","Khana","Obio/Akpor","Ogba/Egbema/Ndoni","Ogu/Bolo","Okrika","Omuma","Opobo/Nkoro","Oyigbo","Port Harcourt","Tai"],
+    "Sokoto": ["Binji","Bodinga","Dange Shuni","Gada","Goronyo","Gudu","Gwadabawa","Illela","Isa","Kebbe","Kware","Rabah","Sabon Birni","Shagari","Silame","Sokoto North","Sokoto South","Tambuwal","Tangaza","Tureta","Wamako","Wurno","Yabo"],
+    "Taraba": ["Ardo Kola","Bali","Donga","Gashaka","Gassol","Ibi","Jalingo","Karim Lamido","Kurmi","Lau","Sardauna","Takum","Ussa","Wukari","Yorro","Zing"],
+    "Yobe": ["Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko","Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmua","Tarmuwa","Yunusari","Zango"],
+    "Zamfara": ["Anka","Bakura","Birnin Magaji/Kiyaw","Bukkuyum","Bungudu","Gummi","Gusau","Kaura Namoda","Maradun","Maru","Shinkafi","Talata Mafara","Tsafe","Zurmi"]
+  };
 
   var PRODUCTS = [
     {
@@ -979,15 +1019,46 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   NIGERIAN_STATES.forEach(function (s) {
     var o = document.createElement("option");
     o.textContent = s;
+    o.value = s;
     stateSel.appendChild(o);
   });
+
+  // Populate LGA dropdown based on selected state
+  var lgaSel = document.getElementById("f-lga");
+  stateSel.addEventListener("change", function () {
+    var state = this.value;
+    lgaSel.innerHTML = '<option value="">Select LGA</option>';
+    if (state && LGA_BY_STATE[state]) {
+      LGA_BY_STATE[state].forEach(function (lga) {
+        var o = document.createElement("option");
+        o.value = lga;
+        o.textContent = lga;
+        lgaSel.appendChild(o);
+      });
+      lgaSel.disabled = false;
+    } else {
+      lgaSel.innerHTML = '<option value="">Select state first</option>';
+      lgaSel.disabled = true;
+    }
+  });
+
+  // Set date constraints for ID fields
+  var today = new Date().toISOString().split("T")[0];
+  document.getElementById("f-idIssue").setAttribute("max", today);
+  document.getElementById("f-idExpiry").setAttribute("min", today);
 
   // Set today's date on signature field
   document.getElementById("f-sigDate").value =
     new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
 
-  // Build product cards
-  buildProductCards();
+  // Investment option — select all button
+  document.getElementById("investmentSelectAll").addEventListener("click", function () {
+    var grp = form.querySelector('[data-check="investmentOption"]');
+    grp.querySelectorAll("input[type=checkbox]").forEach(function (cb) {
+      cb.checked = true;
+      cb.closest(".choice").classList.add("sel");
+    });
+  });
 
   /* ================================================================
    * PRODUCT CARDS
@@ -1222,7 +1293,11 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   }
 
   function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  function isPhone(v) { return /^[0-9+()\ \-]{7,20}$/.test(v); }
+  function isPhone(v) {
+    var d = v.replace(/[\s\-().+]/g, "");
+    // Accept 11-digit local (08x/07x/09x) or 13-digit international (234xxxxxxxxxx)
+    return /^(0[789][01]\d{8}|234[789][01]\d{8})$/.test(d);
+  }
 
   function markField(name, ok) {
     var el = form.elements[name];
@@ -1242,9 +1317,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * ================================================================ */
   var RULES = {
     0: [
-      ["surname","req"],["firstName","req"],["middleName","req"],["title","req"],
+      ["surname","req"],["firstName","req"],["title","req"],
       ["sex","req"],["dob","dob"],["nationality","req"],["maritalStatus","req"],
-      ["stateOfOrigin","req"],["lga","req"],["bvn","11"],["nin","nin"]
+      ["stateOfOrigin","req"],["lga","req"],["motherMaiden","req"],["bvn","11"],["nin","nin"]
     ],
     1: [
       ["residentialAddress","req"],["email","email"],["mobile","phone"],
@@ -1257,7 +1332,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       ["bankName","req"],["bankBranch","req"],["bankAccountNumber","10"],["bankAccountName","req"],
       ["dcs","radio"]
     ],
-    5: [["pep","radio"],["sigName","req"]]
+    4: [["pep","radio"],["sigName","req"]]
   };
 
   function checkRule(name, type) {
@@ -1321,18 +1396,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       if (!sofOk) ok = false;
     }
 
-    // Step 4: selected products must have amounts
+    // Step 4: all declarations, signature
     if (s === 4) {
-      document.querySelectorAll(".product.sel").forEach(function (p) {
-        var amtEl = p.querySelector("[data-pamt]");
-        var has = (amtEl.value || "").replace(/[^0-9]/g, "") !== "";
-        amtEl.classList.toggle("invalid", !has);
-        if (!has) ok = false;
-      });
-    }
-
-    // Step 5: all declarations, signature
-    if (s === 5) {
       var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
         .every(function (n) { return form.elements[n].checked; });
       var declErr = document.getElementById("decl-err");
@@ -1399,7 +1464,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       s === STEPS - 1 ? "Submit application" : "Continue";
 
     // Init canvas on first show
-    if (s === 5 && !ctx) setTimeout(fitCanvas, 30);
+    if (s === 4 && !ctx) setTimeout(fitCanvas, 30);
 
     syncConditionals();
 
@@ -1413,9 +1478,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   document.getElementById("nextBtn").addEventListener("click", function () {
     if (current < STEPS - 1) {
       if (!validateStep(current)) {
-        // Focus first invalid element
-        var bad = form.querySelector(".has-error input, .has-error select, .has-error textarea, .invalid");
-        if (bad && bad.focus) bad.focus();
+        var bad = form.querySelector(".has-error input, .has-error select, .has-error textarea, .invalid, [role='alert'][style*='block']");
+        if (bad) { bad.scrollIntoView({ behavior: "smooth", block: "center" }); if (bad.focus) bad.focus(); }
         return;
       }
       current++;
@@ -1493,23 +1557,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     });
     html += '</div></div>';
 
-    // Products & funding
-    var selProds = [];
-    document.querySelectorAll(".product.sel").forEach(function (p) {
-      var k = p.dataset.prod;
-      var prod = PRODUCTS.filter(function (x) { return x.key === k; })[0];
-      var amtRaw = (p.querySelector("[data-pamt]").value || "").replace(/[^0-9]/g, "");
-      selProds.push([prod.name, amtRaw ? "₦" + Number(amtRaw).toLocaleString("en-NG") : "—"]);
-    });
-    html += '<div class="review-group"><div class="review-head">Products & funding'
-      + '<button type="button" data-goto="4" aria-label="Edit products and funding">Edit</button></div><div class="review-body">';
-    if (selProds.length) selProds.forEach(function (p) { html += rrow(p[0], p[1]); });
-    else html += rrow("Selected", "None — fund later");
-    html += '</div></div>';
-
     // Declarations & signature
     html += '<div class="review-group"><div class="review-head">Declarations & signature'
-      + '<button type="button" data-goto="5" aria-label="Edit declarations and signature">Edit</button></div><div class="review-body">';
+      + '<button type="button" data-goto="4" aria-label="Edit declarations and signature">Edit</button></div><div class="review-body">';
     html += rrow("PEP", val("pep") || "—");
     html += rrow("Signed by", val("sigName") || "—");
     html += rrow("Date", document.getElementById("f-sigDate").value);
@@ -1626,7 +1676,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * ================================================================ */
   function submitApplication() {
     // Re-validate declarations step before final submit
-    if (!validateStep(5)) { current = 5; showStep(5); return; }
+    if (!validateStep(4)) { current = 4; showStep(4); return; }
 
     var btn = document.getElementById("nextBtn");
     var ref = "ASL-" + Date.now().toString(36).toUpperCase().slice(-6);
@@ -1717,7 +1767,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * WINDOW RESIZE — refit canvas if on sig step
    * ================================================================ */
   window.addEventListener("resize", function () {
-    if (ctx && current === 5) {
+    if (ctx && current === 4) {
       // Preserve signature before refit
       var img = sigDirty ? canvas.toDataURL() : null;
       fitCanvas();
