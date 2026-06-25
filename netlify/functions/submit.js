@@ -131,7 +131,7 @@ exports.handler = async (event) => {
                                   ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                   : "",
     "Document Links":           docLinks.join("\n"),
-    "Application PDF":          `${process.env.URL || "https://anchoria-securities-account-opening.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
+    "View Application":         `${process.env.URL || "https://anchoria-securities-account-opening.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
     "Status":                   "New",
     "Notes":                    "",
   };
