@@ -1,7 +1,9 @@
 /**
  * Anchoria Securities — Account Opening Form Submission Handler
- * Netlify Serverless Function → Airtable
+ * Netlify Serverless Function → Airtable + Netlify Blobs
  */
+
+const { getStore } = require("@netlify/blobs");
 
 const AIRTABLE_TABLE = "Applications";
 
@@ -39,9 +41,29 @@ exports.handler = async (event) => {
   const date = (v) => (v ? v.slice(0, 10) : null);
 
   const sig  = payload.signature || {};
-  const docs = Array.isArray(payload.documents)
-    ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
-    : "";
+  const ref  = str(payload.reference);
+
+  /* ── Upload documents to Netlify Blobs ── */
+  const docLinks = [];
+  if (Array.isArray(payload.documents) && payload.documents.length > 0) {
+    const store = getStore("documents");
+    for (const doc of payload.documents) {
+      if (!doc.data) continue;
+      try {
+        // Strip base64 header e.g. "data:image/jpeg;base64,..."
+        const base64 = doc.data.includes(",") ? doc.data.split(",")[1] : doc.data;
+        const mimeType = doc.data.includes(";") ? doc.data.split(";")[0].replace("data:", "") : "application/octet-stream";
+        const buffer = Buffer.from(base64, "base64");
+        const key = `${ref}/${doc.key}`;
+        await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
+        const downloadUrl = `/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
+        docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
+        console.log("Stored document:", key);
+      } catch (err) {
+        console.error("Failed to store document", doc.key, err.message);
+      }
+    }
+  }
 
   const products = Array.isArray(payload.products)
     ? payload.products
@@ -49,9 +71,8 @@ exports.handler = async (event) => {
         .join(", ")
     : "";
 
-  // Field names match Airtable schema exactly
   const fields = {
-    "Reference":                str(payload.reference),
+    "Reference":                ref,
     "Surname":                  str(payload.surname),
     "First Name":               str(payload.firstName),
     "Middle Name":              str(payload.middleName),
@@ -104,7 +125,10 @@ exports.handler = async (event) => {
     "PEP Details":              str(payload.pepDetails),
     "Signatory Name":           str(sig.name),
     "Signature Date":           date(sig.date),
-    "Documents Submitted":      docs,
+    "Documents Submitted":      Array.isArray(payload.documents)
+                                  ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
+                                  : "",
+    "Document Links":           docLinks.join("\n"),
     "Status":                   "New",
     "Notes":                    "",
   };
@@ -135,8 +159,8 @@ exports.handler = async (event) => {
     }
 
     const result = await res.json();
-    console.log("Application saved:", payload.reference, "→ Airtable", result.id);
-    return json(200, { success: true, reference: payload.reference, airtableId: result.id });
+    console.log("Application saved:", ref, "→ Airtable", result.id);
+    return json(200, { success: true, reference: ref, airtableId: result.id });
 
   } catch (err) {
     console.error("Function error:", err);
