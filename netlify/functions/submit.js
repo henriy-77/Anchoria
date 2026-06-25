@@ -58,6 +58,7 @@ exports.handler = async (event) => {
         await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
         const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
         const downloadUrl = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
+        // (siteUrl reused below for PDF link)
         docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
         console.log("Stored document:", key);
       } catch (err) {
@@ -130,6 +131,7 @@ exports.handler = async (event) => {
                                   ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                   : "",
     "Document Links":           docLinks.join("\n"),
+    "Application PDF":          `${process.env.URL || "https://anchoria-securities-account-opening.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
     "Status":                   "New",
     "Notes":                    "",
   };
