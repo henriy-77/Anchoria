@@ -24,12 +24,18 @@ exports.handler = async (event) => {
       headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
     });
     const data = await res.json();
+    if (data.error) {
+      console.error("Airtable error:", JSON.stringify(data));
+      return { statusCode: 502, body: `Airtable error: ${data.error.message || JSON.stringify(data.error)}` };
+    }
     if (!data.records || data.records.length === 0) {
-      return { statusCode: 404, body: "Application not found" };
+      console.error("No records found for ref:", ref, "URL:", url);
+      return { statusCode: 404, body: `Application not found for reference: ${ref}` };
     }
     record = data.records[0].fields;
   } catch (err) {
-    return { statusCode: 500, body: "Failed to fetch application" };
+    console.error("Fetch error:", err);
+    return { statusCode: 500, body: `Failed to fetch application: ${err.message}` };
   }
 
   const f = (v) => v || "—";
