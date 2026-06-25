@@ -39,6 +39,31 @@ exports.handler = async (event) => {
   }
 
   const f = (v) => v || "—";
+
+  const IMAGE_KEYS = ["passportPhoto", "signature", "photo", "image"];
+  function buildDocLinks(docLinksField) {
+    if (!docLinksField) return `<div class="field full"><label>Files</label><span>—</span></div>`;
+    const lines = docLinksField.split("\n").filter(Boolean);
+    return lines.map((line) => {
+      // format: "key (name): url"
+      const match = line.match(/^([^(]+)\(([^)]+)\):\s*(.+)$/);
+      if (!match) return `<div class="field full"><span>${line}</span></div>`;
+      const [, key, name, url] = match;
+      const k = key.trim();
+      const isImage = IMAGE_KEYS.some((ik) => k.toLowerCase().includes(ik));
+      if (isImage) {
+        return `<div class="field full">
+          <label>${name}</label>
+          <img src="${url.trim()}" alt="${name}" style="max-width:200px;max-height:200px;border:1px solid #E7E4DB;border-radius:4px;margin-top:4px;display:block"/>
+          <a href="${url.trim()}" style="font-size:10px;color:#C2972B" target="_blank">Download</a>
+        </div>`;
+      }
+      return `<div class="field full">
+        <label>${name}</label>
+        <a href="${url.trim()}" style="color:#C2972B;font-size:12px" target="_blank">Download ${name}</a>
+      </div>`;
+    }).join("");
+  }
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,7 +176,7 @@ exports.handler = async (event) => {
 
   <h2>Documents Submitted</h2>
   <div class="grid">
-    <div class="field full"><label>Files</label><span style="white-space:pre-line">${f(record["Documents Submitted"])}</span></div>
+    ${buildDocLinks(record["Document Links"])}
   </div>
 
   <div class="footer">
