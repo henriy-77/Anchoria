@@ -56,7 +56,8 @@ exports.handler = async (event) => {
         const buffer = Buffer.from(base64, "base64");
         const key = `${ref}/${doc.key}`;
         await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
-        const downloadUrl = `/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
+        const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
+        const downloadUrl = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
         docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
         console.log("Stored document:", key);
       } catch (err) {
