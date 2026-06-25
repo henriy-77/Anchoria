@@ -1719,8 +1719,10 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
         body: JSON.stringify(payload)
       })
       .then(function (r) {
-        if (!r.ok) throw new Error("Server responded " + r.status);
-        return r.json().catch(function () { return {}; });
+        return r.json().catch(function () { return { _status: r.status }; }).then(function (body) {
+          if (!r.ok) throw new Error((body && body.error) ? body.error + (body.detail ? ": " + body.detail : "") : "Server responded " + r.status);
+          return body;
+        });
       })
       .then(function () {
         document.getElementById("refNo").textContent = "REF " + ref;
@@ -1728,7 +1730,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       })
       .catch(function (err) {
         console.error("Submit error:", err);
-        showSubmitError(btn);
+        showSubmitError(btn, err.message);
       });
 
     }).catch(function (err) {
@@ -1737,14 +1739,14 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     });
   }
 
-  function showSubmitError(btn) {
+  function showSubmitError(btn, msg) {
     btn.disabled = false;
     btn.classList.remove("loading");
     btn.querySelector(".btn-label").textContent = "Submit application";
     var banner = document.getElementById("errBanner");
+    banner.textContent = "Submission failed — " + (msg || "please check your connection and try again") + ". Your data has been preserved.";
     banner.classList.add("show");
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // Data is preserved — form state untouched
   }
 
   function showDone() {
