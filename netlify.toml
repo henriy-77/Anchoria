@@ -5,6 +5,9 @@
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "SHARED_SECRET"
 
+[functions]
+  node_bundler = "esbuild"
+
 
 [[headers]]
   for = "/*"

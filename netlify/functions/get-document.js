@@ -13,12 +13,6 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: "Missing ref or doc parameter" };
   }
 
-  const SHARED_SECRET = process.env.SHARED_SECRET;
-  const token = event.queryStringParameters.token || event.headers["x-shared-secret"] || "";
-  if (SHARED_SECRET && token !== SHARED_SECRET) {
-    return { statusCode: 401, body: "Unauthorized" };
-  }
-
   try {
     const store = getStore("documents");
     const key = `${ref}/${doc}`;
