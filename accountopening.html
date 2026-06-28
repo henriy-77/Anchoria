@@ -1640,35 +1640,29 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     });
   }
 
-  /* Build the complete backend-ready payload (async — files + sig as base64) */
+  /* Build the complete backend-ready payload (async — sig as base64, docs as metadata only) */
   function buildPayload(ref) {
     var fields = collectFields();
-    var docPromises = [];
     var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit"];
+    var docs = [];
 
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {
-        docPromises.push(
-          readFileAsBase64(uploads[k].file).then(function (dataUrl) {
-            return { key: k, name: uploads[k].name, type: uploads[k].type, data: dataUrl };
-          })
-        );
+        docs.push({ key: k, name: uploads[k].name, type: uploads[k].type });
       }
     });
 
-    return Promise.all(docPromises).then(function (docs) {
-      return Object.assign({}, fields, {
-        reference: ref,
-        sharedSecret: SHARED_SECRET,
-        submittedAt: new Date().toISOString(),
-        documents: docs,
-        signature: {
-          name: val("sigName"),
-          date: document.getElementById("f-sigDate").value,
+    return Promise.resolve(Object.assign({}, fields, {
+      reference: ref,
+      sharedSecret: SHARED_SECRET,
+      submittedAt: new Date().toISOString(),
+      documents: docs,
+      signature: {
+        name: val("sigName"),
+        date: document.getElementById("f-sigDate").value,
           image: sigDirty ? canvas.toDataURL("image/png") : null
         }
-      });
-    });
+      }));
   }
 
   /* ================================================================
