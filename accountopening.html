@@ -1721,6 +1721,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       .then(function () {
         document.getElementById("refNo").textContent = "REF " + ref;
         showDone();
+        // Upload documents in background after successful submission
+        uploadDocuments(ref);
       })
       .catch(function (err) {
         console.error("Submit error:", err);
@@ -1741,6 +1743,35 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     banner.textContent = "Submission failed — " + (msg || "please check your connection and try again") + ". Your data has been preserved.";
     banner.classList.add("show");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* Upload documents one-by-one after successful submission */
+  function uploadDocuments(ref) {
+    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit"];
+    var queue = [];
+    docKeys.forEach(function (k) {
+      if (uploads[k] && uploads[k].file) {
+        queue.push({ key: k, file: uploads[k].file, name: uploads[k].name });
+      }
+    });
+    if (!queue.length) return;
+
+    function uploadNext(i) {
+      if (i >= queue.length) return;
+      var item = queue[i];
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        fetch("/.netlify/functions/upload-document", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+          body: JSON.stringify({ ref: ref, key: item.key, name: item.name, data: e.target.result })
+        })
+        .then(function () { uploadNext(i + 1); })
+        .catch(function (err) { console.error("Doc upload failed:", item.key, err); uploadNext(i + 1); });
+      };
+      reader.readAsDataURL(item.file);
+    }
+    uploadNext(0);
   }
 
   function showDone() {
