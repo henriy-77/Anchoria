@@ -22,7 +22,7 @@ exports.handler = async (event) => {
   const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SHARED_SECRET    = process.env.SHARED_SECRET;
-  const SITE_ID          = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
+  const SITE_ID          = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
   const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
 
   const incomingSecret = event.headers["x-shared-secret"] || "";
@@ -51,7 +51,7 @@ exports.handler = async (event) => {
       const buffer   = Buffer.from(base64, "base64");
       const store    = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
       await store.set(`${ref}/${key}`, buffer, { metadata: { name: name || key, mimeType, ref } });
-      const siteUrl  = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
+      const siteUrl  = process.env.URL || "https://tourmaline-longma-857abb.netlify.app";
       downloadUrl    = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(key)}`;
       console.log("Stored document:", `${ref}/${key}`);
     } catch (err) {
