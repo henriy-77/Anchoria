@@ -68,10 +68,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   padding:34px 26px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
 }
 .brand{display:flex;align-items:center;gap:13px;margin-bottom:6px;}
-.emblem{
-  width:42px;height:42px;border-radius:50%;flex-shrink:0;
-  background:#fff url('anchoria-emblem.png') center/cover no-repeat;
-}
+.emblem{width:42px;height:42px;border-radius:50%;flex-shrink:0;object-fit:cover;}
 .brand .name{font-family:var(--serif);font-size:16px;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase;}
 .brand .sub{font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;font-weight:600;}
 .lede{font-size:13px;color:#9A9384;margin:16px 0 24px;line-height:1.6;}
@@ -311,7 +308,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   <!-- ===== LEFT RAIL (desktop) ===== -->
   <aside class="rail" aria-label="Application progress">
     <div class="brand">
-      <div class="emblem" role="img" aria-label="Anchoria Securities emblem"></div>
+      <img class="emblem" src="anchoria-emblem.png" alt="Anchoria Securities emblem">
       <div>
         <div class="name">ANCHORIA</div>
         <div class="sub">SECURITIES</div>
@@ -342,7 +339,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     <!-- Mobile top bar -->
     <div class="topbar" aria-hidden="true">
       <div class="brand">
-        <div class="emblem"></div>
+        <img class="emblem" src="anchoria-emblem.png" alt="">
         <div class="name">ANCHORIA SECURITIES</div>
       </div>
       <div class="pbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Form progress">
