@@ -57,6 +57,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--serif);line-heig
 /* ===== FOCUS STYLES (visible for keyboard nav) ===== */
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
 button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px;}
+#cardTitle:focus{outline:none;}
 
 /* ===== SHELL LAYOUT ===== */
 .shell{display:flex;min-height:100vh;}
@@ -192,6 +193,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 .p-amt{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);}
 .product.sel .p-amt{display:block;}
 .p-words{font-size:11.5px;color:var(--gold-2);font-style:italic;margin-top:6px;min-height:14px;}
+
+.sel-all-btn{margin-top:8px;padding:6px 16px;font-size:12px;border-radius:8px;border:1.5px solid var(--line-strong);background:var(--surface);cursor:pointer;font-family:var(--serif);color:var(--ink);transition:border-color .15s,background .15s;}
+.sel-all-btn:hover{border-color:var(--gold);background:var(--gold-soft);}
 
 /* ===== DECLARATIONS ===== */
 .decl-box{border:1px solid var(--line);border-radius:10px;background:#FDFCF8;padding:14px 16px;font-size:12.5px;color:#4A453B;line-height:1.6;margin-bottom:14px;}
@@ -345,7 +349,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
         <div class="pfill" id="pfill"></div>
       </div>
       <div class="pmeta">
-        <span id="pstep">Step 1 of 7</span>
+        <span id="pstep">Step 1 of 6</span>
         <span id="pname">Personal details</span>
       </div>
     </div>
@@ -359,7 +363,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
     <form class="card" id="form" novalidate aria-label="Account opening application">
       <div class="card-head">
-        <div class="ey" id="eyebrow" aria-live="polite">Step 1 of 7</div>
+        <div class="ey" id="eyebrow" aria-live="polite">Step 1 of 6</div>
         <h1 id="cardTitle">Personal details</h1>
       </div>
       <div class="card-body">
@@ -748,12 +752,12 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
               <input id="f-sourceDetails" name="sourceDetails">
             </div>
 
-            <div class="field">
+            <div class="field full">
               <label class="lab" for="f-countryOfFunds">Expected country of origin of funds</label>
               <input id="f-countryOfFunds" name="countryOfFunds" value="Nigeria">
             </div>
 
-            <div class="field">
+            <div class="field full">
               <label class="lab" id="ic-label">Investor categorisation</label>
               <div class="choices" data-check="investorCategory" role="group" aria-labelledby="ic-label">
                 <label class="choice"><input type="checkbox" value="Retail">Retail</label>
@@ -785,7 +789,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
                 <label class="choice"><input type="checkbox" value="NASD">NASD</label>
                 <label class="choice"><input type="checkbox" value="LCFE">LCFE</label>
               </div>
-              <button type="button" id="investmentSelectAll" style="margin-top:8px;padding:5px 14px;font-size:12px;border-radius:7px;border:1.5px solid var(--line-strong);background:#fff;cursor:pointer;font-family:var(--serif);color:var(--ink);">Select all exchanges</button>
+              <button type="button" id="investmentSelectAll" class="sel-all-btn">Select all exchanges</button>
             </div>
 
             <div class="field full">
@@ -909,7 +913,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
       <div class="nav" id="nav">
         <button type="button" class="btn btn-ghost" id="backBtn" aria-label="Go back to previous step">Back</button>
-        <span class="step-count" id="stepCount" aria-live="polite">Step 1 of 7</span>
+        <span class="step-count" id="stepCount" aria-live="polite">Step 1 of 6</span>
         <button type="button" class="btn btn-primary" id="nextBtn">
           <span class="btn-label">Continue</span>
           <span class="spin" aria-hidden="true"></span>
