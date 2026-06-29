@@ -11,11 +11,11 @@
       --surface:#FAFAF7;--serif:'Georgia',serif;--line:#E5E1D8;
     }
     body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface);font-family:var(--serif);padding:24px;}
-    .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:48px 40px;max-width:480px;width:100%;text-align:center;}
-    .logo{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:32px;text-decoration:none;color:inherit;}
-    .logo:link,.logo:visited,.logo:hover,.logo:active{color:inherit;}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);max-width:480px;width:100%;text-align:center;overflow:hidden;}
+    .logo{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:0;text-decoration:none;color:inherit;background:#1C1A17;padding:22px 40px;}
+    .logo:link,.logo:visited,.logo:hover,.logo:active{color:inherit;text-decoration:none;}
     .logo img{width:52px;height:52px;border-radius:50%;}
-    .logo-text .name{font-size:20px;font-weight:700;color:#1C1A17 !important;letter-spacing:.06em;text-transform:uppercase;}
+    .logo-text .name{font-size:20px;font-weight:700;color:#fff !important;letter-spacing:.06em;text-transform:uppercase;}
     .logo-text .sub{font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;font-weight:600;}
     h1{font-size:22px;font-weight:600;color:var(--black);margin-bottom:8px;}
     p{font-size:14px;color:#6B6457;margin-bottom:36px;line-height:1.6;}
@@ -37,7 +37,7 @@
         <div class="sub">Securities</div>
       </div>
     </div>
-    <h1>Open an Account</h1>
+    <div style="padding:36px 40px 40px"><h1>Open an Account</h1>
     <p>Choose the account type that applies to you to get started.</p>
     <div class="options">
       <a href="accountopening.html" class="opt featured">
@@ -49,7 +49,7 @@
         <div class="opt-sub">For companies, trustees, NGOs and partnerships</div>
       </a>
     </div>
-  </div>
+  </div></div>
   <footer>Anchoria Securities Limited &mdash; SEC-registered &amp; NGX-licensed</footer>
 </body>
 </html>
