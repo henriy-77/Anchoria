@@ -6,7 +6,10 @@
 
 const { getStore } = require("@netlify/blobs");
 
-const AIRTABLE_TABLE = "Applications";
+// Detect table from ref prefix: CASL- = Corporate, else individual
+function getAirtableTable(ref) {
+  return ref && ref.startsWith("CASL-") ? "Corporate Applications" : "Applications";
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -64,6 +67,7 @@ exports.handler = async (event) => {
     return json(200, { stored: true, airtableSkipped: true });
   }
 
+  const AIRTABLE_TABLE = getAirtableTable(ref);
   try {
     const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}?filterByFormula=${encodeURIComponent(`{Reference}="${ref}"`)}`;
     const searchRes = await fetch(searchUrl, {
