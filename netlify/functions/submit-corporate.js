@@ -3,6 +3,8 @@
  * Netlify Serverless Function → Airtable (Corporate Applications table)
  */
 
+const { getStore } = require("@netlify/blobs");
+
 const AIRTABLE_TABLE = "Corporate Applications";
 
 exports.handler = async (event) => {
@@ -121,6 +123,23 @@ exports.handler = async (event) => {
 
     const result = await res.json();
     console.log("Corporate application saved:", ref, "→ Airtable", result.id);
+
+    // Save canvas signature to Netlify Blobs
+    const SITE_ID   = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
+    const BLOB_TOKEN = process.env.NETLIFY_TOKEN  || process.env.NETLIFY_BLOBS_TOKEN;
+    const sigData = decl.signature;
+    if (sigData && SITE_ID && BLOB_TOKEN) {
+      try {
+        const store  = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+        const base64 = sigData.includes(",") ? sigData.split(",")[1] : sigData;
+        const buffer = Buffer.from(base64, "base64");
+        await store.set(`${ref}/signature`, buffer, { metadata: { name: "signature.png", mimeType: "image/png", ref } });
+        console.log("Stored signature for", ref);
+      } catch (err) {
+        console.error("Failed to store signature:", err.message);
+      }
+    }
+
     return json(200, { success: true, reference: ref, airtableId: result.id });
 
   } catch (err) {

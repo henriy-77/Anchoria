@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 
   /* ── Upload documents to Netlify Blobs ── */
   const docLinks = [];
-  const SITE_ID    = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
+  const SITE_ID    = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
   const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
   const blobsReady = !!(SITE_ID && BLOB_TOKEN);
 
@@ -75,6 +75,18 @@ exports.handler = async (event) => {
           console.log("Stored document:", key);
         } catch (err) {
           console.error("Failed to store document", doc.key, err.message);
+        }
+      }
+      // Save canvas signature to Blobs
+      const sigImage = sig.image || sig.data;
+      if (sigImage) {
+        try {
+          const base64 = sigImage.includes(",") ? sigImage.split(",")[1] : sigImage;
+          const buffer = Buffer.from(base64, "base64");
+          await store.set(`${ref}/signature`, buffer, { metadata: { name: "signature.png", mimeType: "image/png", ref } });
+          console.log("Stored signature for", ref);
+        } catch (err) {
+          console.error("Failed to store signature:", err.message);
         }
       }
     }
