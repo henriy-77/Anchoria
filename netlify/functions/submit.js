@@ -69,7 +69,7 @@ exports.handler = async (event) => {
           const buffer = Buffer.from(base64, "base64");
           const key = `${ref}/${doc.key}`;
           await store.set(key, buffer, { metadata: { name: doc.name, mimeType, ref } });
-          const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
+          const siteUrl = process.env.URL || "https://tourmaline-longma-857abb.netlify.app";
           const downloadUrl = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(doc.key)}`;
           docLinks.push(`${doc.key} (${doc.name}): ${downloadUrl}`);
           console.log("Stored document:", key);
@@ -144,7 +144,7 @@ exports.handler = async (event) => {
                                   ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                   : "",
     "Document Links":           docLinks.join("\n"),
-    "View Application":         `${process.env.URL || "https://anchoria-securities-account-opening.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
+    "View Application":         `${process.env.URL || "https://tourmaline-longma-857abb.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
     "Status":                   "New",
     "Notes":                    "",
   };

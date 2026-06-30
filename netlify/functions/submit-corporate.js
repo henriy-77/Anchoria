@@ -38,54 +38,57 @@ exports.handler = async (event) => {
   const arr  = (v) => (Array.isArray(v) ? v.join(", ") : v || "");
   const date = (v) => (v ? v.slice(0, 10) : null);
 
-  const ref = str(payload.reference);
-  const sig = payload.signature || {};
+  // Frontend sends nested structure: entityDetails, financial, declaration, ref
+  const ref  = str(payload.ref || payload.reference);
+  const ed   = payload.entityDetails  || {};
+  const fin  = payload.financial      || {};
+  const decl = payload.declaration    || {};
 
   // Directors
   const directors = Array.isArray(payload.directors) ? payload.directors : [];
   const dirStr = directors.map((d, i) =>
-    `Director ${i + 1}: ${d.name || ""}${d.bvn ? " | BVN: " + d.bvn : ""}${d.nin ? " | NIN: " + d.nin : ""}${d.phone ? " | Phone: " + d.phone : ""}${d.email ? " | Email: " + d.email : ""}`
+    `Director ${i + 1}: ${d.fullName || d.name || ""}${d.bvn ? " | BVN: " + d.bvn : ""}${d.nin ? " | NIN: " + d.nin : ""}${d.phone ? " | Phone: " + d.phone : ""}${d.email ? " | Email: " + d.email : ""}`
   ).join("\n");
 
   // Signatories
   const signatories = Array.isArray(payload.signatories) ? payload.signatories : [];
   const sigStr = signatories.map((s, i) =>
-    `Signatory ${i + 1}: ${s.name || ""}${s.title ? " (" + s.title + ")" : ""}${s.mandate ? " | Mandate: " + s.mandate : ""}${s.phone ? " | Phone: " + s.phone : ""}${s.email ? " | Email: " + s.email : ""}`
+    `Signatory ${i + 1}: ${s.fullName || s.name || ""}${s.title ? " (" + s.title + ")" : ""}${s.mandate ? " | Mandate: " + s.mandate : ""}${s.phone ? " | Phone: " + s.phone : ""}${s.email ? " | Email: " + s.email : ""}`
   ).join("\n");
 
-  const siteUrl = process.env.URL || "https://anchoria-securities-account-opening.netlify.app";
+  const siteUrl = process.env.URL || "https://tourmaline-longma-857abb.netlify.app";
 
   const fields = {
     "Reference":              ref,
-    "Entity Type":            str(payload.entityType),
-    "Company Name":           str(payload.companyName),
-    "RC Number":              str(payload.rcNumber),
-    "Tax ID (TIN)":           str(payload.taxId),
-    "Date of Incorporation":  date(payload.incorporationDate),
-    "Nature of Business":     str(payload.natureOfBusiness),
-    "Registered Address":     str(payload.registeredAddress),
-    "Operating Address":      str(payload.operatingAddress),
-    "Email":                  str(payload.email),
-    "Phone":                  str(payload.phone),
-    "Website":                str(payload.website),
+    "Entity Type":            str(ed.entityType),
+    "Company Name":           str(ed.companyName),
+    "RC Number":              str(ed.rcNumber),
+    "Tax ID (TIN)":           str(ed.tin),
+    "Date of Incorporation":  date(ed.incorporationDate),
+    "Nature of Business":     str(ed.natureBusiness),
+    "Registered Address":     str(ed.registeredAddress),
+    "Operating Address":      str(ed.operatingAddress),
+    "Email":                  str(ed.email),
+    "Phone":                  str(ed.phone),
+    "Website":                str(ed.website),
     "Directors":              dirStr,
     "Authorized Signatories": sigStr,
-    "Bank Name":              str(payload.bankName),
-    "Bank Branch":            str(payload.bankBranch),
-    "Bank Account Number":    str(payload.bankAccountNumber),
-    "Bank Account Name":      str(payload.bankAccountName),
-    "DCS / Settlement":       str(payload.dcs),
-    "Source of Funds":        arr(payload.sourceOfFunds),
-    "Source of Funds Details":str(payload.sourceDetails),
-    "Annual Turnover":        str(payload.annualTurnover),
-    "Investment Options":     arr(payload.investmentOptions),
-    "Referral Source":        str(payload.referralSource),
+    "Bank Name":              str(fin.bankName),
+    "Bank Branch":            str(fin.bankBranch),
+    "Bank Account Number":    str(fin.accountNumber),
+    "Bank Account Name":      str(fin.accountName),
+    "DCS / Settlement":       str(fin.dcsNumber),
+    "Source of Funds":        arr(fin.sourceOfFunds),
+    "Source of Funds Details":str(fin.sourceDetails),
+    "Annual Turnover":        str(fin.annualTurnover),
+    "Investment Options":     arr(fin.investmentOptions),
+    "Referral Source":        str(fin.referralSource),
     "Documents Submitted":    Array.isArray(payload.documents)
                                 ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                 : "",
     "Document Links":         "",
-    "Signatory Name":         str(sig.name),
-    "Signature Date":         date(sig.date),
+    "Signatory Name":         str(decl.signatoryName),
+    "Signature Date":         date(decl.date),
     "View Application":       `${siteUrl}/.netlify/functions/corporate-pdf?ref=${encodeURIComponent(ref)}`,
     "Status":                 "New",
     "Notes":                  "",
