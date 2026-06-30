@@ -1,6 +1,7 @@
 /**
  * Anchoria Securities — Individual Application PDF View
- * Returns a print-ready HTML page with all form data + embedded documents.
+ * Returns a print-ready HTML page. Documents are loaded by the browser
+ * via get-document URLs (not embedded) to stay under the 6MB response limit.
  * Usage: /.netlify/functions/application-pdf?ref=ASL-XXXXX
  */
 
@@ -8,7 +9,6 @@ const { getStore } = require("@netlify/blobs");
 
 const AIRTABLE_TABLE = "Applications";
 
-// Document keys and labels for individual form
 const DOC_DEFS = [
   { key: "passportPhoto",   label: "Passport Photograph" },
   { key: "validId",         label: "Government-Issued ID" },
@@ -25,6 +25,7 @@ exports.handler = async (event) => {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SITE_ID          = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
   const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
+  const SITE_URL         = process.env.URL             || "https://tourmaline-longma-857abb.netlify.app";
 
   if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
     return { statusCode: 500, body: "Server misconfiguration" };
@@ -44,61 +45,48 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: `Failed to fetch application: ${err.message}` };
   }
 
-  // Fetch all documents from Blobs and embed as base64 data URIs
-  const embeddedDocs = [];
+  // Check which docs exist in Blobs (metadata only — no data fetched here)
+  const existingDocs = [];
   if (SITE_ID && BLOB_TOKEN) {
     const store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
     for (const def of DOC_DEFS) {
       try {
-        const result = await store.getWithMetadata(`${ref}/${def.key}`, { type: "arrayBuffer" });
-        if (result) {
-          const mime    = result.metadata.mimeType || "application/octet-stream";
-          const b64     = Buffer.from(result.data).toString("base64");
-          const dataUri = `data:${mime};base64,${b64}`;
-          embeddedDocs.push({ key: def.key, label: def.label, mime, dataUri, fileName: result.metadata.name || def.key });
+        const meta = await store.getMetadata(`${ref}/${def.key}`);
+        if (meta) {
+          const mime   = meta.mimeType || "application/octet-stream";
+          const docUrl = `${SITE_URL}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(def.key)}`;
+          existingDocs.push({ key: def.key, label: def.label, mime, url: docUrl, fileName: meta.name || def.key });
         }
-      } catch (_) { /* doc not uploaded — skip */ }
+      } catch (_) { /* not uploaded */ }
     }
   }
 
-  const f = (v) => (v != null && v !== "" ? String(v) : "—");
+  const f   = (v) => (v != null && v !== "" ? String(v) : "—");
   const esc = (s) => String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
   function renderDoc(doc) {
     const isImage = doc.mime.startsWith("image/");
     const isPdf   = doc.mime === "application/pdf";
-    const dlBtn   = `<a href="${doc.dataUri}" download="${esc(doc.fileName)}" class="dl-btn">⬇ Download ${esc(doc.label)}</a>`;
-    if (doc.key === "signature" || (isImage && doc.key === "passportPhoto")) {
-      return `<div class="doc-block">
-        <div class="doc-label">${esc(doc.label)}</div>
-        <img src="${doc.dataUri}" alt="${esc(doc.label)}" class="${doc.key === "signature" ? "sig-img" : "passport-img"}"/>
-        ${dlBtn}
-      </div>`;
-    }
+    const dlBtn   = `<a href="${doc.url}" download="${esc(doc.fileName)}" class="dl-btn" target="_blank">⬇ Download ${esc(doc.label)}</a>`;
     if (isImage) {
       return `<div class="doc-block">
         <div class="doc-label">${esc(doc.label)}</div>
-        <img src="${doc.dataUri}" alt="${esc(doc.label)}" class="doc-img"/>
+        <img src="${doc.url}" alt="${esc(doc.label)}" class="${doc.key === "signature" ? "sig-img" : doc.key === "passportPhoto" ? "passport-img" : "doc-img"}" crossorigin="anonymous"/>
         ${dlBtn}
       </div>`;
     }
     if (isPdf) {
       return `<div class="doc-block">
         <div class="doc-label">${esc(doc.label)}</div>
-        <object data="${doc.dataUri}" type="application/pdf" class="pdf-embed">
-          <p>PDF cannot be displayed inline. ${dlBtn}</p>
-        </object>
+        <iframe src="${doc.url}" class="pdf-embed" title="${esc(doc.label)}"></iframe>
         ${dlBtn}
       </div>`;
     }
-    return `<div class="doc-block">
-      <div class="doc-label">${esc(doc.label)}</div>
-      ${dlBtn}
-    </div>`;
+    return `<div class="doc-block"><div class="doc-label">${esc(doc.label)}</div>${dlBtn}</div>`;
   }
 
-  const docsHtml = embeddedDocs.length
-    ? embeddedDocs.map(renderDoc).join("\n")
+  const docsHtml = existingDocs.length
+    ? existingDocs.map(renderDoc).join("\n")
     : `<p style="color:#6B655A;font-size:12px">No documents on file.</p>`;
 
   const html = `<!DOCTYPE html>
@@ -132,13 +120,7 @@ exports.handler = async (event) => {
   .doc-img{max-width:100%;max-height:400px;border:1px solid #E7E4DB;border-radius:4px;display:block}
   .pdf-embed{width:100%;height:500px;border:1px solid #E7E4DB;border-radius:4px;display:block;margin-bottom:6px}
   .dl-btn{display:inline-block;margin-top:6px;padding:4px 12px;background:#C2972B;color:#fff;text-decoration:none;border-radius:4px;font-size:11px;font-family:Georgia,serif}
-  .dl-btn:hover{background:#a57e20}
-  @media print{
-    .print-btn{display:none}
-    body{padding:10px}
-    .pdf-embed{height:700px}
-    .dl-btn{display:none}
-  }
+  @media print{.print-btn{display:none}body{padding:10px}.pdf-embed{height:700px}}
 </style>
 </head>
 <body>
