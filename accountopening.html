@@ -125,6 +125,9 @@ input.invalid,select.invalid,textarea.invalid{border-color:var(--err);background
 .err-msg{font-size:11.5px;color:var(--err);display:none;}
 .field.has-error .err-msg{display:block;}
 .field.has-error input,.field.has-error select,.field.has-error textarea{border-color:var(--err);background:var(--err-bg);}
+.dob-row{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:8px;}
+.dob-row select{width:100%;}
+.field.has-error .dob-row select{border-color:var(--err);background:var(--err-bg);}
 
 /* ===== CHOICE BUTTONS (radio / checkbox groups) ===== */
 .choices{display:flex;gap:9px;flex-wrap:wrap;}
@@ -405,7 +408,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             </div>
 
             <div class="field">
-              <label class="lab" for="f-sex">Sex<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab" for="f-sex">Gender<span class="req" aria-hidden="true">*</span></label>
               <select id="f-sex" name="sex" aria-required="true" aria-describedby="e-sex">
                 <option value="">Select</option>
                 <option>Male</option><option>Female</option>
@@ -414,15 +417,36 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             </div>
 
             <div class="field">
-              <label class="lab" for="f-dob">Date of birth<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-dob" type="date" name="dob" aria-required="true" aria-describedby="e-dob h-dob">
+              <label class="lab" for="f-dob-day">Date of birth<span class="req" aria-hidden="true">*</span></label>
+              <div class="dob-row">
+                <select id="f-dob-day" class="dob-part" aria-label="Day">
+                  <option value="">Day</option>
+                </select>
+                <select id="f-dob-month" class="dob-part" aria-label="Month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="f-dob-year" class="dob-part" aria-label="Year">
+                  <option value="">Year</option>
+                </select>
+              </div>
+              <input type="hidden" id="f-dob" name="dob" aria-required="true" aria-describedby="e-dob h-dob">
               <div class="help" id="h-dob">Must be 18 or older.</div>
               <div class="err-msg" id="e-dob" role="alert">You must be 18 or older.</div>
             </div>
 
             <div class="field">
               <label class="lab" for="f-nationality">Nationality<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nationality" name="nationality" value="Nigerian" aria-required="true" aria-describedby="e-nationality">
+              <select id="f-nationality" name="nationality" aria-required="true" aria-describedby="e-nationality">
+                <option value="">Select country</option>
+                <option value="Nigerian" selected>Nigerian</option>
+                <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
+              </select>
               <div class="err-msg" id="e-nationality" role="alert">Required.</div>
             </div>
 
@@ -1025,6 +1049,34 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
    * INITIALISATION
    * ================================================================ */
 
+  // Populate DOB day/year dropdowns and sync hidden input
+  (function() {
+    var dayEl   = document.getElementById("f-dob-day");
+    var monthEl = document.getElementById("f-dob-month");
+    var yearEl  = document.getElementById("f-dob-year");
+    var hidden  = document.getElementById("f-dob");
+    for (var d = 1; d <= 31; d++) {
+      var o = document.createElement("option");
+      o.value = String(d).padStart(2, "0");
+      o.textContent = d;
+      dayEl.appendChild(o);
+    }
+    var curYear = new Date().getFullYear();
+    for (var y = curYear - 18; y >= curYear - 100; y--) {
+      var o2 = document.createElement("option");
+      o2.value = y;
+      o2.textContent = y;
+      yearEl.appendChild(o2);
+    }
+    function syncDob() {
+      var d2 = dayEl.value, m = monthEl.value, y2 = yearEl.value;
+      hidden.value = (d2 && m && y2) ? (y2 + "-" + m + "-" + d2) : "";
+    }
+    dayEl.addEventListener("change", syncDob);
+    monthEl.addEventListener("change", syncDob);
+    yearEl.addEventListener("change", syncDob);
+  })();
+
   // Populate states dropdown
   var stateSel = document.getElementById("f-stateOfOrigin");
   NIGERIAN_STATES.forEach(function (s) {
@@ -1519,7 +1571,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   var REVIEW_MAP = [
     ["Personal details", 0, [
       ["Surname","surname"],["First name","firstName"],["Middle name","middleName"],
-      ["Title","title"],["Sex","sex"],["Date of birth","dob"],["Nationality","nationality"],
+      ["Title","title"],["Gender","sex"],["Date of birth","dob"],["Nationality","nationality"],
       ["Marital status","maritalStatus"],["State of origin","stateOfOrigin"],["LGA","lga"],
       ["Maiden name","maidenName"],["Mother's maiden name","motherMaiden"],
       ["BVN","bvn"],["NIN","nin"],["TIN","taxId"]
