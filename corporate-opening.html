@@ -713,7 +713,7 @@ canvas.addEventListener("touchmove",function(e){
 },{passive:false});
 canvas.addEventListener("touchend",function(){drawing=false;});
 document.getElementById("sig-clear").addEventListener("click",function(){
-  var r=canvas.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); sigDrawn=false;
+  ctx.clearRect(0,0,canvas.width,canvas.height); sigDrawn=false;
   document.getElementById("sig-placeholder").style.display="flex";
   document.getElementById("sig-wrap").classList.remove("has-drawn");
 });
@@ -823,6 +823,7 @@ function showStep(n){
   document.getElementById("step-"+currentStep).classList.add("active");
   updateNav(); hideErrBanner();
   window.scrollTo({top:0,behavior:"smooth"});
+  if(n===5) setTimeout(resizeCanvas,50);
 }
 function saveDirectorValues(){
   directors.forEach(function(d){ var n=d.n; ["fullName","bvn","nin","phone","email","address"].forEach(function(k){ var el=document.getElementById("dir"+n+"-"+k); if(el) d[k]=el.value; }); });
