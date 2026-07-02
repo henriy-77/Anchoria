@@ -1289,6 +1289,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     ctx.lineJoin = "round";
     ctx.strokeStyle = "#1C1A17";
     sigDirty = false;
+    canvas.classList.remove("has-drawn", "sig-error");
   }
 
   function sigPos(e) {

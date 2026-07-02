@@ -695,6 +695,9 @@ function resizeCanvas(){
   var r=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
   canvas.width=r.width*dpr; canvas.height=r.height*dpr;
   ctx.scale(dpr,dpr); ctx.strokeStyle="#141312"; ctx.lineWidth=2; ctx.lineCap="round"; ctx.lineJoin="round";
+  sigDrawn=false;
+  document.getElementById("sig-wrap").classList.remove("has-drawn");
+  document.getElementById("sig-placeholder").style.display="flex";
 }
 window.addEventListener("resize",resizeCanvas); resizeCanvas();
 function getPos(e){ var r=canvas.getBoundingClientRect(); if(e.touches) return {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}; return {x:e.clientX-r.left,y:e.clientY-r.top}; }
