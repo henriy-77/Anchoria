@@ -1527,7 +1527,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       s === STEPS - 1 ? "Submit application" : "Continue";
 
     // Init canvas on first show
-    if (s === 4 && !ctx) setTimeout(fitCanvas, 30);
+    if (s === 4) setTimeout(fitCanvas, 50);
 
     syncConditionals();
 
