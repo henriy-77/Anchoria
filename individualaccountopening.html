@@ -98,7 +98,7 @@ a.brand,a.brand:link,a.brand:visited,a.brand:hover,a.brand:active{color:inherit;
 .main{flex:1;display:flex;flex-direction:column;align-items:center;padding:44px 26px 80px;}
 .topbar{display:none;}
 .card{width:100%;max-width:740px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:0 0 30px;overflow:hidden;}
-.card-head{background:var(--black);color:#fff;padding:20px 44px;}
+.card-head{background:var(--black);color:#fff;padding:15px 44px;}
 .card-head .ey{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;}
 .card-head h1{font-family:var(--serif);font-size:24px;margin:5px 0 0;font-weight:600;letter-spacing:.2px;}
 .card-body{padding:26px 44px 0;}
@@ -274,6 +274,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   border-radius:9px;padding:11px 14px;font-size:13px;margin-bottom:16px;display:none;
 }
 .err-banner.show{display:block;}
+#errBannerWrap{display:none;padding:0;border:0;box-shadow:none;background:none;overflow:visible;}
+#errBannerWrap.show{display:block;}
+#errBannerWrap.show .err-banner{margin-bottom:0;}
 
 .hidden{display:none!important;}
 
@@ -292,7 +295,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   .topbar .pfill{height:100%;background:var(--gold);width:0;transition:width .35s;}
   .topbar .pmeta{display:flex;justify-content:space-between;font-size:10.5px;color:#9A9384;margin-top:6px;}
   .main{padding:20px 12px 56px;}
-  .card-head{padding:16px 20px;}
+  .card-head{padding:12px 20px;}
   .card-body{padding:20px 20px 0;}
   .nav{margin:20px 20px 0;}
   .grid{grid-template-columns:1fr;}
@@ -605,13 +608,39 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             </div>
 
             <div class="field">
-              <label class="lab" for="f-idIssue">ID issue date</label>
-              <input id="f-idIssue" type="date" name="idIssue">
+              <label class="lab" for="f-idIssue-day">ID issue date</label>
+              <div class="dob-row">
+                <select id="f-idIssue-day" class="dob-part" aria-label="Issue day"><option value="">Day</option></select>
+                <select id="f-idIssue-month" class="dob-part" aria-label="Issue month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="f-idIssue-year" class="dob-part" aria-label="Issue year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="f-idIssue" name="idIssue">
             </div>
 
             <div class="field">
-              <label class="lab" for="f-idExpiry">ID expiry date</label>
-              <input id="f-idExpiry" type="date" name="idExpiry">
+              <label class="lab" for="f-idExpiry-day">ID expiry date</label>
+              <div class="dob-row">
+                <select id="f-idExpiry-day" class="dob-part" aria-label="Expiry day"><option value="">Day</option></select>
+                <select id="f-idExpiry-month" class="dob-part" aria-label="Expiry month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="f-idExpiry-year" class="dob-part" aria-label="Expiry year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="f-idExpiry" name="idExpiry">
             </div>
 
             <hr class="rule">
@@ -1075,6 +1104,43 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     dayEl.addEventListener("change", syncDob);
     monthEl.addEventListener("change", syncDob);
     yearEl.addEventListener("change", syncDob);
+  })();
+
+  // Custom Day/Month/Year pickers for ID issue & expiry dates.
+  // Writes YYYY-MM-DD to the hidden input, matching the old native date field.
+  (function() {
+    function initDatePicker(prefix, yearStart, yearEnd) {
+      var dayEl   = document.getElementById(prefix + "-day");
+      var monthEl = document.getElementById(prefix + "-month");
+      var yearEl  = document.getElementById(prefix + "-year");
+      var hidden  = document.getElementById(prefix);
+      if (!dayEl || !monthEl || !yearEl || !hidden) return;
+      for (var d = 1; d <= 31; d++) {
+        var o = document.createElement("option");
+        o.value = String(d).padStart(2, "0");
+        o.textContent = d;
+        dayEl.appendChild(o);
+      }
+      var step = yearStart <= yearEnd ? 1 : -1;
+      for (var y = yearStart; step > 0 ? y <= yearEnd : y >= yearEnd; y += step) {
+        var o2 = document.createElement("option");
+        o2.value = y;
+        o2.textContent = y;
+        yearEl.appendChild(o2);
+      }
+      function sync() {
+        var dd = dayEl.value, mm = monthEl.value, yy = yearEl.value;
+        hidden.value = (dd && mm && yy) ? (yy + "-" + mm + "-" + dd) : "";
+      }
+      dayEl.addEventListener("change", sync);
+      monthEl.addEventListener("change", sync);
+      yearEl.addEventListener("change", sync);
+    }
+    var cur = new Date().getFullYear();
+    // Issue date: recent years first (this year back 40 years)
+    initDatePicker("f-idIssue", cur, cur - 40);
+    // Expiry date: near future first (this year forward 30 years)
+    initDatePicker("f-idExpiry", cur, cur + 30);
   })();
 
   // Populate states dropdown
@@ -1744,6 +1810,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     btn.classList.add("loading");
     btn.querySelector(".btn-label").textContent = "Submitting…";
     document.getElementById("errBanner").classList.remove("show");
+    document.getElementById("errBannerWrap").classList.remove("show");
 
     buildPayload(ref).then(function (payload) {
 
@@ -1806,6 +1873,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     var banner = document.getElementById("errBanner");
     banner.textContent = "Submission failed — " + (msg || "please check your connection and try again") + ". Your data has been preserved.";
     banner.classList.add("show");
+    document.getElementById("errBannerWrap").classList.add("show");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
