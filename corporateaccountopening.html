@@ -55,6 +55,9 @@ a.brand,a.brand:link,a.brand:visited,a.brand:hover,a.brand:active{color:inherit;
 .card-body{padding:26px 44px 0;}
 .step-hint{font-size:13.5px;color:var(--muted);margin:0 0 22px;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+.date-row{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:10px;}
+.date-row select{width:100%;}
+.field.has-error .date-row select{border-color:var(--err);background:var(--err-bg);}
 .field{display:flex;flex-direction:column;gap:6px;}
 .field.full{grid-column:1/-1;}
 label.lab{font-size:12.5px;font-weight:600;color:#3B362E;}
@@ -232,8 +235,21 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
               <span class="err-msg" id="err-tin">This field is required</span>
             </div>
             <div class="field">
-              <label class="lab" for="incorporationDate">Date of Incorporation <span class="req">*</span></label>
-              <input type="date" id="incorporationDate">
+              <label class="lab" for="incorporationDate-day">Date of Incorporation <span class="req">*</span></label>
+              <div class="date-row">
+                <select id="incorporationDate-day" aria-label="Incorporation day"><option value="">Day</option></select>
+                <select id="incorporationDate-month" aria-label="Incorporation month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="incorporationDate-year" aria-label="Incorporation year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="incorporationDate">
               <span class="err-msg" id="err-incorporationDate">This field is required</span>
             </div>
             <div class="field">
@@ -488,7 +504,7 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
             </div>
             <div class="field">
               <label class="lab" for="sigDate">Date <span class="req">*</span></label>
-              <input type="date" id="sigDate">
+              <input type="text" id="sigDate" readonly aria-readonly="true">
               <span class="err-msg" id="err-sigDate">This field is required</span>
             </div>
             <div class="field full" style="margin-top:4px;">
@@ -721,7 +737,23 @@ document.getElementById("sig-clear").addEventListener("click",function(){
   document.getElementById("sig-placeholder").style.display="flex";
   document.getElementById("sig-wrap").classList.remove("has-drawn");
 });
-document.getElementById("sigDate").value=new Date().toISOString().slice(0,10);
+document.getElementById("sigDate").value=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+
+// Populate the Date of Incorporation Day/Month/Year picker and sync hidden input (YYYY-MM-DD)
+(function(){
+  var dayEl=document.getElementById("incorporationDate-day");
+  var monthEl=document.getElementById("incorporationDate-month");
+  var yearEl=document.getElementById("incorporationDate-year");
+  var hidden=document.getElementById("incorporationDate");
+  if(!dayEl||!monthEl||!yearEl||!hidden) return;
+  for(var d=1;d<=31;d++){var o=document.createElement("option");o.value=String(d).padStart(2,"0");o.textContent=d;dayEl.appendChild(o);}
+  var cur=new Date().getFullYear();
+  for(var y=cur;y>=1950;y--){var o2=document.createElement("option");o2.value=y;o2.textContent=y;yearEl.appendChild(o2);}
+  function sync(){var dd=dayEl.value,mm=monthEl.value,yy=yearEl.value;hidden.value=(dd&&mm&&yy)?(yy+"-"+mm+"-"+dd):"";}
+  dayEl.addEventListener("change",sync);
+  monthEl.addEventListener("change",sync);
+  yearEl.addEventListener("change",sync);
+})();
 
 function esc(v){ return (v||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
 function val(id){ var el=document.getElementById(id); return el?el.value.trim():""; }
