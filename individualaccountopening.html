@@ -86,6 +86,8 @@ a.brand,a.brand:link,a.brand:visited,a.brand:hover,a.brand:active{color:inherit;
 }
 .tracker li.active .dot{background:var(--gold);color:#fff;}
 .tracker li.done .dot{background:var(--ok);color:#fff;}
+.tracker li.incomplete .dot{background:var(--err);color:#fff;}
+.tracker li.incomplete .t-label{color:#E9A8A0;}
 .t-label{font-size:12.5px;color:#9A9384;transition:color .2s;}
 .tracker li.active .t-label{color:#fff;font-weight:600;}
 .tracker li.done .t-label{color:#7B7568;}
@@ -1468,27 +1470,65 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     4: [["pep","radio"],["sigName","req"]]
   };
 
-  function checkRule(name, type) {
-    var v = val(name), ok = true;
-    if (type === "req")   ok = v !== "";
-    else if (type === "radio") ok = v !== "";
-    else if (type === "email") ok = isEmail(v);
-    else if (type === "phone") ok = isPhone(v);
-    else if (type === "11")   ok = /^[0-9]{11}$/.test(v);
-    else if (type === "10")   ok = /^[0-9]{10}$/.test(v);
-    else if (type === "nin")  ok = (v === "" || /^[0-9]{11}$/.test(v));
-    else if (type === "dob") {
-      if (!v) { ok = false; }
-      else {
-        var d = new Date(v), now = new Date();
-        var age = now.getFullYear() - d.getFullYear();
-        var m = now.getMonth() - d.getMonth();
-        if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
-        ok = age >= 18;
-      }
+  // Pure validity check for a single field — no DOM side effects
+  function ruleValid(name, type) {
+    var v = val(name);
+    if (type === "req" || type === "radio") return v !== "";
+    if (type === "email") return isEmail(v);
+    if (type === "phone") return isPhone(v);
+    if (type === "11")   return /^[0-9]{11}$/.test(v);
+    if (type === "10")   return /^[0-9]{10}$/.test(v);
+    if (type === "nin")  return (v === "" || /^[0-9]{11}$/.test(v));
+    if (type === "dob") {
+      if (!v) return false;
+      var d = new Date(v), now = new Date();
+      var age = now.getFullYear() - d.getFullYear();
+      var m = now.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+      return age >= 18;
     }
+    return true;
+  }
+
+  function checkRule(name, type) {
+    var ok = ruleValid(name, type);
     markField(name, ok);
     return ok;
+  }
+
+  // Read-only: is a step's required content complete? (no DOM mutation)
+  function isStepComplete(s) {
+    var rules = RULES[s];
+    if (rules) {
+      for (var i = 0; i < rules.length; i++) {
+        if (!ruleValid(rules[i][0], rules[i][1])) return false;
+      }
+    }
+    if (s === 2) {
+      if (!uploads.passportPhoto || !uploads.validId || !uploads.proofOfAddress) return false;
+      var permit = document.getElementById("cond-permit");
+      if (permit.classList.contains("show") && !uploads.residencePermit) return false;
+    }
+    if (s === 3) {
+      if (checks("sourceOfFunds").length === 0) return false;
+    }
+    if (s === 4) {
+      var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
+        .every(function (n) { return form.elements[n].checked; });
+      if (!allDecl) return false;
+      if (!sigDirty) return false;
+    }
+    return true;
+  }
+
+  // Flag earlier reached-but-incomplete steps with a red dot in the sidebar
+  var maxReached = 0;
+  function refreshStepStatus(active) {
+    document.querySelectorAll("#tracker li").forEach(function (li) {
+      var n = +li.getAttribute("data-step");
+      var flag = n < maxReached && n !== active && !isStepComplete(n);
+      li.classList.toggle("incomplete", flag);
+    });
   }
 
   /* ================================================================
@@ -1558,7 +1598,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       var wrap = el.closest(".field");
       if (wrap) wrap.classList.remove("has-error");
     }
+    refreshStepStatus(current);
   });
+  form.addEventListener("change", function () { refreshStepStatus(current); });
 
   /* ================================================================
    * NAVIGATION
@@ -1598,6 +1640,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
     // Init canvas on first show
     if (s === 4) setTimeout(fitCanvas, 50);
+
+    maxReached = Math.max(maxReached, isDone ? STEPS : s);
+    refreshStepStatus(isDone ? -1 : s);
 
     syncConditionals();
 
