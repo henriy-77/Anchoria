@@ -114,11 +114,11 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 .sigtools button:hover{background:var(--gold-soft);}
 .sigtools span{font-size:11.5px;color:var(--muted-2);}
 .nav{display:flex;justify-content:space-between;align-items:center;margin:26px 44px 0;padding-top:20px;border-top:1px solid var(--line);}
-.btn-next{background:var(--black);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-family:var(--serif);font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;min-width:140px;}
+.btn-next{background:var(--black);color:#fff;border:1.5px solid transparent;border-radius:9px;padding:11px 24px;font-family:var(--serif);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
 .btn-next:hover{background:#000;}
 .btn-next.loading{opacity:.7;cursor:wait;}
-.btn-back{background:none;border:1.5px solid var(--line-strong);border-radius:10px;padding:12px 20px;font-family:var(--serif);font-size:14px;color:var(--muted);cursor:pointer;transition:border-color .15s;}
-.btn-back:hover{border-color:var(--gold);color:var(--gold);}
+.btn-back{background:#fff;border:1.5px solid var(--line-strong);border-radius:9px;padding:11px 24px;font-family:var(--serif);font-size:14px;font-weight:600;color:var(--black);cursor:pointer;transition:border-color .15s;}
+.btn-back:hover{border-color:var(--gold);}
 .btn-back.hidden{visibility:hidden;}
 .success{text-align:center;padding:48px 32px 32px;}
 .seal{width:68px;height:68px;border-radius:50%;background:var(--gold-soft);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:32px;color:var(--gold-2);}
@@ -532,7 +532,7 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
       <div class="nav">
         <button type="button" class="btn-back hidden" id="backBtn">Back</button>
         <button type="button" class="btn-next" id="nextBtn">
-          <span class="btn-label">Next</span>
+          <span class="btn-label">Continue</span>
         </button>
       </div>
     </form>
@@ -583,7 +583,7 @@ function updateNav(){
   document.getElementById("pname").textContent = STEP_LABELS[currentStep];
   var back=document.getElementById("backBtn");
   currentStep===0 ? back.classList.add("hidden") : back.classList.remove("hidden");
-  document.querySelector("#nextBtn .btn-label").textContent = currentStep===totalSteps-1 ? "Submit application" : "Next";
+  document.querySelector("#nextBtn .btn-label").textContent = currentStep===totalSteps-1 ? "Submit application" : "Continue";
 }
 
 function renderDirectors(){
