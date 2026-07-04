@@ -383,7 +383,14 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
             </div>
             <div class="field full">
               <label class="lab" for="referralSource">How did you hear about us? <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
-              <input type="text" id="referralSource" placeholder="e.g. Referral, Social media, Web search">
+              <select id="referralSource">
+                <option value="">Select</option>
+                <option>Referral</option>
+                <option>Staff</option>
+                <option>Internet / Social Media</option>
+                <option>Email</option>
+                <option>Other</option>
+              </select>
             </div>
           </div>
         </div>
