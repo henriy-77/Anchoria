@@ -74,7 +74,10 @@ a.brand,a.brand:link,a.brand:visited,a.brand:hover,a.brand:active{color:inherit;
 .brand .sub{font-size:10px;letter-spacing:.18em;color:#C2972B !important;text-transform:uppercase;font-weight:600;}
 .lede{font-size:13px;color:#9A9384;margin:16px 0 24px;line-height:1.6;}
 .tracker{list-style:none;margin:0;padding:0;flex:1;}
-.tracker li{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #2A2620;cursor:default;}
+.tracker li{display:flex;align-items:center;gap:11px;padding:9px 8px;margin:0 -8px;border-radius:8px;border-bottom:1px solid #2A2620;cursor:pointer;transition:background .15s;}
+.tracker li:hover{background:#231F1A;}
+.tracker li:hover .t-label{color:#fff;}
+.tracker li:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;}
 .tracker li:last-child{border:0;}
 .dot{
   width:26px;height:26px;border-radius:50%;background:#2A2620;color:#9A9384;
@@ -1622,6 +1625,23 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
   document.getElementById("backBtn").addEventListener("click", function () {
     if (current > 0) { current--; showStep(current); }
+  });
+
+  // Sidebar step navigation — click any step to jump straight to it
+  document.querySelectorAll("#tracker li").forEach(function (li) {
+    li.setAttribute("role", "button");
+    li.setAttribute("tabindex", "0");
+    function jump() {
+      var n = +li.getAttribute("data-step");
+      if (isNaN(n) || n === current) return;
+      current = n;
+      if (current === STEPS - 1) buildReview();
+      showStep(current);
+    }
+    li.addEventListener("click", jump);
+    li.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); jump(); }
+    });
   });
 
   // Keyboard: Enter on canvas starts new stroke
