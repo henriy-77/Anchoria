@@ -87,8 +87,24 @@ exports.handler = async (event) => {
     return `<div class="doc-block"><div class="doc-label">${esc(doc.label)}</div>${dlBtn}</div>`;
   }
 
-  const docsHtml = existingDocs.length
-    ? existingDocs.map(renderDoc).join("\n")
+  const sigDoc    = existingDocs.find(d => d.key === "signature");
+  const otherDocs = existingDocs.filter(d => d.key !== "signature");
+
+  const sigBlock = `<div class="sig-block">
+    <div class="sig-slot">
+      ${sigDoc
+        ? `<img src="${sigDoc.url}" alt="Signature" class="sig-draw" crossorigin="anonymous"/>`
+        : `<span class="sig-missing">No signature on file</span>`}
+      <div class="sig-caption">Authorised Signatory Signature</div>
+    </div>
+    <div class="sig-details">
+      <div class="field"><label>Signatory Name</label><span>${esc(f(record["Signatory Name"]))}</span></div>
+      <div class="field"><label>Date</label><span>${esc(f(record["Signature Date"]))}</span></div>
+    </div>
+  </div>`;
+
+  const docsHtml = otherDocs.length
+    ? otherDocs.map(renderDoc).join("\n")
     : `<p style="color:#6B655A;font-size:12px">No documents on file.</p>`;
 
   const html = `<!DOCTYPE html>
@@ -118,6 +134,12 @@ exports.handler = async (event) => {
   .doc-block{margin:10px 0;padding:10px;border:1px solid #E7E4DB;border-radius:6px;background:#FAFAF8;page-break-inside:avoid}
   .doc-label{font-size:10px;color:#6B655A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:bold}
   .sig-img{max-width:300px;max-height:120px;border:1px solid #E7E4DB;border-radius:4px;display:block;background:#fff}
+  .sig-block{display:flex;gap:34px;align-items:flex-end;margin:14px 0 4px;flex-wrap:wrap;page-break-inside:avoid}
+  .sig-slot{min-width:280px}
+  .sig-draw{max-width:280px;max-height:110px;display:block;background:transparent}
+  .sig-slot .sig-caption{border-top:1px solid #1C1A17;padding-top:4px;margin-top:2px;font-size:10px;color:#6B655A;text-transform:uppercase;letter-spacing:.5px}
+  .sig-missing{display:block;color:#B23A3A;font-size:11px;padding:26px 0 6px}
+  .sig-details{flex:1;min-width:200px}
   .doc-img{max-width:100%;max-height:400px;border:1px solid #E7E4DB;border-radius:4px;display:block}
   .pdf-embed{width:100%;height:500px;border:1px solid #E7E4DB;border-radius:4px;display:block;margin-bottom:6px}
   .dl-btn{display:inline-block;margin-top:6px;padding:4px 12px;background:#C2972B;color:#fff;text-decoration:none;border-radius:4px;font-size:11px;font-family:Georgia,serif}
@@ -177,11 +199,8 @@ exports.handler = async (event) => {
     <div class="field"><label>Referral Source</label><span>${esc(f(record["Referral Source"]))}</span></div>
   </div>
 
-  <h2>Declarations & Signature</h2>
-  <div class="grid">
-    <div class="field"><label>Signatory Name</label><span>${esc(f(record["Signatory Name"]))}</span></div>
-    <div class="field"><label>Signature Date</label><span>${esc(f(record["Signature Date"]))}</span></div>
-  </div>
+  <h2>Declarations &amp; Signature</h2>
+  ${sigBlock}
 
   <h2>Documents</h2>
   ${docsHtml}
