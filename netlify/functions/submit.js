@@ -53,7 +53,7 @@ exports.handler = async (event) => {
     console.warn("Netlify Blobs not configured (missing NETLIFY_TOKEN). Documents will not be stored.");
   }
 
-  if (blobsReady && Array.isArray(payload.documents) && payload.documents.length > 0) {
+  if (blobsReady) {
     let store;
     try {
       store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
@@ -61,7 +61,7 @@ exports.handler = async (event) => {
       console.error("Failed to init Blobs store:", err.message);
     }
     if (store) {
-      for (const doc of payload.documents) {
+      for (const doc of (Array.isArray(payload.documents) ? payload.documents : [])) {
         if (!doc.data) continue;
         try {
           const base64 = doc.data.includes(",") ? doc.data.split(",")[1] : doc.data;
