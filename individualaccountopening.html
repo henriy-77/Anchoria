@@ -143,7 +143,9 @@ input.invalid,select.invalid,textarea.invalid{border-color:var(--err);background
 }
 .choice:hover{border-color:var(--gold);}
 .choice input[type=checkbox],.choice input[type=radio]{
-  width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--gold-2);cursor:pointer;
+  -webkit-appearance:auto;appearance:auto;
+  width:16px;height:16px;min-height:0;margin:0;padding:0;border:none;border-radius:0;
+  flex-shrink:0;accent-color:var(--gold-2);cursor:pointer;
 }
 .choice.sel{border-color:var(--gold);background:var(--gold-soft);}
 .field.has-error .choices .choice{border-color:var(--err);}
