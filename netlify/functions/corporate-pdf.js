@@ -197,6 +197,7 @@ exports.handler = async (event) => {
     <div class="field"><label>Investment Options</label><span>${esc(f(record["Investment Options"]))}</span></div>
     <div class="field full"><label>Source Details</label><span>${esc(f(record["Source of Funds Details"]))}</span></div>
     <div class="field"><label>Referral Source</label><span>${esc(f(record["Referral Source"]))}</span></div>
+    <div class="field"><label>Relationship Manager</label><span>${esc(f(record["Relationship Manager"]))}</span></div>
   </div>
 
   <h2>Declarations &amp; Signature</h2>

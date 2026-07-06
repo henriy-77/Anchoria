@@ -85,6 +85,7 @@ exports.handler = async (event) => {
     "Annual Turnover":        str(fin.annualTurnover),
     "Investment Options":     arr(fin.investmentOptions),
     "Referral Source":        str(fin.referralSource),
+    "Relationship Manager":   str(fin.relationshipManager),
     "Documents Submitted":    Array.isArray(payload.documents)
                                 ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                 : "",
