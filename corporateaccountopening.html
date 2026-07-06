@@ -392,6 +392,10 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
                 <option>Other</option>
               </select>
             </div>
+            <div class="field full">
+              <label class="lab" for="relationshipManager">Relationship Manager <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="relationshipManager" placeholder="Name of your Anchoria relationship manager, if any">
+            </div>
           </div>
         </div>
 
@@ -520,16 +524,17 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
               <span class="err-msg" id="err-sigDate">This field is required</span>
             </div>
             <div class="field full" style="margin-top:4px;">
-              <label class="lab">Signature <span class="req">*</span></label>
-              <div class="sig-wrap" id="sig-wrap">
-                <canvas id="sig-canvas"></canvas>
-                <div class="sig-placeholder" id="sig-placeholder">Draw your signature here</div>
+              <label class="lab">Upload Signature <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-signature">
+                <input type="file" id="file-signature" accept=".jpg,.jpeg,.png" data-key="signature">
+                <span class="upload-icon">✍️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Authorised signatory's signature</span>
+                  <span class="upload-sub">A clear photo or scan of the signature on white paper · JPG / PNG</span>
+                  <span class="upload-name" id="name-signature"></span>
+                </div>
               </div>
-              <div class="sigtools">
-                <span>Sign above using your mouse or finger</span>
-                <button type="button" id="sig-clear">Clear</button>
-              </div>
-              <span class="err-msg" id="err-signature">Please draw your signature</span>
+              <span class="err-msg" id="err-signature">Signature image is required</span>
             </div>
           </div>
         </div>
@@ -695,7 +700,7 @@ document.getElementById("registeredAddress").addEventListener("input",function()
   if(document.getElementById("sameAddress").checked) document.getElementById("operatingAddress").value=this.value;
 });
 
-var FILE_KEYS=["cac","memart","resolution","address","id1","id2"];
+var FILE_KEYS=["cac","memart","resolution","address","id1","id2","signature"];
 var fileStore={};
 FILE_KEYS.forEach(function(key){
   var slot=document.getElementById("slot-"+key);
@@ -716,39 +721,8 @@ function handleFile(key,file){
   clearErr("err-"+key);
 }
 
-var canvas=document.getElementById("sig-canvas");
-var ctx=canvas.getContext("2d");
-var sigDrawn=false,drawing=false;
-function resizeCanvas(){
-  var r=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
-  canvas.width=r.width*dpr; canvas.height=r.height*dpr;
-  ctx.scale(dpr,dpr); ctx.strokeStyle="#141312"; ctx.lineWidth=2; ctx.lineCap="round"; ctx.lineJoin="round";
-  sigDrawn=false;
-  document.getElementById("sig-wrap").classList.remove("has-drawn");
-  document.getElementById("sig-placeholder").style.display="flex";
-}
-window.addEventListener("resize",resizeCanvas); resizeCanvas();
-function getPos(e){ var r=canvas.getBoundingClientRect(); if(e.touches) return {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}; return {x:e.clientX-r.left,y:e.clientY-r.top}; }
-canvas.addEventListener("mousedown",function(e){ drawing=true; var p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
-canvas.addEventListener("mousemove",function(e){
-  if(!drawing) return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); sigDrawn=true;
-  document.getElementById("sig-placeholder").style.display="none";
-  document.getElementById("sig-wrap").classList.add("has-drawn");
-});
-canvas.addEventListener("mouseup",function(){drawing=false;});
-canvas.addEventListener("mouseleave",function(){drawing=false;});
-canvas.addEventListener("touchstart",function(e){ e.preventDefault(); drawing=true; var p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); },{passive:false});
-canvas.addEventListener("touchmove",function(e){
-  e.preventDefault(); if(!drawing) return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); sigDrawn=true;
-  document.getElementById("sig-placeholder").style.display="none";
-  document.getElementById("sig-wrap").classList.add("has-drawn");
-},{passive:false});
-canvas.addEventListener("touchend",function(){drawing=false;});
-document.getElementById("sig-clear").addEventListener("click",function(){
-  ctx.clearRect(0,0,canvas.width,canvas.height); sigDrawn=false;
-  document.getElementById("sig-placeholder").style.display="flex";
-  document.getElementById("sig-wrap").classList.remove("has-drawn");
-});
+// Signature is now provided as an uploaded image (data-key="signature"),
+// handled by the FILE_KEYS wiring above.
 document.getElementById("sigDate").value=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
 
 // Populate the Date of Incorporation Day/Month/Year picker and sync hidden input (YYYY-MM-DD)
@@ -857,8 +831,7 @@ function validateStep5(){
   if(!allChecked){setErr("err-declarations",true);ok=false;}else{setErr("err-declarations",false);}
   if(!markField("signatoryName","err-signatoryName",val("signatoryName").length>0)) ok=false;
   if(!markField("sigDate","err-sigDate",val("sigDate").length>0)) ok=false;
-  if(!sigDrawn){ document.getElementById("sig-wrap").classList.add("err-field"); setErr("err-signature",true); ok=false; }
-  else{ document.getElementById("sig-wrap").classList.remove("err-field"); setErr("err-signature",false); }
+  if(!fileStore.signature){ setErr("err-signature",true); ok=false; } else { setErr("err-signature",false); }
   return ok;
 }
 
@@ -909,7 +882,7 @@ function isStepComplete(n){
     for(var i=1;i<=5;i++){ if(!document.getElementById("decl-"+i).checked) return false; }
     if(!val("signatoryName").length) return false;
     if(!val("sigDate").length) return false;
-    if(!sigDrawn) return false;
+    if(!fileStore.signature) return false;
     return true;
   }
   return true;
@@ -934,7 +907,6 @@ function showStep(n){
   document.getElementById("step-"+currentStep).classList.add("active");
   updateNav(); hideErrBanner();
   window.scrollTo({top:0,behavior:"smooth"});
-  if(n===5) setTimeout(resizeCanvas,50);
   maxReached=Math.max(maxReached,n);
   refreshStepStatus(n);
 }
@@ -984,8 +956,8 @@ function collectPayload(){
     entityDetails:{entityType:et?et.value:"",companyName:val("companyName"),rcNumber:val("rcNumber"),tin:val("tin"),incorporationDate:val("incorporationDate"),natureBusiness:val("natureBusiness"),registeredAddress:val("registeredAddress"),operatingAddress:val("operatingAddress"),email:val("corpEmail"),phone:val("corpPhone"),website:val("website")},
     directors:directors.map(function(d){return {n:d.n,fullName:d.fullName,bvn:d.bvn,nin:d.nin,phone:d.phone,email:d.email,address:d.address};}),
     signatories:signatories.map(function(s){return {n:s.n,fullName:s.fullName,title:s.title,phone:s.phone,email:s.email,mandate:s.mandate};}),
-    financial:{bankName:val("bankName"),bankBranch:val("bankBranch"),accountNumber:val("accountNumber"),accountName:val("accountName"),dcsNumber:val("dcsNumber"),sourceOfFunds:sof,sourceDetails:val("sourceDetails"),annualTurnover:val("annualTurnover"),investmentOptions:inv,referralSource:val("referralSource")},
-    declaration:{signatoryName:val("signatoryName"),date:val("sigDate"),signature:canvas.toDataURL("image/png")}
+    financial:{bankName:val("bankName"),bankBranch:val("bankBranch"),accountNumber:val("accountNumber"),accountName:val("accountName"),dcsNumber:val("dcsNumber"),sourceOfFunds:sof,sourceDetails:val("sourceDetails"),annualTurnover:val("annualTurnover"),investmentOptions:inv,referralSource:val("referralSource"),relationshipManager:val("relationshipManager")},
+    declaration:{signatoryName:val("signatoryName"),date:val("sigDate")}
   };
 }
 

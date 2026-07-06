@@ -862,6 +862,11 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
               </select>
             </div>
 
+            <div class="field full">
+              <label class="lab" for="f-relationshipManager">Relationship Manager <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input id="f-relationshipManager" name="relationshipManager" placeholder="Name of your Anchoria relationship manager, if any">
+            </div>
+
           </div>
         </section>
 
@@ -927,14 +932,20 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
               <div class="err-msg" id="e-sigName" role="alert">Required.</div>
             </div>
 
-            <div class="field sigwrap">
-              <label class="lab" for="sigpad">Draw your signature<span class="req" aria-hidden="true">*</span></label>
-              <canvas class="sigpad" id="sigpad" role="img" aria-label="Signature drawing area — draw with mouse or touch" tabindex="0"></canvas>
-              <div class="sigtools">
-                <span>Sign with your mouse or finger</span>
-                <button type="button" id="sigClear" aria-label="Clear signature">Clear</button>
+            <div class="field full">
+              <label class="lab">Upload your signature<span class="req" aria-hidden="true">*</span></label>
+              <div class="upload" data-upload="signature" role="group" aria-labelledby="ul-signature">
+                <div class="u-info">
+                  <div class="u-label" id="ul-signature">Signature image</div>
+                  <div class="u-sub">A clear photo or scan of your signature on white paper. JPG or PNG.</div>
+                  <div class="u-file" aria-live="polite"></div>
+                  <div class="u-err" role="alert">Required. 5 MB max, JPG or PNG only.</div>
+                </div>
+                <div class="u-actions">
+                  <button type="button" class="u-clear" aria-label="Remove signature">&#x2715;</button>
+                  <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload signature image"></label>
+                </div>
               </div>
-              <div class="sig-err" id="sig-error" role="alert" aria-live="polite">Please draw your signature in the box above.</div>
             </div>
 
             <div class="field">
@@ -1342,71 +1353,8 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
   form.addEventListener("change", syncConditionals);
   form.addEventListener("input", syncConditionals);
 
-  /* ================================================================
-   * SIGNATURE PAD
-   * ================================================================ */
-  var canvas = document.getElementById("sigpad");
-  var ctx = null;
-  var drawing = false;
-  var sigDirty = false;
-
-  function fitCanvas() {
-    var r = canvas.getBoundingClientRect();
-    // Retina-sharp
-    canvas.width = r.width * 2;
-    canvas.height = r.height * 2;
-    ctx = canvas.getContext("2d");
-    ctx.scale(2, 2);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#1C1A17";
-    sigDirty = false;
-    canvas.classList.remove("has-drawn", "sig-error");
-  }
-
-  function sigPos(e) {
-    var r = canvas.getBoundingClientRect();
-    var t = e.touches ? e.touches[0] : e;
-    return { x: t.clientX - r.left, y: t.clientY - r.top };
-  }
-
-  function sigStart(e) {
-    if (!ctx) fitCanvas();
-    drawing = true;
-    sigDirty = true;
-    var p = sigPos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    canvas.classList.add("has-drawn");
-    canvas.classList.remove("sig-error");
-    document.getElementById("sig-error").style.display = "none";
-    e.preventDefault();
-  }
-
-  function sigMove(e) {
-    if (!drawing) return;
-    var p = sigPos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    e.preventDefault();
-  }
-
-  function sigEnd() { drawing = false; }
-
-  canvas.addEventListener("mousedown", sigStart);
-  canvas.addEventListener("mousemove", sigMove);
-  window.addEventListener("mouseup", sigEnd);
-  canvas.addEventListener("touchstart", sigStart, { passive: false });
-  canvas.addEventListener("touchmove", sigMove, { passive: false });
-  canvas.addEventListener("touchend", sigEnd);
-
-  document.getElementById("sigClear").addEventListener("click", function () {
-    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-    sigDirty = false;
-    canvas.classList.remove("has-drawn", "sig-error");
-    document.getElementById("sig-error").style.display = "none";
-  });
+  /* Signature is now provided as an uploaded image (data-upload="signature"),
+     handled by the generic .upload wiring above. */
 
   /* ================================================================
    * HELPERS
@@ -1518,7 +1466,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
         .every(function (n) { return form.elements[n].checked; });
       if (!allDecl) return false;
-      if (!sigDirty) return false;
+      if (!uploads.signature) return false;
     }
     return true;
   }
@@ -1579,13 +1527,12 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       declErr.style.display = allDecl ? "none" : "block";
       if (!allDecl) ok = false;
 
-      if (!sigDirty) {
-        document.getElementById("sig-error").style.display = "block";
-        canvas.classList.add("sig-error");
+      var sigWidget = document.querySelector('[data-upload="signature"]');
+      if (!uploads.signature) {
+        if (sigWidget) sigWidget.classList.add("has-error");
         ok = false;
       } else {
-        document.getElementById("sig-error").style.display = "none";
-        canvas.classList.remove("sig-error");
+        if (sigWidget) sigWidget.classList.remove("has-error");
       }
     }
 
@@ -1640,9 +1587,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     document.getElementById("nextBtn").querySelector(".btn-label").textContent =
       s === STEPS - 1 ? "Submit application" : "Continue";
 
-    // Init canvas on first show
-    if (s === 4) setTimeout(fitCanvas, 50);
-
     maxReached = Math.max(maxReached, isDone ? STEPS : s);
     refreshStepStatus(isDone ? -1 : s);
 
@@ -1689,14 +1633,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     li.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); jump(); }
     });
-  });
-
-  // Keyboard: Enter on canvas starts new stroke
-  canvas.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" || e.key === " ") {
-      document.getElementById("sigClear").click();
-      e.preventDefault();
-    }
   });
 
   /* ================================================================
@@ -1800,7 +1736,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     // Financial
     ["occupation","natureOfBusiness","employer","income",
      "bankName","bankBranch","bankAccountNumber","bankAccountName","dcs",
-     "countryOfFunds","cscsNumber","chn","referralSource"].forEach(function(n){ d[n] = val(n); });
+     "countryOfFunds","cscsNumber","chn","referralSource","relationshipManager"].forEach(function(n){ d[n] = val(n); });
     // Arrays
     d.sourceOfFunds    = checks("sourceOfFunds");
     d.sourceDetails    = val("sourceDetails");
@@ -1856,10 +1792,9 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
       documents: docs,
       signature: {
         name: val("sigName"),
-        date: document.getElementById("f-sigDate").value,
-          image: sigDirty ? canvas.toDataURL("image/png") : null
-        }
-      }));
+        date: document.getElementById("f-sigDate").value
+      }
+    }));
   }
 
   /* ================================================================
@@ -1946,7 +1881,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
 
   /* Upload documents one-by-one after successful submission */
   function uploadDocuments(ref) {
-    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit"];
+    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit","signature"];
     var queue = [];
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {
@@ -1988,26 +1923,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     // Announce to screen readers
     document.getElementById("cardTitle").focus({ preventScroll: true });
   }
-
-  /* ================================================================
-   * WINDOW RESIZE — refit canvas if on sig step
-   * ================================================================ */
-  window.addEventListener("resize", function () {
-    if (ctx && current === 4) {
-      // Preserve signature before refit
-      var img = sigDirty ? canvas.toDataURL() : null;
-      fitCanvas();
-      if (img) {
-        var image = new Image();
-        image.onload = function () {
-          ctx.drawImage(image, 0, 0, canvas.getBoundingClientRect().width,
-                                       canvas.getBoundingClientRect().height);
-          sigDirty = true;
-        };
-        image.src = img;
-      }
-    }
-  });
 
   /* ================================================================
    * BOOT
