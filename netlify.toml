@@ -11,6 +11,19 @@
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
+# Send the old form URLs to the current renamed pages
+[[redirects]]
+  from = "/accountopening.html"
+  to = "/individualaccountopening.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/corporate-opening.html"
+  to = "/corporateaccountopening.html"
+  status = 301
+  force = true
+
 
 [[headers]]
   for = "/*"
