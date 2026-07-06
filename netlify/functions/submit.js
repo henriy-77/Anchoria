@@ -157,7 +157,7 @@ exports.handler = async (event) => {
                                   ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                   : "",
     "Document Links":           docLinks.join("\n"),
-    "View Application":         `${process.env.URL || "https://tourmaline-longma-857abb.netlify.app"}/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
+    "View Application":         `https://onboard.anchoriaonline.com/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
     "Status":                   "New",
     "Notes":                    "",
   };
