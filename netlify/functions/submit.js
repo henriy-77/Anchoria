@@ -148,6 +148,7 @@ exports.handler = async (event) => {
     "CHN":                      str(payload.chn),
     "Referral Source":          str(payload.referralSource),
     "Relationship Manager":     str(payload.relationshipManager),
+    "Anchoria Tag":             str(payload.anchoriaTag),
     "Products Selected":        products,
     "PEP":                      str(payload.pep),
     "PEP Details":              str(payload.pepDetails),
