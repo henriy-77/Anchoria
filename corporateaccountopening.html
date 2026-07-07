@@ -396,10 +396,6 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
               <label class="lab" for="relationshipManager">Relationship Manager <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
               <input type="text" id="relationshipManager" placeholder="Name of your Anchoria relationship manager, if any">
             </div>
-            <div class="field full">
-              <label class="lab" for="anchoriaTag">Anchoria Tag <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
-              <input type="text" id="anchoriaTag" placeholder="Your Anchoria tag, if you have one">
-            </div>
           </div>
         </div>
 
@@ -960,7 +956,7 @@ function collectPayload(){
     entityDetails:{entityType:et?et.value:"",companyName:val("companyName"),rcNumber:val("rcNumber"),tin:val("tin"),incorporationDate:val("incorporationDate"),natureBusiness:val("natureBusiness"),registeredAddress:val("registeredAddress"),operatingAddress:val("operatingAddress"),email:val("corpEmail"),phone:val("corpPhone"),website:val("website")},
     directors:directors.map(function(d){return {n:d.n,fullName:d.fullName,bvn:d.bvn,nin:d.nin,phone:d.phone,email:d.email,address:d.address};}),
     signatories:signatories.map(function(s){return {n:s.n,fullName:s.fullName,title:s.title,phone:s.phone,email:s.email,mandate:s.mandate};}),
-    financial:{bankName:val("bankName"),bankBranch:val("bankBranch"),accountNumber:val("accountNumber"),accountName:val("accountName"),dcsNumber:val("dcsNumber"),sourceOfFunds:sof,sourceDetails:val("sourceDetails"),annualTurnover:val("annualTurnover"),investmentOptions:inv,referralSource:val("referralSource"),relationshipManager:val("relationshipManager"),anchoriaTag:val("anchoriaTag")},
+    financial:{bankName:val("bankName"),bankBranch:val("bankBranch"),accountNumber:val("accountNumber"),accountName:val("accountName"),dcsNumber:val("dcsNumber"),sourceOfFunds:sof,sourceDetails:val("sourceDetails"),annualTurnover:val("annualTurnover"),investmentOptions:inv,referralSource:val("referralSource"),relationshipManager:val("relationshipManager")},
     declaration:{signatoryName:val("signatoryName"),date:val("sigDate")}
   };
 }
