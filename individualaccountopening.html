@@ -867,6 +867,11 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
               <input id="f-relationshipManager" name="relationshipManager" placeholder="Name of your Anchoria relationship manager, if any">
             </div>
 
+            <div class="field full">
+              <label class="lab" for="f-anchoriaTag">Anchoria Tag <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input id="f-anchoriaTag" name="anchoriaTag" placeholder="Your Anchoria tag, if you have one">
+            </div>
+
           </div>
         </section>
 
@@ -1736,7 +1741,7 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
     // Financial
     ["occupation","natureOfBusiness","employer","income",
      "bankName","bankBranch","bankAccountNumber","bankAccountName","dcs",
-     "countryOfFunds","cscsNumber","chn","referralSource","relationshipManager"].forEach(function(n){ d[n] = val(n); });
+     "countryOfFunds","cscsNumber","chn","referralSource","relationshipManager","anchoriaTag"].forEach(function(n){ d[n] = val(n); });
     // Arrays
     d.sourceOfFunds    = checks("sourceOfFunds");
     d.sourceDetails    = val("sourceDetails");
