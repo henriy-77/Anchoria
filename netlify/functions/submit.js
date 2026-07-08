@@ -152,6 +152,11 @@ exports.handler = async (event) => {
     "Products Selected":        products,
     "PEP":                      str(payload.pep),
     "PEP Details":              str(payload.pepDetails),
+    "Declaration: True Info":   !!(payload.declarations && payload.declarations.accurateAndTrue),
+    "Declaration: Terms":       !!(payload.declarations && payload.declarations.termsAndConditions),
+    "Declaration: Indemnity":   !!(payload.declarations && payload.declarations.indemnityMandate),
+    "Declaration: Risk":        !!(payload.declarations && payload.declarations.riskDisclosure),
+    "Declaration: Privacy":     !!(payload.declarations && payload.declarations.privacyConsent),
     "Signatory Name":           str(sig.name),
     "Signature Date":           date(sig.date),
     "Documents Submitted":      Array.isArray(payload.documents)
