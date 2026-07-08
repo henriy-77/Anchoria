@@ -271,9 +271,6 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 .success h2{font-family:var(--serif);font-size:25px;margin:0 0 8px;}
 .success p{color:var(--muted);font-size:14px;max-width:48ch;margin:0 auto 6px;}
 .ref{display:inline-block;margin-top:16px;background:var(--gold-soft);border:1px dashed var(--gold);border-radius:9px;padding:9px 20px;font-size:15px;font-weight:700;letter-spacing:.06em;color:var(--gold-2);}
-details.payload{margin-top:24px;text-align:left;}
-details.payload summary{cursor:pointer;font-size:12px;color:var(--muted);padding:4px 0;}
-details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-radius:10px;overflow:auto;font-size:11px;margin-top:8px;max-height:360px;line-height:1.5;}
 
 /* ===== GLOBAL ERROR BANNER ===== */
 .err-banner{
@@ -975,11 +972,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
             <p>Thank you. Your account opening request has been sent to the Anchoria back office. We'll verify your details and documents and email you once your account is live — usually within 1–2 business days.</p>
             <p style="margin-top:8px;font-size:13px;">Please save your reference number for follow-up queries.</p>
             <div class="ref" id="refNo" aria-label="Application reference number">REF —</div>
-            <!-- Demo-only: shows captured payload. Remove in production. -->
-            <details class="payload">
-              <summary>View captured payload (demo — remove in production)</summary>
-              <pre id="payloadOut" aria-label="JSON payload"></pre>
-            </details>
           </div>
         </section>
 
@@ -1830,12 +1822,6 @@ details.payload pre{background:var(--black);color:#E8D9A8;padding:16px;border-ra
         // --- DEMO / LOCAL DEV MODE ---
         setTimeout(function () {
           document.getElementById("refNo").textContent = "REF " + ref;
-          document.getElementById("payloadOut").textContent =
-            JSON.stringify(payload, function (k, v) {
-              if ((k === "image" || k === "data") && typeof v === "string" && v.length > 80)
-                return v.slice(0, 60) + "… [" + v.length + " chars]";
-              return v;
-            }, 2);
           showDone();
         }, 800);
         return;
