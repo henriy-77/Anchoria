@@ -654,7 +654,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
             <hr class="rule">
             <div class="subhead">Required documents</div>
-            <div class="note">Accepted: JPG, PNG, PDF. Maximum file size: 5 MB each.</div>
+            <div class="note">Accepted: JPG, PNG, PDF. Maximum file size: 4 MB each.</div>
 
             <!-- Passport photo upload -->
             <div class="upload" data-upload="passportPhoto" role="group" aria-labelledby="ul-passportPhoto">
@@ -662,7 +662,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
                 <div class="u-label" id="ul-passportPhoto">Passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
                 <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required. 5 MB max, JPG or PNG only.</div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
               </div>
               <div class="u-actions">
                 <button type="button" class="u-clear" aria-label="Remove passport photograph">&#x2715;</button>
@@ -676,7 +676,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
                 <div class="u-label" id="ul-validId">Valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
                 <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required. 5 MB max, JPG/PNG/PDF.</div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
               </div>
               <div class="u-actions">
                 <button type="button" class="u-clear" aria-label="Remove valid ID">&#x2715;</button>
@@ -690,7 +690,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
                 <div class="u-label" id="ul-proofOfAddress">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Public utility bill issued within the last 3 months.</div>
                 <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required. 5 MB max, JPG/PNG/PDF.</div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
               </div>
               <div class="u-actions">
                 <button type="button" class="u-clear" aria-label="Remove proof of address">&#x2715;</button>
@@ -704,7 +704,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
                 <div class="u-label" id="ul-residencePermit">Current residence permit<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Required for foreign nationals residing in Nigeria.</div>
                 <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required for non-Nigerian nationals. 5 MB max, JPG/PNG/PDF.</div>
+                <div class="u-err" role="alert">Required for non-Nigerian nationals. 4 MB max, JPG/PNG/PDF.</div>
               </div>
               <div class="u-actions">
                 <button type="button" class="u-clear" aria-label="Remove residence permit">&#x2715;</button>
@@ -941,7 +941,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
                   <div class="u-label" id="ul-signature">Signature image</div>
                   <div class="u-sub">A clear photo or scan of your signature on white paper. JPG or PNG.</div>
                   <div class="u-file" aria-live="polite"></div>
-                  <div class="u-err" role="alert">Required. 5 MB max, JPG or PNG only.</div>
+                  <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
                 </div>
                 <div class="u-actions">
                   <button type="button" class="u-clear" aria-label="Remove signature">&#x2715;</button>
@@ -1012,7 +1012,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * CONSTANTS
    * ================================================================ */
   var STEPS = 6;
-  var MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
+  var MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB (keeps base64 body under Netlify's 6 MB limit)
+  var pendingUploadRef = null; // set when a record is saved but its uploads still need to finish/retry
 
   var STEP_NAMES = [
     "Personal details",
@@ -1300,7 +1301,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
       // Size check
       if (f.size > MAX_FILE_BYTES) {
-        errMsg.textContent = "File is too large. Maximum size is 5 MB.";
+        errMsg.textContent = "File is too large. Maximum size is 4 MB.";
         widget.classList.add("has-error");
         widget.classList.remove("filled");
         fileLabel.textContent = "";
@@ -1313,7 +1314,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       widget.classList.add("filled");
       widget.classList.remove("has-error");
       fileLabel.textContent = "✓ " + f.name;
-      errMsg.textContent = "Required. 5 MB max, JPG/PNG/PDF."; // reset default msg
+      errMsg.textContent = "Required. 4 MB max, JPG/PNG/PDF."; // reset default msg
     });
 
     clearBtn.addEventListener("click", function () {
@@ -1798,10 +1799,23 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * SUBMISSION
    * ================================================================ */
   function submitApplication() {
+    var btn = document.getElementById("nextBtn");
+
+    // If a record was already saved but its uploads failed, just retry the uploads —
+    // don't create a second record.
+    if (pendingUploadRef) {
+      btn.disabled = true;
+      btn.classList.add("loading");
+      btn.querySelector(".btn-label").textContent = "Uploading documents…";
+      document.getElementById("errBanner").classList.remove("show");
+      document.getElementById("errBannerWrap").classList.remove("show");
+      finishUploads(pendingUploadRef, btn);
+      return;
+    }
+
     // Re-validate declarations step before final submit
     if (!validateStep(4)) { current = 4; showStep(4); return; }
 
-    var btn = document.getElementById("nextBtn");
     var ref = "ASL-" + Date.now().toString(36).toUpperCase().slice(-6);
 
     // Enter loading state
@@ -1843,10 +1857,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         });
       })
       .then(function () {
-        document.getElementById("refNo").textContent = "REF " + ref;
-        showDone();
-        // Upload documents in background after successful submission
-        uploadDocuments(ref);
+        // Record saved. Now upload the documents and only show success once they land.
+        btn.querySelector(".btn-label").textContent = "Uploading documents…";
+        finishUploads(ref, btn);
       })
       .catch(function (err) {
         console.error("Submit error:", err);
@@ -1856,6 +1869,30 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     }).catch(function (err) {
       console.error("Payload build error:", err);
       showSubmitError(btn);
+    });
+  }
+
+  /* Upload all files for a saved record, then show success — or surface a
+     retryable error if any file fails. Prevents "saved with no documents". */
+  function finishUploads(ref, btn) {
+    uploadDocuments(ref).then(function (failures) {
+      if (failures.length) {
+        pendingUploadRef = ref;
+        btn.disabled = false;
+        btn.classList.remove("loading");
+        btn.querySelector(".btn-label").textContent = "Retry document upload";
+        var banner = document.getElementById("errBanner");
+        banner.textContent = "Your application was saved (REF " + ref + "), but " + failures.length +
+          " file(s) didn't upload. Check your connection and tap “Retry document upload”. " +
+          "If a file is over 4 MB, go back and replace it with a smaller one.";
+        banner.classList.add("show");
+        document.getElementById("errBannerWrap").classList.add("show");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      pendingUploadRef = null;
+      document.getElementById("refNo").textContent = "REF " + ref;
+      showDone();
     });
   }
 
@@ -1870,7 +1907,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /* Upload documents one-by-one after successful submission */
+  /* Upload documents one-by-one, verifying each and retrying once.
+     Returns a promise resolving to the list of keys that still failed. */
   function uploadDocuments(ref) {
     var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit","signature"];
     var queue = [];
@@ -1879,24 +1917,37 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         queue.push({ key: k, file: uploads[k].file, name: uploads[k].name });
       }
     });
-    if (!queue.length) return;
 
-    function uploadNext(i) {
-      if (i >= queue.length) return;
-      var item = queue[i];
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        fetch("/.netlify/functions/upload-document", {
+    var failures = [];
+
+    function readAsDataURL(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) { resolve(e.target.result); };
+        reader.onerror = function () { reject(new Error("read failed")); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function uploadOne(item, attempt) {
+      return readAsDataURL(item.file).then(function (dataUrl) {
+        return fetch("/.netlify/functions/upload-document", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
-          body: JSON.stringify({ ref: ref, key: item.key, name: item.name, data: e.target.result })
-        })
-        .then(function () { uploadNext(i + 1); })
-        .catch(function (err) { console.error("Doc upload failed:", item.key, err); uploadNext(i + 1); });
-      };
-      reader.readAsDataURL(item.file);
+          body: JSON.stringify({ ref: ref, key: item.key, name: item.name, data: dataUrl })
+        }).then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+        });
+      }).catch(function (err) {
+        console.error("Doc upload failed:", item.key, "(attempt " + attempt + ")", err);
+        if (attempt < 2) return uploadOne(item, attempt + 1);
+        failures.push(item.key);
+      });
     }
-    uploadNext(0);
+
+    return queue.reduce(function (chain, item) {
+      return chain.then(function () { return uploadOne(item, 1); });
+    }, Promise.resolve()).then(function () { return failures; });
   }
 
   function showDone() {
