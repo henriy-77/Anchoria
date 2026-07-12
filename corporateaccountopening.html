@@ -401,7 +401,7 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 
         <!-- STEP 4 -->
         <div class="step" id="step-4">
-          <p class="step-hint">Upload the required documents. Files must be PDF, JPG, or PNG (max 5 MB each).</p>
+          <p class="step-hint">Upload the required documents. Files must be PDF, JPG, or PNG (max 4 MB each).</p>
           <div class="grid">
             <div class="field full">
               <label class="lab">CAC Certificate of Incorporation <span class="req">*</span></label>
@@ -713,9 +713,15 @@ FILE_KEYS.forEach(function(key){
 });
 function handleFile(key,file){
   if(!file) return;
-  fileStore[key]=file;
   var n=document.getElementById("name-"+key);
-  if(n){ n.textContent="✓ "+file.name; n.style.display="block"; }
+  if(file.size > 4*1024*1024){
+    delete fileStore[key];
+    var s0=document.getElementById("slot-"+key); if(s0) s0.classList.remove("filled");
+    if(n){ n.textContent="File too large — maximum 4 MB"; n.style.display="block"; n.style.color="#B23A3A"; }
+    return;
+  }
+  fileStore[key]=file;
+  if(n){ n.textContent="✓ "+file.name; n.style.display="block"; n.style.color=""; }
   var s=document.getElementById("slot-"+key);
   if(s) s.classList.add("filled");
   clearErr("err-"+key);
@@ -961,8 +967,17 @@ function collectPayload(){
   };
 }
 
+var pendingUploadRef=null; // set when a record is saved but its uploads still need to finish/retry
+
 function submitForm(){
   var btn=document.getElementById("nextBtn"),lbl=document.querySelector("#nextBtn .btn-label");
+
+  // Retry-only path: record already saved, just re-run the uploads (no duplicate record).
+  if(pendingUploadRef){
+    btn.classList.add("loading"); btn.disabled=true; lbl.textContent="Uploading documents…"; hideErrBanner();
+    finishUploads(pendingUploadRef,btn,lbl); return;
+  }
+
   btn.classList.add("loading"); btn.disabled=true; lbl.textContent="Submitting…";
   var payload=collectPayload();
   var ref="CASL-"+Date.now().toString(36).toUpperCase().slice(-6);
@@ -971,10 +986,8 @@ function submitForm(){
   .then(function(res){ return res.json().then(function(body){ return {ok:res.ok,body:body}; }); })
   .then(function(r){
     if(!r.ok) throw new Error(r.body&&r.body.error?r.body.error:"Submission failed. Please try again.");
-    document.getElementById("mainCard").classList.add("hidden");
-    document.getElementById("successCard").classList.remove("hidden");
-    document.getElementById("comp-ref").textContent=ref;
-    uploadDocuments(ref);
+    lbl.textContent="Uploading documents…";
+    finishUploads(ref,btn,lbl);
   })
   .catch(function(e){
     btn.classList.remove("loading"); btn.disabled=false; lbl.textContent="Submit application";
@@ -982,20 +995,36 @@ function submitForm(){
   });
 }
 
+// Upload the files for a saved record, then reveal the success card — or show a retryable error.
+function finishUploads(ref,btn,lbl){
+  uploadDocuments(ref).then(function(failures){
+    if(failures.length){
+      pendingUploadRef=ref;
+      btn.classList.remove("loading"); btn.disabled=false; lbl.textContent="Retry document upload";
+      showErrBanner("Your application was saved (REF "+ref+"), but "+failures.length+" file(s) didn't upload. Check your connection and tap “Retry document upload”. If a file is over 4 MB, go back and replace it with a smaller one.");
+      return;
+    }
+    pendingUploadRef=null;
+    document.getElementById("mainCard").classList.add("hidden");
+    document.getElementById("successCard").classList.remove("hidden");
+    document.getElementById("comp-ref").textContent=ref;
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+}
+
+// Upload all files, verifying each and retrying once. Resolves to the list of failed keys.
 function uploadDocuments(ref){
-  var keys=Object.keys(fileStore),idx=0;
-  function next(){
-    if(idx>=keys.length) return;
-    var key=keys[idx++],file=fileStore[key];
-    if(!file){next();return;}
-    var r=new FileReader();
-    r.onload=function(e){
-      fetch("/.netlify/functions/upload-document",{method:"POST",headers:{"Content-Type":"application/json","X-Shared-Secret":SHARED_SECRET},body:JSON.stringify({ref:ref,key:key,name:file.name,data:e.target.result})})
-      .then(function(){next();}).catch(function(){next();});
-    };
-    r.readAsDataURL(file);
+  var keys=Object.keys(fileStore).filter(function(k){return fileStore[k];});
+  var failures=[];
+  function readAsDataURL(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(e){res(e.target.result);}; r.onerror=function(){rej(new Error("read failed"));}; r.readAsDataURL(file); }); }
+  function uploadOne(key,attempt){
+    var file=fileStore[key];
+    return readAsDataURL(file).then(function(dataUrl){
+      return fetch("/.netlify/functions/upload-document",{method:"POST",headers:{"Content-Type":"application/json","X-Shared-Secret":SHARED_SECRET},body:JSON.stringify({ref:ref,key:key,name:file.name,data:dataUrl})})
+      .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); });
+    }).catch(function(err){ console.error("Doc upload failed:",key,"(attempt "+attempt+")",err); if(attempt<2) return uploadOne(key,attempt+1); failures.push(key); });
   }
-  next();
+  return keys.reduce(function(chain,key){ return chain.then(function(){ return uploadOne(key,1); }); }, Promise.resolve()).then(function(){ return failures; });
 }
 
 ["companyName","rcNumber","tin","incorporationDate","natureBusiness","registeredAddress","operatingAddress","corpEmail","corpPhone"].forEach(function(id){
