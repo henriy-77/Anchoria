@@ -333,12 +333,12 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     </div>
     <p class="lede">Open a stockbroking account for a minor online. The parent/guardian completes and signs on the minor's behalf.</p>
     <ul class="tracker" id="tracker" role="list" aria-label="Form steps">
-      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Minor's details</span></li>
-      <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Guardian's details</span></li>
-      <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Contact &amp; next of kin</span></li>
+      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Minor &amp; guardian</span></li>
+      <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Contact &amp; next of kin</span></li>
+      <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Identification &amp; documents</span></li>
       <li data-step="3" role="listitem"><span class="dot" aria-hidden="true">4</span><span class="t-label">Financial &amp; bank</span></li>
-      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Documents</span></li>
-      <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Declarations &amp; submit</span></li>
+      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Declarations &amp; signature</span></li>
+      <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Review &amp; submit</span></li>
     </ul>
     <div class="trust">
       <strong>Anchoria Securities Limited</strong><br>
@@ -378,13 +378,83 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       </div>
       <div class="card-body">
 
-        <!-- ===== STEP 1: PERSONAL DETAILS ===== -->
+        <!-- ===== STEP 1: MINOR & GUARDIAN DETAILS ===== -->
         <section class="step" data-step="0" aria-labelledby="cardTitle">
-          <p class="step-hint">Tell us about yourself. Fields marked <span style="color:var(--gold)" aria-label="required">*</span> are required.</p>
+          <p class="step-hint">Enter the minor's details, then the parent/guardian's details. Fields marked <span style="color:var(--gold)" aria-label="required">*</span> are required.</p>
+
+          <div class="subhead">Minor's details</div>
+          <div class="grid">
+            <div class="field">
+              <label class="lab" for="f-minorSurname">Minor's surname<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-minorSurname" name="minorSurname" aria-required="true" aria-describedby="e-minorSurname">
+              <div class="err-msg" id="e-minorSurname" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorFirstName">Minor's first name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-minorFirstName" name="minorFirstName" aria-required="true" aria-describedby="e-minorFirstName">
+              <div class="err-msg" id="e-minorFirstName" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorMiddleName">Minor's middle name</label>
+              <input id="f-minorMiddleName" name="minorMiddleName">
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorTitle">Title</label>
+              <select id="f-minorTitle" name="minorTitle">
+                <option value="">Select</option>
+                <option>Master</option><option>Miss</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorSex">Gender<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-minorSex" name="minorSex" aria-required="true" aria-describedby="e-minorSex">
+                <option value="">Select</option>
+                <option>Male</option><option>Female</option>
+              </select>
+              <div class="err-msg" id="e-minorSex" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorDob-day">Date of birth<span class="req" aria-hidden="true">*</span></label>
+              <div class="dob-row">
+                <select id="f-minorDob-day" class="dob-part" aria-label="Minor day"><option value="">Day</option></select>
+                <select id="f-minorDob-month" class="dob-part" aria-label="Minor month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="f-minorDob-year" class="dob-part" aria-label="Minor year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="f-minorDob" name="minorDob" aria-required="true" aria-describedby="e-minorDob">
+              <div class="help">The account holder must be under 18.</div>
+              <div class="err-msg" id="e-minorDob" role="alert">Enter the minor's date of birth (must be under 18).</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorNationality">Nationality<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-minorNationality" name="minorNationality" value="Nigerian" aria-required="true" aria-describedby="e-minorNationality">
+              <div class="err-msg" id="e-minorNationality" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorStateOfOrigin">State of origin<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-minorStateOfOrigin" name="minorStateOfOrigin" aria-required="true" aria-describedby="e-minorStateOfOrigin">
+              <div class="err-msg" id="e-minorStateOfOrigin" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-minorLga">Local Government Area<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-minorLga" name="minorLga" aria-required="true" aria-describedby="e-minorLga">
+              <div class="err-msg" id="e-minorLga" role="alert">Required.</div>
+            </div>
+          </div>
+
+          <hr class="rule">
+          <div class="subhead">Guardian's details</div>
           <div class="grid">
 
             <div class="field">
-              <label class="lab" for="f-surname">Surname<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab" for="f-surname">Guardian's surname<span class="req" aria-hidden="true">*</span></label>
               <input id="f-surname" name="surname" autocomplete="family-name" aria-required="true" aria-describedby="e-surname">
               <div class="err-msg" id="e-surname" role="alert">Required.</div>
             </div>
@@ -597,7 +667,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
         <!-- ===== STEP 3: IDENTIFICATION & DOCUMENTS ===== -->
         <section class="step hidden" data-step="2" aria-labelledby="cardTitle">
-          <p class="step-hint">Verify your identity and upload the documents the SEC requires us to keep on file.</p>
+          <p class="step-hint">The guardian's means of identification, and the documents the SEC requires us to keep on file.</p>
           <div class="grid">
 
             <div class="field">
@@ -658,59 +728,73 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
             <div class="subhead">Required documents</div>
             <div class="note">Accepted: JPG, PNG, PDF. Maximum file size: 4 MB each.</div>
 
-            <!-- Passport photo upload -->
-            <div class="upload" data-upload="passportPhoto" role="group" aria-labelledby="ul-passportPhoto">
+            <!-- Minor's birth certificate -->
+            <div class="upload" data-upload="minorBirthCert" role="group" aria-labelledby="ul-minorBirthCert">
               <div class="u-info">
-                <div class="u-label" id="ul-passportPhoto">Passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-label" id="ul-minorBirthCert">Minor's birth certificate<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Birth certificate or age declaration of the minor.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove birth certificate">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload minor's birth certificate"></label>
+              </div>
+            </div>
+
+            <!-- Minor's passport photograph -->
+            <div class="upload" data-upload="minorPassport" role="group" aria-labelledby="ul-minorPassport">
+              <div class="u-info">
+                <div class="u-label" id="ul-minorPassport">Minor's passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
               </div>
               <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove passport photograph">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload passport photograph"></label>
+                <button type="button" class="u-clear" aria-label="Remove minor's passport">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload minor's passport photograph"></label>
               </div>
             </div>
 
-            <!-- Valid ID upload -->
-            <div class="upload" data-upload="validId" role="group" aria-labelledby="ul-validId">
+            <!-- Guardian's passport photograph -->
+            <div class="upload" data-upload="guardianPassport" role="group" aria-labelledby="ul-guardianPassport">
               <div class="u-info">
-                <div class="u-label" id="ul-validId">Valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
+                <div class="u-label" id="ul-guardianPassport">Guardian's passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove guardian's passport">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload guardian's passport photograph"></label>
+              </div>
+            </div>
+
+            <!-- Guardian's valid ID -->
+            <div class="upload" data-upload="guardianId" role="group" aria-labelledby="ul-guardianId">
+              <div class="u-info">
+                <div class="u-label" id="ul-guardianId">Guardian's valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Showing name, photo, date of birth &amp; signature.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
               </div>
               <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove valid ID">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload valid means of ID"></label>
+                <button type="button" class="u-clear" aria-label="Remove guardian's ID">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload guardian's valid ID"></label>
               </div>
             </div>
 
-            <!-- Proof of address upload -->
-            <div class="upload" data-upload="proofOfAddress" role="group" aria-labelledby="ul-proofOfAddress">
+            <!-- Guardian's utility bill / proof of address -->
+            <div class="upload" data-upload="utilityBill" role="group" aria-labelledby="ul-utilityBill">
               <div class="u-info">
-                <div class="u-label" id="ul-proofOfAddress">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Public utility bill issued within the last 3 months.</div>
+                <div class="u-label" id="ul-utilityBill">Guardian's utility bill<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Public utility bill issued within the last 3 months (proof of address).</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
               </div>
               <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove proof of address">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload proof of address"></label>
-              </div>
-            </div>
-
-            <!-- Residence permit (conditional — non-Nigerians) -->
-            <div class="upload conditional full" id="cond-permit" data-upload="residencePermit" role="group" aria-labelledby="ul-residencePermit">
-              <div class="u-info">
-                <div class="u-label" id="ul-residencePermit">Current residence permit<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Required for foreign nationals residing in Nigeria.</div>
-                <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required for non-Nigerian nationals. 4 MB max, JPG/PNG/PDF.</div>
-              </div>
-              <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove residence permit">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload residence permit"></label>
+                <button type="button" class="u-clear" aria-label="Remove utility bill">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload guardian's utility bill"></label>
               </div>
             </div>
 
@@ -1007,7 +1091,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * the SAME value as SHARED_SECRET in Netlify → Environment vars.
    * Also set AIRTABLE_TOKEN and AIRTABLE_BASE_ID there.
    * ================================================================ */
-  var ENDPOINT_URL  = "/.netlify/functions/submit";
+  var ENDPOINT_URL  = "/.netlify/functions/submit-minor";
   var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
   /* ================================================================
@@ -1018,12 +1102,12 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   var pendingUploadRef = null; // set when a record is saved but its uploads still need to finish/retry
 
   var STEP_NAMES = [
-    "Minor's details",
-    "Guardian's details",
+    "Minor & guardian details",
     "Contact & next of kin",
+    "Identification & documents",
     "Financial & bank",
-    "Documents",
-    "Declarations & submit"
+    "Declarations & signature",
+    "Review & submit"
   ];
 
   var NIGERIAN_STATES = [
@@ -1122,6 +1206,31 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     dayEl.addEventListener("change", syncDob);
     monthEl.addEventListener("change", syncDob);
     yearEl.addEventListener("change", syncDob);
+  })();
+
+  // Populate the MINOR's DOB picker (years: this year back 18) and sync hidden input
+  (function() {
+    var dayEl   = document.getElementById("f-minorDob-day");
+    var monthEl = document.getElementById("f-minorDob-month");
+    var yearEl  = document.getElementById("f-minorDob-year");
+    var hidden  = document.getElementById("f-minorDob");
+    if (!dayEl) return;
+    for (var d = 1; d <= 31; d++) {
+      var o = document.createElement("option");
+      o.value = String(d).padStart(2, "0"); o.textContent = d; dayEl.appendChild(o);
+    }
+    var curYear = new Date().getFullYear();
+    for (var y = curYear; y >= curYear - 18; y--) {
+      var o2 = document.createElement("option");
+      o2.value = y; o2.textContent = y; yearEl.appendChild(o2);
+    }
+    function sync() {
+      var d2 = dayEl.value, m = monthEl.value, y2 = yearEl.value;
+      hidden.value = (d2 && m && y2) ? (y2 + "-" + m + "-" + d2) : "";
+    }
+    dayEl.addEventListener("change", sync);
+    monthEl.addEventListener("change", sync);
+    yearEl.addEventListener("change", sync);
   })();
 
   // Custom Day/Month/Year pickers for ID issue & expiry dates.
@@ -1335,13 +1444,6 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     toggleEl("cond-title", val("title") === "Other");
     // PEP details
     toggleEl("cond-pep", val("pep") === "Yes");
-    // Source of funds details
-    var sof = checks("sourceOfFunds");
-    toggleEl("cond-sof", sof.indexOf("Business activities") > -1 || sof.indexOf("Other") > -1);
-    // Residence permit (non-Nigerian)
-    var nat = (val("nationality") || "").toLowerCase().trim();
-    var isForeign = nat !== "" && nat !== "nigerian";
-    toggleEl("cond-permit", isForeign);
   }
 
   function toggleEl(id, show) {
@@ -1402,6 +1504,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   var RULES = {
     0: [
+      ["minorSurname","req"],["minorFirstName","req"],["minorSex","req"],["minorDob","req"],
+      ["minorNationality","req"],["minorStateOfOrigin","req"],["minorLga","req"],
       ["surname","req"],["firstName","req"],["title","req"],
       ["sex","req"],["dob","dob"],["nationality","req"],["maritalStatus","req"],
       ["stateOfOrigin","req"],["lga","req"],["motherMaiden","req"],["bvn","11"],["nin","nin"]
@@ -1455,12 +1559,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     }
     if (s === 2) {
-      if (!uploads.passportPhoto || !uploads.validId || !uploads.proofOfAddress) return false;
-      var permit = document.getElementById("cond-permit");
-      if (permit.classList.contains("show") && !uploads.residencePermit) return false;
-    }
-    if (s === 3) {
-      if (checks("sourceOfFunds").length === 0) return false;
+      if (!uploads.minorBirthCert || !uploads.minorPassport || !uploads.guardianPassport
+          || !uploads.guardianId || !uploads.utilityBill) return false;
     }
     if (s === 4) {
       var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
@@ -1497,26 +1597,12 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     // Step 2: required file uploads
     if (s === 2) {
-      ["passportPhoto", "validId", "proofOfAddress"].forEach(function (k) {
+      ["minorBirthCert", "minorPassport", "guardianPassport", "guardianId", "utilityBill"].forEach(function (k) {
         var w = document.querySelector('[data-upload="' + k + '"]');
         var has = !!uploads[k];
-        w.classList.toggle("has-error", !has);
+        if (w) w.classList.toggle("has-error", !has);
         if (!has) ok = false;
       });
-      var permit = document.getElementById("cond-permit");
-      if (permit.classList.contains("show")) {
-        var hasPermit = !!uploads.residencePermit;
-        permit.classList.toggle("has-error", !hasPermit);
-        if (!hasPermit) ok = false;
-      }
-    }
-
-    // Step 3: source of funds ≥ 1
-    if (s === 3) {
-      var sofOk = checks("sourceOfFunds").length > 0;
-      var sofField = form.querySelector('[data-check="sourceOfFunds"]').closest(".field");
-      sofField.classList.toggle("has-error", !sofOk);
-      if (!sofOk) ok = false;
     }
 
     // Step 4: all declarations, signature
@@ -1684,8 +1770,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     // Documents
     html += '<div class="review-group"><div class="review-head">Documents'
       + '<button type="button" data-goto="2" aria-label="Edit documents">Edit</button></div><div class="review-body">';
-    [["Passport photo","passportPhoto"],["Valid ID","validId"],
-     ["Proof of address","proofOfAddress"],["Residence permit","residencePermit"]].forEach(function (d) {
+    [["Minor's birth certificate","minorBirthCert"],["Minor's passport","minorPassport"],
+     ["Guardian's passport","guardianPassport"],["Guardian's ID","guardianId"],
+     ["Guardian's utility bill","utilityBill"]].forEach(function (d) {
       html += rrow(d[0], uploads[d[1]] ? uploads[d[1]].name : "—");
     });
     html += '</div></div>';
@@ -1724,7 +1811,10 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   function collectFields() {
     var d = {};
-    // Personal
+    // Minor
+    ["minorSurname","minorFirstName","minorMiddleName","minorTitle","minorSex","minorDob",
+     "minorNationality","minorStateOfOrigin","minorLga"].forEach(function(n){ d[n] = val(n); });
+    // Guardian (personal)
     ["surname","firstName","middleName","title","titleOther","sex","dob",
      "nationality","maritalStatus","stateOfOrigin","lga","maidenName","motherMaiden",
      "bvn","nin","taxId"].forEach(function(n){ d[n] = val(n); });
@@ -1776,7 +1866,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* Build the complete backend-ready payload (async — sig as base64, docs as metadata only) */
   function buildPayload(ref) {
     var fields = collectFields();
-    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit"];
+    var docKeys = ["minorBirthCert","minorPassport","guardianPassport","guardianId","utilityBill"];
     var docs = [];
 
     docKeys.forEach(function (k) {
@@ -1818,7 +1908,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     // Re-validate declarations step before final submit
     if (!validateStep(4)) { current = 4; showStep(4); return; }
 
-    var ref = "ASL-" + Date.now().toString(36).toUpperCase().slice(-6);
+    var ref = "MINOR-" + Date.now().toString(36).toUpperCase().slice(-6);
 
     // Enter loading state
     btn.disabled = true;
@@ -1912,7 +2002,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* Upload documents one-by-one, verifying each and retrying once.
      Returns a promise resolving to the list of keys that still failed. */
   function uploadDocuments(ref) {
-    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit","signature"];
+    var docKeys = ["minorBirthCert","minorPassport","guardianPassport","guardianId","utilityBill","signature"];
     var queue = [];
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {
