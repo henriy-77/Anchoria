@@ -8,7 +8,9 @@ const { getStore } = require("@netlify/blobs");
 
 // Detect table from ref prefix: CASL- = Corporate, else individual
 function getAirtableTable(ref) {
-  return ref && ref.startsWith("CASL-") ? "Corporate Applications" : "Applications";
+  if (ref && ref.startsWith("CASL-")) return "Corporate Applications";
+  if (ref && ref.startsWith("MINOR-")) return "Minor Applications";
+  return "Applications";
 }
 
 exports.handler = async (event) => {
