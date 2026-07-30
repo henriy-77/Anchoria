@@ -6,10 +6,11 @@
 
 const { getStore } = require("@netlify/blobs");
 
-// Detect table from ref prefix: CASL- = Corporate, else individual
+// Detect table from ref prefix: CASL- = Corporate, MINOR- = Minor, JOINT- = Joint, else individual
 function getAirtableTable(ref) {
   if (ref && ref.startsWith("CASL-")) return "Corporate Applications";
   if (ref && ref.startsWith("MINOR-")) return "Minor Applications";
+  if (ref && ref.startsWith("JOINT-")) return "Joint Applications";
   return "Applications";
 }
 
