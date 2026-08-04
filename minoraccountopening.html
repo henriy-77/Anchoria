@@ -1053,6 +1053,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   var STEPS = 6;
   var MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB (keeps base64 body under Netlify's 6 MB limit)
   var pendingUploadRef = null; // set when a record is saved but its uploads still need to finish/retry
+  var pendingFailedKeys = null; // which doc keys still need (re)uploading — avoids re-sending already-successful files
 
   var STEP_NAMES = [
     "Minor & guardian details",
@@ -1884,7 +1885,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       btn.querySelector(".btn-label").textContent = "Uploading documents…";
       document.getElementById("errBanner").classList.remove("show");
       document.getElementById("errBannerWrap").classList.remove("show");
-      finishUploads(pendingUploadRef, btn);
+      finishUploads(pendingUploadRef, btn, pendingFailedKeys);
       return;
     }
 
@@ -1949,10 +1950,11 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
   /* Upload all files for a saved record, then show success — or surface a
      retryable error if any file fails. Prevents "saved with no documents". */
-  function finishUploads(ref, btn) {
-    uploadDocuments(ref).then(function (failures) {
+  function finishUploads(ref, btn, onlyKeys) {
+    uploadDocuments(ref, onlyKeys).then(function (failures) {
       if (failures.length) {
         pendingUploadRef = ref;
+        pendingFailedKeys = failures;
         btn.disabled = false;
         btn.classList.remove("loading");
         btn.querySelector(".btn-label").textContent = "Retry document upload";
@@ -1966,6 +1968,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         return;
       }
       pendingUploadRef = null;
+      pendingFailedKeys = null;
       document.getElementById("refNo").textContent = "REF " + ref;
       showDone();
     });
@@ -1984,8 +1987,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
   /* Upload documents one-by-one, verifying each and retrying once.
      Returns a promise resolving to the list of keys that still failed. */
-  function uploadDocuments(ref) {
-    var docKeys = ["minorBirthCert","minorPassport","guardianPassport","guardianId","utilityBill","signature"];
+  function uploadDocuments(ref, onlyKeys) {
+    var docKeys = onlyKeys || ["minorBirthCert","minorPassport","guardianPassport","guardianId","utilityBill","signature"];
     var queue = [];
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {

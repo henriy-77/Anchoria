@@ -970,6 +970,7 @@ function collectPayload(){
 }
 
 var pendingUploadRef=null; // set when a record is saved but its uploads still need to finish/retry
+var pendingFailedKeys=null; // which doc keys still need (re)uploading — avoids re-sending already-successful files
 
 function submitForm(){
   var btn=document.getElementById("nextBtn"),lbl=document.querySelector("#nextBtn .btn-label");
@@ -977,7 +978,7 @@ function submitForm(){
   // Retry-only path: record already saved, just re-run the uploads (no duplicate record).
   if(pendingUploadRef){
     btn.classList.add("loading"); btn.disabled=true; lbl.textContent="Uploading documents…"; hideErrBanner();
-    finishUploads(pendingUploadRef,btn,lbl); return;
+    finishUploads(pendingUploadRef,btn,lbl,pendingFailedKeys); return;
   }
 
   btn.classList.add("loading"); btn.disabled=true; lbl.textContent="Submitting…";
@@ -998,15 +999,17 @@ function submitForm(){
 }
 
 // Upload the files for a saved record, then reveal the success card — or show a retryable error.
-function finishUploads(ref,btn,lbl){
-  uploadDocuments(ref).then(function(failures){
+function finishUploads(ref,btn,lbl,onlyKeys){
+  uploadDocuments(ref,onlyKeys).then(function(failures){
     if(failures.length){
       pendingUploadRef=ref;
+      pendingFailedKeys=failures;
       btn.classList.remove("loading"); btn.disabled=false; lbl.textContent="Retry document upload";
       showErrBanner("Your application was saved (REF "+ref+"), but "+failures.length+" file(s) didn't upload. Check your connection and tap “Retry document upload”. If a file is over 4 MB, go back and replace it with a smaller one.");
       return;
     }
     pendingUploadRef=null;
+    pendingFailedKeys=null;
     document.getElementById("mainCard").classList.add("hidden");
     document.getElementById("successCard").classList.remove("hidden");
     document.getElementById("comp-ref").textContent=ref;
@@ -1015,8 +1018,8 @@ function finishUploads(ref,btn,lbl){
 }
 
 // Upload all files, verifying each and retrying once. Resolves to the list of failed keys.
-function uploadDocuments(ref){
-  var keys=Object.keys(fileStore).filter(function(k){return fileStore[k];});
+function uploadDocuments(ref,onlyKeys){
+  var keys=onlyKeys || Object.keys(fileStore).filter(function(k){return fileStore[k];});
   var failures=[];
   function readAsDataURL(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(e){res(e.target.result);}; r.onerror=function(){rej(new Error("read failed"));}; r.readAsDataURL(file); }); }
   function uploadOne(key,attempt){
