@@ -109,6 +109,7 @@ exports.handler = async (event) => {
                                       ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                       : "",
     "View Application":             `https://onboard.anchoriaonline.com/.netlify/functions/minor-pdf?ref=${encodeURIComponent(ref)}`,
+    "Source":                       str(payload.source) || "Direct",
     "Status":                       "New",
   };
 

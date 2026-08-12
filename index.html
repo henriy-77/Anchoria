@@ -59,5 +59,19 @@
     </div>
   </div></div>
   <footer>Anchoria Securities Limited &mdash; SEC-registered &amp; NGX-licensed</footer>
+  <script>
+    // Propagate a marketing/referral tracking param (?src=CODE) to whichever
+    // account-type card the visitor clicks, so the form on the next page can
+    // capture it and record it as the lead's Source in Airtable.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var src = params.get("src") || params.get("ref") || params.get("source");
+      if (!src) return;
+      document.querySelectorAll("a.opt").forEach(function (a) {
+        var sep = a.getAttribute("href").indexOf("?") > -1 ? "&" : "?";
+        a.setAttribute("href", a.getAttribute("href") + sep + "src=" + encodeURIComponent(src));
+      });
+    })();
+  </script>
 </body>
 </html>

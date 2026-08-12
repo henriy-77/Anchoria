@@ -997,6 +997,31 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   "use strict";
 
   /* ================================================================
+   * LEAD SOURCE TRACKING — capture ?src=CODE from the URL (falls back
+   * to sessionStorage so it survives switching between account-type
+   * tabs, and to "Direct" if nothing was ever passed in).
+   * ================================================================ */
+  var leadSource = (function () {
+    var params = new URLSearchParams(window.location.search);
+    var src = params.get("src") || params.get("ref") || params.get("source");
+    if (src) {
+      try { sessionStorage.setItem("anchoria_src", src); } catch (e) {}
+      return src;
+    }
+    try {
+      var stored = sessionStorage.getItem("anchoria_src");
+      if (stored) return stored;
+    } catch (e) {}
+    return "Direct";
+  })();
+  if (window.location.search) {
+    document.querySelectorAll(".acct-switch a").forEach(function (a) {
+      var sep = a.getAttribute("href").indexOf("?") > -1 ? "&" : "?";
+      a.setAttribute("href", a.getAttribute("href") + sep + window.location.search.replace(/^\?/, ""));
+    });
+  }
+
+  /* ================================================================
    * BACKEND — Netlify Function → Airtable
    * ================================================================
    * Submissions POST to /.netlify/functions/submit (same-origin).
@@ -1788,6 +1813,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     return Promise.resolve(Object.assign({}, fields, {
       reference: ref,
+      source: leadSource,
       sharedSecret: SHARED_SECRET,
       submittedAt: new Date().toISOString(),
       documents: docs,

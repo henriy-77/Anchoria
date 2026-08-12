@@ -93,6 +93,7 @@ exports.handler = async (event) => {
     "Signatory Name":         str(decl.signatoryName),
     "Signature Date":         date(decl.date),
     "View Application":       `${siteUrl}/.netlify/functions/corporate-pdf?ref=${encodeURIComponent(ref)}`,
+    "Source":                 str(payload.source) || "Direct",
     "Status":                 "New",
     "Notes":                  "",
   };

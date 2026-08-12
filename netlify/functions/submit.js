@@ -164,6 +164,7 @@ exports.handler = async (event) => {
                                   : "",
     "Document Links":           docLinks.join("\n"),
     "View Application":         `https://onboard.anchoriaonline.com/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
+    "Source":                   str(payload.source) || "Direct",
     "Status":                   "New",
     "Notes":                    "",
   };

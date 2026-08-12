@@ -567,6 +567,29 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 (function(){
 "use strict";
 
+/* Lead source tracking — capture ?src=CODE from the URL (falls back to
+   sessionStorage so it survives switching account-type tabs, and to
+   "Direct" if nothing was ever passed in). */
+var leadSource = (function () {
+  var params = new URLSearchParams(window.location.search);
+  var src = params.get("src") || params.get("ref") || params.get("source");
+  if (src) {
+    try { sessionStorage.setItem("anchoria_src", src); } catch (e) {}
+    return src;
+  }
+  try {
+    var stored = sessionStorage.getItem("anchoria_src");
+    if (stored) return stored;
+  } catch (e) {}
+  return "Direct";
+})();
+if (window.location.search) {
+  document.querySelectorAll(".acct-switch a").forEach(function (a) {
+    var sep = a.getAttribute("href").indexOf("?") > -1 ? "&" : "?";
+    a.setAttribute("href", a.getAttribute("href") + sep + window.location.search.replace(/^\?/, ""));
+  });
+}
+
 var ENDPOINT_URL  = "/.netlify/functions/submit-corporate";
 var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
@@ -985,6 +1008,7 @@ function submitForm(){
   var payload=collectPayload();
   var ref="CASL-"+Date.now().toString(36).toUpperCase().slice(-6);
   payload.ref=ref;
+  payload.source=leadSource;
   fetch(ENDPOINT_URL,{method:"POST",headers:{"Content-Type":"application/json","X-Shared-Secret":SHARED_SECRET},body:JSON.stringify(payload)})
   .then(function(res){ return res.json().then(function(body){ return {ok:res.ok,body:body}; }); })
   .then(function(r){
