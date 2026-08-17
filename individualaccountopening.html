@@ -854,11 +854,6 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               <button type="button" id="investmentSelectAll" class="sel-all-btn">Select all exchanges</button>
             </div>
 
-            <hr class="rule">
-            <div class="subhead">Fund &amp; product investment (optional)</div>
-            <div class="note">Select any Anchoria fund(s) or products you'd like to invest in now. You can also open your account first and fund it later.</div>
-            <div id="products"></div>
-
             <div class="field full">
               <label class="lab" for="f-referralSource">How did you hear about us?</label>
               <select id="f-referralSource" name="referralSource">
@@ -1350,7 +1345,10 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     });
   }
-  buildProductCards();
+  // buildProductCards() is not called for now — fund/product selection is
+  // temporarily hidden from the form. PRODUCTS + buildProductCards() are left
+  // in place so it can be re-enabled later by adding back the #products
+  // container and this call.
 
   /* ================================================================
    * AMOUNT-TO-WORDS
@@ -1802,16 +1800,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         html += rrow("Source of funds", checks("sourceOfFunds").join(", ") || "—");
         html += rrow("Investor category", checks("investorCategory").join(", ") || "—");
         html += rrow("Investment option", checks("investmentOption").join(", ") || "—");
-        var prodByKeyR = {};
-        PRODUCTS.forEach(function (p) { prodByKeyR[p.key] = p; });
-        var prodLines = [];
-        document.querySelectorAll(".product.sel").forEach(function (card) {
-          var key = card.dataset.prod, p = prodByKeyR[key];
-          var raw = (card.querySelector("[data-pamt]").value || "").replace(/[^0-9]/g, "");
-          var symbol = p.currency === "USD" ? "$" : "₦";
-          prodLines.push(p.name + ": " + symbol + (raw ? Number(raw).toLocaleString("en-NG") : "0"));
-        });
-        html += rrow("Funds/products selected", prodLines.length ? prodLines.join("; ") : "None (account only)");
+        // Funds/products selected row omitted while fund selection is hidden from the form.
       }
       html += '</div></div>';
     });
