@@ -332,7 +332,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     </div>
     <p class="lede">Open your Anchoria account online. No paperwork — takes about 10 minutes.</p>
     <ul class="tracker" id="tracker" role="list" aria-label="Form steps">
-      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Estate details</span></li>
+      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Account details</span></li>
       <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Signatories</span></li>
       <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Documents</span></li>
       <li data-step="3" role="listitem"><span class="dot" aria-hidden="true">4</span><span class="t-label">Declarations &amp; signature</span></li>
@@ -378,19 +378,28 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
         <!-- ===== STEP 1: PERSONAL DETAILS ===== -->
         <section class="step" data-step="0" aria-labelledby="cardTitle">
-          <p class="step-hint">Tell us about the estate and its settlement bank account.</p>
+          <p class="step-hint">Tell us about the account and its settlement bank account.</p>
           <div class="grid">
 
-            <div class="subhead">Estate information</div>
+            <div class="field full">
+              <label class="lab" id="acctType-label">Account type<span class="req" aria-hidden="true">*</span></label>
+              <div class="choices" data-radio="acctType" role="radiogroup" aria-labelledby="acctType-label" aria-describedby="e-acctType">
+                <label class="choice"><input type="radio" name="acctType" value="Joint" checked aria-required="true">Joint account</label>
+                <label class="choice"><input type="radio" name="acctType" value="Estate">Estate account</label>
+              </div>
+              <div class="err-msg" id="e-acctType" role="alert">Please choose one.</div>
+            </div>
+
+            <div class="subhead" id="estateInfoHead">Account information</div>
 
             <div class="field full">
-              <label class="lab" for="f-estateName">Estate name<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab" id="estateName-label" for="f-estateName">Account / estate name<span class="req" aria-hidden="true">*</span></label>
               <input id="f-estateName" name="estateName" aria-required="true" aria-describedby="e-estateName">
               <div class="err-msg" id="e-estateName" role="alert">Required.</div>
             </div>
 
             <div class="field full">
-              <label class="lab" for="f-estateAddress">Estate address<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab" for="f-estateAddress">Address<span class="req" aria-hidden="true">*</span></label>
               <input id="f-estateAddress" name="estateAddress" aria-required="true" aria-describedby="e-estateAddress">
               <div class="err-msg" id="e-estateAddress" role="alert">Required.</div>
             </div>
@@ -402,7 +411,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
             </div>
 
             <hr class="rule">
-            <div class="subhead">Estate bank account</div>
+            <div class="subhead">Settlement bank account</div>
 
             <div class="field">
               <label class="lab" for="f-bankName">Bank name<span class="req" aria-hidden="true">*</span></label>
@@ -693,13 +702,13 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
         <!-- ===== STEP 3: DOCUMENTS ===== -->
         <section class="step hidden" data-step="2" aria-labelledby="cardTitle">
-          <p class="step-hint">Upload the documents the SEC requires us to keep on file for an estate account.</p>
+          <p class="step-hint">Upload the documents the SEC requires us to keep on file for this account.</p>
           <div class="grid">
 
-            <div class="subhead">Estate documents</div>
-            <div class="note">Accepted: JPG, PNG, PDF. Maximum file size: 4 MB each.</div>
+            <div class="subhead" id="estateDocsHead">Estate documents</div>
+            <div class="note" id="estateDocsNote">Required for estate accounts only. Accepted: JPG, PNG, PDF. Maximum file size: 4 MB each.</div>
 
-            <div class="upload" data-upload="letterOfAdministration" role="group" aria-labelledby="ul-letterOfAdministration">
+            <div class="upload conditional" id="cond-letterOfAdministration" data-upload="letterOfAdministration" role="group" aria-labelledby="ul-letterOfAdministration">
               <div class="u-info">
                 <div class="u-label" id="ul-letterOfAdministration">Letter of Administration / Probate<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Grant of probate or letter of administration for the estate.</div>
@@ -712,7 +721,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               </div>
             </div>
 
-            <div class="upload" data-upload="deathCertificate" role="group" aria-labelledby="ul-deathCertificate">
+            <div class="upload conditional" id="cond-deathCertificate" data-upload="deathCertificate" role="group" aria-labelledby="ul-deathCertificate">
               <div class="u-info">
                 <div class="u-label" id="ul-deathCertificate">Deceased's death certificate<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub"></div>
@@ -725,7 +734,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               </div>
             </div>
 
-            <div class="upload" data-upload="administratorResolution" role="group" aria-labelledby="ul-administratorResolution">
+            <div class="upload conditional" id="cond-administratorResolution" data-upload="administratorResolution" role="group" aria-labelledby="ul-administratorResolution">
               <div class="u-info">
                 <div class="u-label" id="ul-administratorResolution">Administrator resolution<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Indicating authorized signatories with withdrawal mandate.</div>
@@ -740,7 +749,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
             <div class="upload" data-upload="utilityBill" role="group" aria-labelledby="ul-utilityBill">
               <div class="u-info">
-                <div class="u-label" id="ul-utilityBill">Proof of address for the estate<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-label" id="ul-utilityBill">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Utility bill issued within the last 3 months.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
@@ -969,7 +978,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   var pendingFailedKeys = null; // which doc keys still need (re)uploading — avoids re-sending already-successful files
 
   var STEP_NAMES = [
-    "Estate details",
+    "Account details",
     "Signatories",
     "Documents",
     "Declarations & signature",
@@ -1201,11 +1210,27 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* ================================================================
    * CONDITIONAL FIELD VISIBILITY
    * ================================================================ */
+  function isEstate() { return val("acctType") === "Estate"; }
+
   function syncConditionals() {
     // Mandate rule → Two or more
     toggleEl("cond-mandateSpecify", val("mandateRule") === "Two or more");
     // PEP details
     toggleEl("cond-pep", val("pep") === "Yes");
+    // Estate-only documents
+    var estate = isEstate();
+    toggleEl("cond-letterOfAdministration", estate);
+    toggleEl("cond-deathCertificate", estate);
+    toggleEl("cond-administratorResolution", estate);
+    var head = document.getElementById("estateDocsHead");
+    var note = document.getElementById("estateDocsNote");
+    if (head) head.style.display = estate ? "" : "none";
+    if (note) note.style.display = estate ? "" : "none";
+    // Labels
+    var nameLabel = document.getElementById("estateName-label");
+    if (nameLabel) nameLabel.firstChild.textContent = estate ? "Estate name" : "Account name";
+    var infoHead = document.getElementById("estateInfoHead");
+    if (infoHead) infoHead.textContent = estate ? "Estate information" : "Account information";
   }
 
   function toggleEl(id, show) {
@@ -1266,7 +1291,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   var RULES = {
     0: [
-      ["estateName","req"],["estateAddress","req"],["tin","req"],
+      ["acctType","radio"],["estateName","req"],["estateAddress","req"],["tin","req"],
       ["bankName","req"],["bankAddress","req"],["accountNumber","10"],
       ["mandateRule","radio"]
     ],
@@ -1318,8 +1343,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     }
     if (s === 2) {
-      var required = ["letterOfAdministration","deathCertificate","administratorResolution",
-        "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      var required = ["utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      if (isEstate()) required = required.concat(["letterOfAdministration","deathCertificate","administratorResolution"]);
       for (var j = 0; j < required.length; j++) {
         if (!uploads[required[j]]) return false;
       }
@@ -1359,8 +1384,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     // Step 2: required file uploads
     if (s === 2) {
-      ["letterOfAdministration","deathCertificate","administratorResolution",
-       "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"].forEach(function (k) {
+      var reqDocs = ["utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      if (isEstate()) reqDocs = reqDocs.concat(["letterOfAdministration","deathCertificate","administratorResolution"]);
+      reqDocs.forEach(function (k) {
         var w = document.querySelector('[data-upload="' + k + '"]');
         var has = !!uploads[k];
         w.classList.toggle("has-error", !has);
@@ -1488,8 +1514,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * REVIEW BUILDER
    * ================================================================ */
   var REVIEW_MAP = [
-    ["Estate details", 0, [
-      ["Estate name","estateName"],["Estate address","estateAddress"],["TIN","tin"],
+    ["Account details", 0, [
+      ["Account type","acctType"],
+      ["Account / estate name","estateName"],["Address","estateAddress"],["TIN","tin"],
       ["Bank name","bankName"],["Bank address","bankAddress"],["Account number","accountNumber"],
       ["Mandate rule","mandateRule"],["Mandate detail","mandateSpecify"]
     ]],
@@ -1574,8 +1601,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   function collectFields() {
     var d = {};
-    // Estate details
-    ["estateName","estateAddress","tin","bankName","bankAddress","accountNumber",
+    // Account details
+    ["acctType","estateName","estateAddress","tin","bankName","bankAddress","accountNumber",
      "mandateRule","mandateSpecify"].forEach(function(n){ d[n] = val(n); });
     // Principal contact person
     ["principalSurname","principalFirstName","principalMiddleName","principalBvn",
