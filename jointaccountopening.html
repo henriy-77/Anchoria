@@ -789,6 +789,19 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               </div>
             </div>
 
+            <div class="upload" data-upload="principalProofOfAddress" role="group" aria-labelledby="ul-principalProofOfAddress">
+              <div class="u-info">
+                <div class="u-label" id="ul-principalProofOfAddress">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Utility bill issued within the last 3 months.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove proof of address">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload proof of address"></label>
+              </div>
+            </div>
+
             <hr class="rule full">
             <div class="subhead">Authorized signatory 1's documents</div>
 
@@ -802,6 +815,74 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               <div class="u-actions">
                 <button type="button" class="u-clear" aria-label="Remove signatory 1 passport photograph">&#x2715;</button>
                 <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload signatory 1 passport photograph"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="sig1ValidId" role="group" aria-labelledby="ul-sig1ValidId">
+              <div class="u-info">
+                <div class="u-label" id="ul-sig1ValidId">Valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove signatory 1 valid ID">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload signatory 1 valid means of ID"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="sig1ProofOfAddress" role="group" aria-labelledby="ul-sig1ProofOfAddress">
+              <div class="u-info">
+                <div class="u-label" id="ul-sig1ProofOfAddress">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Utility bill issued within the last 3 months.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove signatory 1 proof of address">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload signatory 1 proof of address"></label>
+              </div>
+            </div>
+
+            <hr class="rule full">
+            <div class="subhead">Authorized signatory 2's documents <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></div>
+
+            <div class="upload" data-upload="sig2PassportPhoto" role="group" aria-labelledby="ul-sig2PassportPhoto">
+              <div class="u-info">
+                <div class="u-label" id="ul-sig2PassportPhoto">Passport photograph</div>
+                <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">4 MB max, JPG or PNG only.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove signatory 2 passport photograph">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload signatory 2 passport photograph"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="sig2ValidId" role="group" aria-labelledby="ul-sig2ValidId">
+              <div class="u-info">
+                <div class="u-label" id="ul-sig2ValidId">Valid means of ID</div>
+                <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove signatory 2 valid ID">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload signatory 2 valid means of ID"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="sig2ProofOfAddress" role="group" aria-labelledby="ul-sig2ProofOfAddress">
+              <div class="u-info">
+                <div class="u-label" id="ul-sig2ProofOfAddress">Proof of address</div>
+                <div class="u-sub">Utility bill issued within the last 3 months.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove signatory 2 proof of address">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload signatory 2 proof of address"></label>
               </div>
             </div>
 
@@ -1343,7 +1424,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     }
     if (s === 2) {
-      var required = ["utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      var required = ["utilityBill","principalPassportPhoto","principalValidId","principalProofOfAddress","sig1PassportPhoto","sig1ValidId","sig1ProofOfAddress"];
       if (isEstate()) required = required.concat(["letterOfAdministration","deathCertificate","administratorResolution"]);
       for (var j = 0; j < required.length; j++) {
         if (!uploads[required[j]]) return false;
@@ -1384,7 +1465,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     // Step 2: required file uploads
     if (s === 2) {
-      var reqDocs = ["utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      var reqDocs = ["utilityBill","principalPassportPhoto","principalValidId","principalProofOfAddress","sig1PassportPhoto","sig1ValidId","sig1ProofOfAddress"];
       if (isEstate()) reqDocs = reqDocs.concat(["letterOfAdministration","deathCertificate","administratorResolution"]);
       reqDocs.forEach(function (k) {
         var w = document.querySelector('[data-upload="' + k + '"]');
@@ -1560,9 +1641,13 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     html += '<div class="review-group"><div class="review-head">Documents'
       + '<button type="button" data-goto="2" aria-label="Edit documents">Edit</button></div><div class="review-body">';
     [["Letter of administration","letterOfAdministration"],["Death certificate","deathCertificate"],
-     ["Administrator resolution","administratorResolution"],["Proof of address","utilityBill"],
+     ["Administrator resolution","administratorResolution"],["Proof of address (account)","utilityBill"],
      ["Principal's passport photo","principalPassportPhoto"],["Principal's valid ID","principalValidId"],
-     ["Signatory 1's passport photo","sig1PassportPhoto"]].forEach(function (d) {
+     ["Principal's proof of address","principalProofOfAddress"],
+     ["Signatory 1's passport photo","sig1PassportPhoto"],["Signatory 1's valid ID","sig1ValidId"],
+     ["Signatory 1's proof of address","sig1ProofOfAddress"],
+     ["Signatory 2's passport photo","sig2PassportPhoto"],["Signatory 2's valid ID","sig2ValidId"],
+     ["Signatory 2's proof of address","sig2ProofOfAddress"]].forEach(function (d) {
       html += rrow(d[0], uploads[d[1]] ? uploads[d[1]].name : "—");
     });
     html += '</div></div>';
@@ -1644,7 +1729,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   function buildPayload(ref) {
     var fields = collectFields();
     var docKeys = ["letterOfAdministration","deathCertificate","administratorResolution",
-      "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      "utilityBill","principalPassportPhoto","principalValidId","principalProofOfAddress",
+      "sig1PassportPhoto","sig1ValidId","sig1ProofOfAddress","sig2PassportPhoto","sig2ValidId","sig2ProofOfAddress"];
     var docs = [];
 
     docKeys.forEach(function (k) {
@@ -1784,7 +1870,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
      Returns a promise resolving to the list of keys that still failed. */
   function uploadDocuments(ref, onlyKeys) {
     var docKeys = onlyKeys || ["letterOfAdministration","deathCertificate","administratorResolution",
-      "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto","signature"];
+      "utilityBill","principalPassportPhoto","principalValidId","principalProofOfAddress",
+      "sig1PassportPhoto","sig1ValidId","sig1ProofOfAddress","sig2PassportPhoto","sig2ValidId","sig2ProofOfAddress","signature"];
     var queue = [];
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {
