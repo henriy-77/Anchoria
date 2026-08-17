@@ -332,12 +332,11 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     </div>
     <p class="lede">Open your Anchoria account online. No paperwork — takes about 10 minutes.</p>
     <ul class="tracker" id="tracker" role="list" aria-label="Form steps">
-      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Personal &amp; partner</span></li>
-      <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Contact &amp; next of kin</span></li>
-      <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Identification &amp; documents</span></li>
-      <li data-step="3" role="listitem"><span class="dot" aria-hidden="true">4</span><span class="t-label">Financial &amp; investment</span></li>
-      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Declarations &amp; signature</span></li>
-      <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Review &amp; submit</span></li>
+      <li data-step="0" role="listitem"><span class="dot" aria-hidden="true">1</span><span class="t-label">Estate details</span></li>
+      <li data-step="1" role="listitem"><span class="dot" aria-hidden="true">2</span><span class="t-label">Signatories</span></li>
+      <li data-step="2" role="listitem"><span class="dot" aria-hidden="true">3</span><span class="t-label">Documents</span></li>
+      <li data-step="3" role="listitem"><span class="dot" aria-hidden="true">4</span><span class="t-label">Declarations &amp; signature</span></li>
+      <li data-step="4" role="listitem"><span class="dot" aria-hidden="true">5</span><span class="t-label">Review &amp; submit</span></li>
     </ul>
     <div class="trust">
       <strong>Anchoria Capital Group</strong><br>
@@ -379,416 +378,385 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
         <!-- ===== STEP 1: PERSONAL DETAILS ===== -->
         <section class="step" data-step="0" aria-labelledby="cardTitle">
-          <p class="step-hint">Tell us about yourself. Fields marked <span style="color:var(--gold)" aria-label="required">*</span> are required.</p>
+          <p class="step-hint">Tell us about the estate and its settlement bank account.</p>
           <div class="grid">
 
-            <div class="field">
-              <label class="lab" for="f-surname">Surname<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-surname" name="surname" autocomplete="family-name" aria-required="true" aria-describedby="e-surname">
-              <div class="err-msg" id="e-surname" role="alert">Required.</div>
+            <div class="subhead">Estate information</div>
+
+            <div class="field full">
+              <label class="lab" for="f-estateName">Estate name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-estateName" name="estateName" aria-required="true" aria-describedby="e-estateName">
+              <div class="err-msg" id="e-estateName" role="alert">Required.</div>
+            </div>
+
+            <div class="field full">
+              <label class="lab" for="f-estateAddress">Estate address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-estateAddress" name="estateAddress" aria-required="true" aria-describedby="e-estateAddress">
+              <div class="err-msg" id="e-estateAddress" role="alert">Required.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-firstName">First name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-firstName" name="firstName" autocomplete="given-name" aria-required="true" aria-describedby="e-firstName">
-              <div class="err-msg" id="e-firstName" role="alert">Required.</div>
+              <label class="lab" for="f-tin">Tax Identification Number (TIN)<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-tin" name="tin" aria-required="true" aria-describedby="e-tin">
+              <div class="err-msg" id="e-tin" role="alert">Required.</div>
+            </div>
+
+            <hr class="rule">
+            <div class="subhead">Estate bank account</div>
+
+            <div class="field">
+              <label class="lab" for="f-bankName">Bank name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-bankName" name="bankName" aria-required="true" aria-describedby="e-bankName">
+              <div class="err-msg" id="e-bankName" role="alert">Required.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-middleName">Middle name</label>
-              <input id="f-middleName" name="middleName">
+              <label class="lab" for="f-bankAddress">Bank address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-bankAddress" name="bankAddress" aria-required="true" aria-describedby="e-bankAddress">
+              <div class="err-msg" id="e-bankAddress" role="alert">Required.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-title">Title<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-title" name="title" aria-required="true" aria-describedby="e-title">
-                <option value="">Select</option>
-                <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option>
-                <option value="Other">Other</option>
-              </select>
-              <div class="err-msg" id="e-title" role="alert">Required.</div>
+              <label class="lab" for="f-accountNumber">Account number<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-accountNumber" name="accountNumber" inputmode="numeric" maxlength="10" placeholder="10 digits" aria-required="true" aria-describedby="e-accountNumber">
+              <div class="err-msg" id="e-accountNumber" role="alert">Must be exactly 10 digits.</div>
             </div>
 
-            <div class="field conditional" id="cond-title">
-              <label class="lab" for="f-titleOther">If other, specify</label>
-              <input id="f-titleOther" name="titleOther" aria-describedby="e-titleOther">
-              <div class="err-msg" id="e-titleOther"></div>
-            </div>
+            <hr class="rule">
+            <div class="subhead">Mandate authorisation</div>
 
-            <div class="field">
-              <label class="lab" for="f-sex">Gender<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-sex" name="sex" aria-required="true" aria-describedby="e-sex">
-                <option value="">Select</option>
-                <option>Male</option><option>Female</option>
-              </select>
-              <div class="err-msg" id="e-sex" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-dob-day">Date of birth<span class="req" aria-hidden="true">*</span></label>
-              <div class="dob-row">
-                <select id="f-dob-day" class="dob-part" aria-label="Day">
-                  <option value="">Day</option>
-                </select>
-                <select id="f-dob-month" class="dob-part" aria-label="Month">
-                  <option value="">Month</option>
-                  <option value="01">January</option><option value="02">February</option>
-                  <option value="03">March</option><option value="04">April</option>
-                  <option value="05">May</option><option value="06">June</option>
-                  <option value="07">July</option><option value="08">August</option>
-                  <option value="09">September</option><option value="10">October</option>
-                  <option value="11">November</option><option value="12">December</option>
-                </select>
-                <select id="f-dob-year" class="dob-part" aria-label="Year">
-                  <option value="">Year</option>
-                </select>
+            <div class="field full">
+              <label class="lab" id="mandateRule-label">Combination rule<span class="req" aria-hidden="true">*</span></label>
+              <div class="help">Please tick as appropriate.</div>
+              <div class="choices" data-radio="mandateRule" role="radiogroup" aria-labelledby="mandateRule-label" aria-describedby="e-mandateRule">
+                <label class="choice"><input type="radio" name="mandateRule" value="Sole Signatory" aria-required="true">Sole Signatory</label>
+                <label class="choice"><input type="radio" name="mandateRule" value="Two or more">Two or more</label>
               </div>
-              <input type="hidden" id="f-dob" name="dob" aria-required="true" aria-describedby="e-dob h-dob">
-              <div class="help" id="h-dob">Must be 18 or older.</div>
-              <div class="err-msg" id="e-dob" role="alert">You must be 18 or older.</div>
+              <div class="err-msg" id="e-mandateRule" role="alert">Please choose one.</div>
+            </div>
+
+            <div class="field full conditional" id="cond-mandateSpecify">
+              <label class="lab" for="f-mandateSpecify">If two or more to sign, please specify</label>
+              <input id="f-mandateSpecify" name="mandateSpecify" placeholder="e.g. Any two of three signatories">
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== STEP 2: SIGNATORIES ===== -->
+        <section class="step hidden" data-step="1" aria-labelledby="cardTitle">
+          <p class="step-hint">Details of the estate's principal contact and authorized signatories.</p>
+          <div class="grid">
+
+            <div class="subhead">Principal contact person</div>
+
+            <div class="field">
+              <label class="lab" for="f-principalSurname">Surname<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalSurname" name="principalSurname" aria-required="true" aria-describedby="e-principalSurname">
+              <div class="err-msg" id="e-principalSurname" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-principalFirstName">First name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalFirstName" name="principalFirstName" aria-required="true" aria-describedby="e-principalFirstName">
+              <div class="err-msg" id="e-principalFirstName" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-principalMiddleName">Middle name</label>
+              <input id="f-principalMiddleName" name="principalMiddleName">
             </div>
 
             <div class="field">
-              <label class="lab" for="f-nationality">Nationality<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-nationality" name="nationality" aria-required="true" aria-describedby="e-nationality">
+              <label class="lab" for="f-principalBvn">BVN<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalBvn" name="principalBvn" inputmode="numeric" maxlength="11" placeholder="11 digits" aria-required="true" aria-describedby="e-principalBvn">
+              <div class="err-msg" id="e-principalBvn" role="alert">BVN must be exactly 11 digits.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-principalPhone">Phone number<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalPhone" name="principalPhone" inputmode="tel" type="tel" aria-required="true" aria-describedby="e-principalPhone">
+              <div class="err-msg" id="e-principalPhone" role="alert">Enter a valid phone number.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-principalEmail">Email address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalEmail" name="principalEmail" inputmode="email" type="email" aria-required="true" aria-describedby="e-principalEmail">
+              <div class="err-msg" id="e-principalEmail" role="alert">Enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+              <label class="lab" for="f-principalNationality">Nationality<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-principalNationality" name="principalNationality" aria-required="true" aria-describedby="e-principalNationality">
                 <option value="">Select country</option>
                 <option value="Nigerian" selected>Nigerian</option>
                 <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
               </select>
-              <div class="err-msg" id="e-nationality" role="alert">Required.</div>
+              <div class="err-msg" id="e-principalNationality" role="alert">Required.</div>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-maritalStatus">Marital status<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-maritalStatus" name="maritalStatus" aria-required="true" aria-describedby="e-maritalStatus">
-                <option value="">Select</option>
-                <option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option>
-              </select>
-              <div class="err-msg" id="e-maritalStatus" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-stateOfOrigin">State of origin<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-stateOfOrigin" name="stateOfOrigin" aria-required="true" aria-describedby="e-stateOfOrigin">
+              <label class="lab" for="f-principalStateOfOrigin">State of origin<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-principalStateOfOrigin" name="principalStateOfOrigin" aria-required="true" aria-describedby="e-principalStateOfOrigin">
                 <option value="">Select</option>
               </select>
-              <div class="err-msg" id="e-stateOfOrigin" role="alert">Required.</div>
+              <div class="err-msg" id="e-principalStateOfOrigin" role="alert">Required.</div>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-lga">Local Government Area<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-lga" name="lga" aria-required="true" aria-describedby="e-lga" disabled>
-                <option value="">Select state first</option>
+              <label class="lab" id="principalClass-label">Class of signatory</label>
+              <select id="f-principalClass" name="principalClass" aria-labelledby="principalClass-label">
+                <option value="">Select</option>
+                <option>A</option><option>B</option><option>C</option>
               </select>
-              <div class="err-msg" id="e-lga" role="alert">Required.</div>
             </div>
-
-            <div class="field">
-              <label class="lab" for="f-maidenName">Maiden name (if applicable)</label>
-              <input id="f-maidenName" name="maidenName">
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-motherMaiden">Mother's maiden name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-motherMaiden" name="motherMaiden" aria-required="true" aria-describedby="h-motherMaiden e-motherMaiden">
-              <div class="help" id="h-motherMaiden">Used as a security question.</div>
-              <div class="err-msg" id="e-motherMaiden" role="alert">Required.</div>
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Identity details</div>
-
-            <div class="field">
-              <label class="lab" for="f-bvn">BVN<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-bvn" name="bvn" inputmode="numeric" maxlength="11" placeholder="11 digits" aria-required="true" aria-describedby="e-bvn h-bvn" autocomplete="off">
-              <div class="help" id="h-bvn">Used only to verify your identity — never to access your bank account.</div>
-              <div class="err-msg" id="e-bvn" role="alert">BVN must be exactly 11 digits.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-nin">National Identity Number (NIN)</label>
-              <input id="f-nin" name="nin" inputmode="numeric" maxlength="11" placeholder="11 digits" aria-describedby="e-nin" autocomplete="off">
-              <div class="err-msg" id="e-nin" role="alert">NIN must be exactly 11 digits.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-taxId">Tax Identification Number (TIN)</label>
-              <input id="f-taxId" name="taxId">
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-anchoriaTag">Anchoria Tag</label>
-              <input id="f-anchoriaTag" name="anchoriaTag" placeholder="Your Anchoria tag, if you have one">
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Joint account partner</div>
-            <div class="note">Details of the second holder on this account.</div>
 
             <div class="field full">
-              <label class="lab" for="f-partnerName">Full name (surname first)<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerName" name="partnerName" aria-required="true" aria-describedby="e-partnerName">
-              <div class="err-msg" id="e-partnerName" role="alert">Required.</div>
+              <label class="lab" for="f-principalAddress">Address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalAddress" name="principalAddress" aria-required="true" aria-describedby="e-principalAddress">
+              <div class="err-msg" id="e-principalAddress" role="alert">Required.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-partnerRelationship">Relationship to primary holder<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerRelationship" name="partnerRelationship" placeholder="e.g. Spouse, Sibling, Business partner" aria-required="true" aria-describedby="e-partnerRelationship">
-              <div class="err-msg" id="e-partnerRelationship" role="alert">Required.</div>
+              <label class="lab" for="f-principalIdType">Means of identification<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-principalIdType" name="principalIdType" aria-required="true" aria-describedby="e-principalIdType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+              <div class="err-msg" id="e-principalIdType" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-principalIdNumber">ID number<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalIdNumber" name="principalIdNumber" aria-required="true" aria-describedby="e-principalIdNumber">
+              <div class="err-msg" id="e-principalIdNumber" role="alert">Required.</div>
+            </div>
+
+            <div class="field full">
+              <label class="lab" for="f-principalEmployerName">Employer's name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalEmployerName" name="principalEmployerName" aria-required="true" aria-describedby="e-principalEmployerName">
+              <div class="err-msg" id="e-principalEmployerName" role="alert">Required.</div>
+            </div>
+            <div class="field full">
+              <label class="lab" for="f-principalEmployerAddress">Employer's address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-principalEmployerAddress" name="principalEmployerAddress" aria-required="true" aria-describedby="e-principalEmployerAddress">
+              <div class="err-msg" id="e-principalEmployerAddress" role="alert">Required.</div>
+            </div>
+
+            <hr class="rule">
+            <div class="subhead">Authorized signatory 1</div>
+            <div class="note">Add a second person authorized to sign for the estate account.</div>
+
+            <div class="field">
+              <label class="lab" for="f-sig1Surname">Surname<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1Surname" name="sig1Surname" aria-required="true" aria-describedby="e-sig1Surname">
+              <div class="err-msg" id="e-sig1Surname" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig1FirstName">First name<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1FirstName" name="sig1FirstName" aria-required="true" aria-describedby="e-sig1FirstName">
+              <div class="err-msg" id="e-sig1FirstName" role="alert">Required.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig1MiddleName">Middle name</label>
+              <input id="f-sig1MiddleName" name="sig1MiddleName">
             </div>
 
             <div class="field">
-              <label class="lab" for="f-partnerDob-day">Date of birth<span class="req" aria-hidden="true">*</span></label>
-              <div class="dob-row">
-                <select id="f-partnerDob-day" class="dob-part" aria-label="Partner day"><option value="">Day</option></select>
-                <select id="f-partnerDob-month" class="dob-part" aria-label="Partner month">
-                  <option value="">Month</option>
-                  <option value="01">January</option><option value="02">February</option>
-                  <option value="03">March</option><option value="04">April</option>
-                  <option value="05">May</option><option value="06">June</option>
-                  <option value="07">July</option><option value="08">August</option>
-                  <option value="09">September</option><option value="10">October</option>
-                  <option value="11">November</option><option value="12">December</option>
-                </select>
-                <select id="f-partnerDob-year" class="dob-part" aria-label="Partner year"><option value="">Year</option></select>
-              </div>
-              <input type="hidden" id="f-partnerDob" name="partnerDob" aria-required="true" aria-describedby="e-partnerDob">
-              <div class="err-msg" id="e-partnerDob" role="alert">Required.</div>
+              <label class="lab" for="f-sig1Bvn">BVN<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1Bvn" name="sig1Bvn" inputmode="numeric" maxlength="11" placeholder="11 digits" aria-required="true" aria-describedby="e-sig1Bvn">
+              <div class="err-msg" id="e-sig1Bvn" role="alert">BVN must be exactly 11 digits.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig1Phone">Phone number<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1Phone" name="sig1Phone" inputmode="tel" type="tel" aria-required="true" aria-describedby="e-sig1Phone">
+              <div class="err-msg" id="e-sig1Phone" role="alert">Enter a valid phone number.</div>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig1Email">Email address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1Email" name="sig1Email" inputmode="email" type="email" aria-required="true" aria-describedby="e-sig1Email">
+              <div class="err-msg" id="e-sig1Email" role="alert">Enter a valid email address.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-partnerNationality">Nationality<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-partnerNationality" name="partnerNationality" aria-required="true" aria-describedby="e-partnerNationality">
+              <label class="lab" for="f-sig1Nationality">Nationality<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-sig1Nationality" name="sig1Nationality" aria-required="true" aria-describedby="e-sig1Nationality">
                 <option value="">Select country</option>
               </select>
-              <div class="err-msg" id="e-partnerNationality" role="alert">Required.</div>
+              <div class="err-msg" id="e-sig1Nationality" role="alert">Required.</div>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-partnerStateOfOrigin">State of origin<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-partnerStateOfOrigin" name="partnerStateOfOrigin" aria-required="true" aria-describedby="e-partnerStateOfOrigin">
+              <label class="lab" for="f-sig1StateOfOrigin">State of origin<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-sig1StateOfOrigin" name="sig1StateOfOrigin" aria-required="true" aria-describedby="e-sig1StateOfOrigin">
                 <option value="">Select</option>
               </select>
-              <div class="err-msg" id="e-partnerStateOfOrigin" role="alert">Required.</div>
+              <div class="err-msg" id="e-sig1StateOfOrigin" role="alert">Required.</div>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-partnerLga">Local Government Area<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-partnerLga" name="partnerLga" aria-required="true" aria-describedby="e-partnerLga" disabled>
-                <option value="">Select state first</option>
+              <label class="lab" id="sig1Class-label">Class of signatory</label>
+              <select id="f-sig1Class" name="sig1Class" aria-labelledby="sig1Class-label">
+                <option value="">Select</option>
+                <option>A</option><option>B</option><option>C</option>
               </select>
-              <div class="err-msg" id="e-partnerLga" role="alert">Required.</div>
+            </div>
+
+            <div class="field full">
+              <label class="lab" for="f-sig1Address">Address<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1Address" name="sig1Address" aria-required="true" aria-describedby="e-sig1Address">
+              <div class="err-msg" id="e-sig1Address" role="alert">Required.</div>
             </div>
 
             <div class="field">
-              <label class="lab" for="f-partnerPhone">Phone number<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerPhone" name="partnerPhone" inputmode="tel" type="tel" placeholder="0803 000 0000" aria-required="true" aria-describedby="e-partnerPhone">
-              <div class="err-msg" id="e-partnerPhone" role="alert">Enter a valid phone number.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-partnerEmail">Email address<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerEmail" name="partnerEmail" inputmode="email" type="email" placeholder="you@email.com" aria-required="true" aria-describedby="e-partnerEmail">
-              <div class="err-msg" id="e-partnerEmail" role="alert">Enter a valid email address.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-partnerPostalAddress">Postal address</label>
-              <input id="f-partnerPostalAddress" name="partnerPostalAddress">
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-partnerResidentialAddress">Residential address<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerResidentialAddress" name="partnerResidentialAddress" aria-required="true" aria-describedby="e-partnerResidentialAddress">
-              <div class="err-msg" id="e-partnerResidentialAddress" role="alert">Required.</div>
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Joint partner's identification</div>
-
-            <div class="field">
-              <label class="lab" for="f-partnerIdType">Means of identification<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-partnerIdType" name="partnerIdType" aria-required="true" aria-describedby="e-partnerIdType">
+              <label class="lab" for="f-sig1IdType">Means of identification<span class="req" aria-hidden="true">*</span></label>
+              <select id="f-sig1IdType" name="sig1IdType" aria-required="true" aria-describedby="e-sig1IdType">
                 <option value="">Select</option>
                 <option>International Passport</option>
                 <option>National ID Card</option>
                 <option>Driver's Licence</option>
                 <option>INEC Voter's Card</option>
               </select>
-              <div class="err-msg" id="e-partnerIdType" role="alert">Required.</div>
+              <div class="err-msg" id="e-sig1IdType" role="alert">Required.</div>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-partnerIdNumber">ID number<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerIdNumber" name="partnerIdNumber" aria-required="true" aria-describedby="e-partnerIdNumber">
-              <div class="err-msg" id="e-partnerIdNumber" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-partnerIdExpiry-day">ID expiry date<span class="req" aria-hidden="true">*</span></label>
-              <div class="dob-row">
-                <select id="f-partnerIdExpiry-day" class="dob-part" aria-label="Partner ID expiry day"><option value="">Day</option></select>
-                <select id="f-partnerIdExpiry-month" class="dob-part" aria-label="Partner ID expiry month">
-                  <option value="">Month</option>
-                  <option value="01">January</option><option value="02">February</option>
-                  <option value="03">March</option><option value="04">April</option>
-                  <option value="05">May</option><option value="06">June</option>
-                  <option value="07">July</option><option value="08">August</option>
-                  <option value="09">September</option><option value="10">October</option>
-                  <option value="11">November</option><option value="12">December</option>
-                </select>
-                <select id="f-partnerIdExpiry-year" class="dob-part" aria-label="Partner ID expiry year"><option value="">Year</option></select>
-              </div>
-              <input type="hidden" id="f-partnerIdExpiry" name="partnerIdExpiry" aria-required="true" aria-describedby="e-partnerIdExpiry">
-              <div class="err-msg" id="e-partnerIdExpiry" role="alert">Required.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-partnerMandateInstruction">Mandate signing instruction</label>
-              <input id="f-partnerMandateInstruction" name="partnerMandateInstruction" placeholder="e.g. Either signatory may instruct, or both signatories required" aria-describedby="h-partnerMandateInstruction">
-              <div class="help" id="h-partnerMandateInstruction">How trade instructions on this joint account should be authorised.</div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ===== STEP 2: CONTACT & NEXT OF KIN ===== -->
-        <section class="step hidden" data-step="1" aria-labelledby="cardTitle">
-          <p class="step-hint">Where can we reach you, and who is your next of kin?</p>
-          <div class="grid">
-
-            <div class="field full">
-              <label class="lab" for="f-residentialAddress">Residential address (including nearest landmark)<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-residentialAddress" name="residentialAddress" autocomplete="street-address" aria-required="true" aria-describedby="e-residentialAddress">
-              <div class="err-msg" id="e-residentialAddress" role="alert">Required.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-mailingAddress">Mailing address (if different from residential)</label>
-              <input id="f-mailingAddress" name="mailingAddress" autocomplete="off">
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-email">Email address<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-email" name="email" inputmode="email" type="email" placeholder="you@email.com" autocomplete="email" aria-required="true" aria-describedby="e-email">
-              <div class="err-msg" id="e-email" role="alert">Enter a valid email address.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-mobile">Mobile number<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-mobile" name="mobile" inputmode="tel" type="tel" placeholder="0803 000 0000" autocomplete="tel" aria-required="true" aria-describedby="e-mobile">
-              <div class="err-msg" id="e-mobile" role="alert">Enter a valid 11-digit Nigerian number (e.g. 08012345678).</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-mobile2">Mobile 2 (optional)</label>
-              <input id="f-mobile2" name="mobile2" inputmode="tel" type="tel" aria-describedby="e-mobile2">
-              <div class="err-msg" id="e-mobile2" role="alert">Enter a valid phone number.</div>
+              <label class="lab" for="f-sig1IdNumber">ID number<span class="req" aria-hidden="true">*</span></label>
+              <input id="f-sig1IdNumber" name="sig1IdNumber" aria-required="true" aria-describedby="e-sig1IdNumber">
+              <div class="err-msg" id="e-sig1IdNumber" role="alert">Required.</div>
             </div>
 
             <hr class="rule">
-            <div class="subhead">Next of kin</div>
+            <div class="subhead">Authorized signatory 2 <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></div>
 
             <div class="field">
-              <label class="lab" for="f-nokName">Full name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nokName" name="nokName" aria-required="true" aria-describedby="e-nokName">
-              <div class="err-msg" id="e-nokName" role="alert">Required.</div>
+              <label class="lab" for="f-sig2Surname">Surname</label>
+              <input id="f-sig2Surname" name="sig2Surname">
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig2FirstName">First name</label>
+              <input id="f-sig2FirstName" name="sig2FirstName">
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig2MiddleName">Middle name</label>
+              <input id="f-sig2MiddleName" name="sig2MiddleName">
             </div>
 
             <div class="field">
-              <label class="lab" for="f-nokRelationship">Relationship<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nokRelationship" name="nokRelationship" placeholder="e.g. Spouse, Parent" aria-required="true" aria-describedby="e-nokRelationship">
-              <div class="err-msg" id="e-nokRelationship" role="alert">Required.</div>
+              <label class="lab" for="f-sig2Bvn">BVN</label>
+              <input id="f-sig2Bvn" name="sig2Bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig2Phone">Phone number</label>
+              <input id="f-sig2Phone" name="sig2Phone" inputmode="tel" type="tel">
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig2Email">Email address</label>
+              <input id="f-sig2Email" name="sig2Email" inputmode="email" type="email">
             </div>
 
             <div class="field">
-              <label class="lab" for="f-nokEmail">Email<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nokEmail" name="nokEmail" inputmode="email" type="email" aria-required="true" aria-describedby="e-nokEmail">
-              <div class="err-msg" id="e-nokEmail" role="alert">Enter a valid email address.</div>
+              <label class="lab" for="f-sig2Nationality">Nationality</label>
+              <select id="f-sig2Nationality" name="sig2Nationality">
+                <option value="">Select country</option>
+              </select>
             </div>
-
             <div class="field">
-              <label class="lab" for="f-nokPhone">Phone number<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nokPhone" name="nokPhone" inputmode="tel" type="tel" aria-required="true" aria-describedby="e-nokPhone">
-              <div class="err-msg" id="e-nokPhone" role="alert">Enter a valid phone number.</div>
+              <label class="lab" for="f-sig2StateOfOrigin">State of origin</label>
+              <select id="f-sig2StateOfOrigin" name="sig2StateOfOrigin">
+                <option value="">Select</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="lab" id="sig2Class-label">Class of signatory</label>
+              <select id="f-sig2Class" name="sig2Class" aria-labelledby="sig2Class-label">
+                <option value="">Select</option>
+                <option>A</option><option>B</option><option>C</option>
+              </select>
             </div>
 
             <div class="field full">
-              <label class="lab" for="f-nokAddress">Residential address<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-nokAddress" name="nokAddress" aria-required="true" aria-describedby="e-nokAddress">
-              <div class="err-msg" id="e-nokAddress" role="alert">Required.</div>
+              <label class="lab" for="f-sig2Address">Address</label>
+              <input id="f-sig2Address" name="sig2Address">
+            </div>
+
+            <div class="field">
+              <label class="lab" for="f-sig2IdType">Means of identification</label>
+              <select id="f-sig2IdType" name="sig2IdType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="lab" for="f-sig2IdNumber">ID number</label>
+              <input id="f-sig2IdNumber" name="sig2IdNumber">
             </div>
 
           </div>
         </section>
 
-        <!-- ===== STEP 3: IDENTIFICATION & DOCUMENTS ===== -->
+        <!-- ===== STEP 3: DOCUMENTS ===== -->
         <section class="step hidden" data-step="2" aria-labelledby="cardTitle">
-          <p class="step-hint">Verify your identity and upload the documents the SEC requires us to keep on file.</p>
+          <p class="step-hint">Upload the documents the SEC requires us to keep on file for an estate account.</p>
           <div class="grid">
 
-            <div class="field">
-              <label class="lab" for="f-idType">Means of identification<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-idType" name="idType" aria-required="true" aria-describedby="e-idType">
-                <option value="">Select</option>
-                <option>International Passport</option>
-                <option>National ID Card</option>
-                <option>Driver's Licence</option>
-                <option>INEC Voter's Card</option>
-              </select>
-              <div class="err-msg" id="e-idType" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-idNumber">ID number<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-idNumber" name="idNumber" aria-required="true" aria-describedby="e-idNumber">
-              <div class="err-msg" id="e-idNumber" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-idIssue-day">ID issue date</label>
-              <div class="dob-row">
-                <select id="f-idIssue-day" class="dob-part" aria-label="Issue day"><option value="">Day</option></select>
-                <select id="f-idIssue-month" class="dob-part" aria-label="Issue month">
-                  <option value="">Month</option>
-                  <option value="01">January</option><option value="02">February</option>
-                  <option value="03">March</option><option value="04">April</option>
-                  <option value="05">May</option><option value="06">June</option>
-                  <option value="07">July</option><option value="08">August</option>
-                  <option value="09">September</option><option value="10">October</option>
-                  <option value="11">November</option><option value="12">December</option>
-                </select>
-                <select id="f-idIssue-year" class="dob-part" aria-label="Issue year"><option value="">Year</option></select>
-              </div>
-              <input type="hidden" id="f-idIssue" name="idIssue">
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-idExpiry-day">ID expiry date</label>
-              <div class="dob-row">
-                <select id="f-idExpiry-day" class="dob-part" aria-label="Expiry day"><option value="">Day</option></select>
-                <select id="f-idExpiry-month" class="dob-part" aria-label="Expiry month">
-                  <option value="">Month</option>
-                  <option value="01">January</option><option value="02">February</option>
-                  <option value="03">March</option><option value="04">April</option>
-                  <option value="05">May</option><option value="06">June</option>
-                  <option value="07">July</option><option value="08">August</option>
-                  <option value="09">September</option><option value="10">October</option>
-                  <option value="11">November</option><option value="12">December</option>
-                </select>
-                <select id="f-idExpiry-year" class="dob-part" aria-label="Expiry year"><option value="">Year</option></select>
-              </div>
-              <input type="hidden" id="f-idExpiry" name="idExpiry">
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Required documents</div>
+            <div class="subhead">Estate documents</div>
             <div class="note">Accepted: JPG, PNG, PDF. Maximum file size: 4 MB each.</div>
 
-            <!-- Passport photo upload -->
-            <div class="upload" data-upload="passportPhoto" role="group" aria-labelledby="ul-passportPhoto">
+            <div class="upload" data-upload="letterOfAdministration" role="group" aria-labelledby="ul-letterOfAdministration">
               <div class="u-info">
-                <div class="u-label" id="ul-passportPhoto">Passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-label" id="ul-letterOfAdministration">Letter of Administration / Probate<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Grant of probate or letter of administration for the estate.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove letter of administration">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload letter of administration"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="deathCertificate" role="group" aria-labelledby="ul-deathCertificate">
+              <div class="u-info">
+                <div class="u-label" id="ul-deathCertificate">Deceased's death certificate<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub"></div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove death certificate">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload death certificate"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="administratorResolution" role="group" aria-labelledby="ul-administratorResolution">
+              <div class="u-info">
+                <div class="u-label" id="ul-administratorResolution">Administrator resolution<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Indicating authorized signatories with withdrawal mandate.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove administrator resolution">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload administrator resolution"></label>
+              </div>
+            </div>
+
+            <div class="upload" data-upload="utilityBill" role="group" aria-labelledby="ul-utilityBill">
+              <div class="u-info">
+                <div class="u-label" id="ul-utilityBill">Proof of address for the estate<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-sub">Utility bill issued within the last 3 months.</div>
+                <div class="u-file" aria-live="polite"></div>
+                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
+              </div>
+              <div class="u-actions">
+                <button type="button" class="u-clear" aria-label="Remove proof of address">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload proof of address"></label>
+              </div>
+            </div>
+
+            <hr class="rule full">
+            <div class="subhead">Principal contact's documents</div>
+
+            <div class="upload" data-upload="principalPassportPhoto" role="group" aria-labelledby="ul-principalPassportPhoto">
+              <div class="u-info">
+                <div class="u-label" id="ul-principalPassportPhoto">Passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
@@ -799,10 +767,9 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               </div>
             </div>
 
-            <!-- Valid ID upload -->
-            <div class="upload" data-upload="validId" role="group" aria-labelledby="ul-validId">
+            <div class="upload" data-upload="principalValidId" role="group" aria-labelledby="ul-principalValidId">
               <div class="u-info">
-                <div class="u-label" id="ul-validId">Valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-label" id="ul-principalValidId">Valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
@@ -813,182 +780,36 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               </div>
             </div>
 
-            <!-- Proof of address upload -->
-            <div class="upload" data-upload="proofOfAddress" role="group" aria-labelledby="ul-proofOfAddress">
-              <div class="u-info">
-                <div class="u-label" id="ul-proofOfAddress">Proof of address<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Public utility bill issued within the last 3 months.</div>
-                <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
-              </div>
-              <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove proof of address">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload proof of address"></label>
-              </div>
-            </div>
-
-            <!-- Residence permit (conditional — non-Nigerians) -->
-            <div class="upload conditional full" id="cond-permit" data-upload="residencePermit" role="group" aria-labelledby="ul-residencePermit">
-              <div class="u-info">
-                <div class="u-label" id="ul-residencePermit">Current residence permit<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Required for foreign nationals residing in Nigeria.</div>
-                <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required for non-Nigerian nationals. 4 MB max, JPG/PNG/PDF.</div>
-              </div>
-              <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove residence permit">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload residence permit"></label>
-              </div>
-            </div>
-
             <hr class="rule full">
-            <div class="subhead">Joint partner's documents</div>
+            <div class="subhead">Authorized signatory 1's documents</div>
 
-            <!-- Partner passport photo upload -->
-            <div class="upload" data-upload="partnerPassportPhoto" role="group" aria-labelledby="ul-partnerPassportPhoto">
+            <div class="upload" data-upload="sig1PassportPhoto" role="group" aria-labelledby="ul-sig1PassportPhoto">
               <div class="u-info">
-                <div class="u-label" id="ul-partnerPassportPhoto">Partner's passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
+                <div class="u-label" id="ul-sig1PassportPhoto">Passport photograph<span style="color:var(--gold)" aria-label="required">*</span></div>
                 <div class="u-sub">Recent, clear, light background. JPG or PNG only.</div>
                 <div class="u-file" aria-live="polite"></div>
                 <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
               </div>
               <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove partner's passport photograph">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload partner's passport photograph"></label>
-              </div>
-            </div>
-
-            <!-- Partner valid ID upload -->
-            <div class="upload" data-upload="partnerValidId" role="group" aria-labelledby="ul-partnerValidId">
-              <div class="u-info">
-                <div class="u-label" id="ul-partnerValidId">Partner's valid means of ID<span style="color:var(--gold)" aria-label="required">*</span></div>
-                <div class="u-sub">Showing name, photo, date of birth, address &amp; signature.</div>
-                <div class="u-file" aria-live="polite"></div>
-                <div class="u-err" role="alert">Required. 4 MB max, JPG/PNG/PDF.</div>
-              </div>
-              <div class="u-actions">
-                <button type="button" class="u-clear" aria-label="Remove partner's valid ID">&#x2715;</button>
-                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png,application/pdf" aria-label="Upload partner's valid means of ID"></label>
+                <button type="button" class="u-clear" aria-label="Remove signatory 1 passport photograph">&#x2715;</button>
+                <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload signatory 1 passport photograph"></label>
               </div>
             </div>
 
           </div>
         </section>
 
-        <!-- ===== STEP 4: FINANCIAL & INVESTMENT ===== -->
+        <!-- ===== STEP 4: DECLARATIONS & SIGNATURE ===== -->
         <section class="step hidden" data-step="3" aria-labelledby="cardTitle">
-          <p class="step-hint">Employment, settlement bank account, and how you'll trade.</p>
-          <div class="grid">
-
-            <div class="subhead">Employment</div>
-
-            <div class="field">
-              <label class="lab" for="f-occupation">Occupation<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-occupation" name="occupation" aria-required="true" aria-describedby="e-occupation">
-              <div class="err-msg" id="e-occupation" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-natureOfBusiness">Nature of business<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-natureOfBusiness" name="natureOfBusiness" aria-required="true" aria-describedby="e-natureOfBusiness">
-              <div class="err-msg" id="e-natureOfBusiness" role="alert">Required.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-employer">Employer / Business name &amp; address<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-employer" name="employer" aria-required="true" aria-describedby="e-employer">
-              <div class="err-msg" id="e-employer" role="alert">Required.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" for="f-income">Total estimated annual income (₦)<span class="req" aria-hidden="true">*</span></label>
-              <select id="f-income" name="income" aria-required="true" aria-describedby="e-income">
-                <option value="">Select range</option>
-                <option>Less than ₦1M</option>
-                <option>₦1M – ₦10M</option>
-                <option>₦10M – ₦25M</option>
-                <option>₦25M – ₦50M</option>
-                <option>₦50M – ₦100M</option>
-                <option>₦100M &amp; above</option>
-              </select>
-              <div class="err-msg" id="e-income" role="alert">Required.</div>
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Settlement bank account</div>
-
-            <div class="field">
-              <label class="lab" for="f-bankName">Bank name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-bankName" name="bankName" aria-required="true" aria-describedby="e-bankName">
-              <div class="err-msg" id="e-bankName" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-bankBranch">Bank branch<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-bankBranch" name="bankBranch" aria-required="true" aria-describedby="e-bankBranch">
-              <div class="err-msg" id="e-bankBranch" role="alert">Required.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-bankAccountNumber">Account number (NUBAN)<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-bankAccountNumber" name="bankAccountNumber" inputmode="numeric" maxlength="10" placeholder="10 digits" aria-required="true" aria-describedby="e-bankAccountNumber" autocomplete="off">
-              <div class="err-msg" id="e-bankAccountNumber" role="alert">Must be exactly 10 digits.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-bankAccountName">Account name<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-bankAccountName" name="bankAccountName" aria-required="true" aria-describedby="e-bankAccountName">
-              <div class="err-msg" id="e-bankAccountName" role="alert">Required.</div>
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Sales proceeds mode of payment</div>
-
-            <div class="field full">
-              <label class="lab" id="settlementMode-label">Settlement method<span class="req" aria-hidden="true">*</span></label>
-              <div class="choices" data-radio="settlementMode" role="radiogroup" aria-labelledby="settlementMode-label" aria-describedby="e-settlementMode">
-                <label class="choice"><input type="radio" name="settlementMode" value="CSCS Direct Settlement" aria-required="true">CSCS Direct Settlement</label>
-                <label class="choice"><input type="radio" name="settlementMode" value="In-House Settlement">In-House Settlement</label>
-              </div>
-              <div class="err-msg" id="e-settlementMode" role="alert">Please choose one.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-cscsNumber">CSCS number (if any)</label>
-              <input id="f-cscsNumber" name="cscsNumber" aria-describedby="h-cscs">
-              <div class="help" id="h-cscs">Leave blank if you don't have one.</div>
-            </div>
-
-            <div class="field">
-              <label class="lab" for="f-chn">Clearing House Number (CHN, if any)</label>
-              <input id="f-chn" name="chn" aria-describedby="h-chn">
-              <div class="help" id="h-chn">Leave blank and we'll create one for you.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab" id="moc-label">Mode of communication</label>
-              <div class="help">How should we reach you? Select all that apply.</div>
-              <div class="choices" data-check="modeOfComm" role="group" aria-labelledby="moc-label">
-                <label class="choice"><input type="checkbox" value="Phone call">Phone call</label>
-                <label class="choice"><input type="checkbox" value="Text message">Text message</label>
-                <label class="choice"><input type="checkbox" value="Email">Email</label>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ===== STEP 5: DECLARATIONS & SIGNATURE ===== -->
-        <section class="step hidden" data-step="4" aria-labelledby="cardTitle">
           <p class="step-hint">Please read and accept the declarations below before you sign.</p>
 
           <div class="decl-box">
             <h4>Anti-money laundering</h4>
-            In line with anti-money-laundering legislation, transactions above ₦5,000,000 (individuals) or ₦10,000,000 (corporates) will be reported to the SEC or the CBN as required by law.
+            In line with anti-money-laundering legislation, transaction above ₦1,000,000 (individuals) or ₦5,000,000 (corporate organizations) will be reported to the Securities and Exchange Commission (SEC) or the Central Bank of Nigeria (CBN).
           </div>
           <div class="decl-box">
             <h4>Account funding &amp; debit balances</h4>
-            Accounts must be adequately funded before trading. Any debit balance must be cleared within 3 business days. Balances not cleared within 3 days attract interest at 2.5× the prevailing treasury-bill rate or 22% per annum, whichever is higher. If a balance remains uncleaned after 14 days, Anchoria Securities may liquidate portfolio positions to recover the outstanding balance and accrued interest.
+            Accounts must be adequately funded before trading. Any debit balance must be cleared within 3 business days. Balances not cleared within 3 days attract interest at 2.5× the prevailing treasury-bill rate or 22% per annum, whichever is higher. If a balance remains uncleared after 14 days, Anchoria Capital Group reserves the right to sell from the portfolio to clear the debit balance and accrued interest.
           </div>
 
           <div class="check">
@@ -1001,15 +822,15 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
           </div>
           <div class="check">
             <input type="checkbox" name="declIndemnity" id="declIndemnity" aria-required="true">
-            <label for="declIndemnity" class="ctext">I accept the <strong>Indemnity Mandate</strong> authorising Anchoria Securities Ltd to act on verified mandates (signed letter, or email/SMS from my registered contact details) to buy or sell securities on my behalf at best available market prices.</label>
+            <label for="declIndemnity" class="ctext">I accept the <strong>Indemnity Mandate</strong> authorising Anchoria Securities Ltd to act on verified mandates (signed letter, or email/SMS from a registered contact) to buy or sell securities on the estate's behalf at best available market prices.</label>
           </div>
           <div class="check">
             <input type="checkbox" name="declRisk" id="declRisk" aria-required="true">
-            <label for="declRisk" class="ctext">I have read and accept the <a href="risk-disclosure-statement.html" id="riskLink" target="_blank" rel="noopener noreferrer" aria-label="Risk Disclosure Statement (opens in a new tab)">Risk Disclosure Statement</a> and understand that securities investing is speculative and may result in the loss of my entire investment.</label>
+            <label for="declRisk" class="ctext">I have read and accept the <a href="risk-disclosure-statement.html" id="riskLink" target="_blank" rel="noopener noreferrer" aria-label="Risk Disclosure Statement (opens in a new tab)">Risk Disclosure Statement</a> and understand that securities investing is speculative and may result in the loss of the entire investment.</label>
           </div>
           <div class="check">
             <input type="checkbox" name="declPrivacy" id="declPrivacy" aria-required="true">
-            <label for="declPrivacy" class="ctext">I consent to Anchoria Capital Group processing my personal data for the purpose of opening and managing my account, in line with the Nigeria Data Protection Act (NDPA) 2023.</label>
+            <label for="declPrivacy" class="ctext">I consent to Anchoria Capital Group processing my personal data for the purpose of opening and managing this account, in line with the Nigeria Data Protection Act (NDPA) 2023.</label>
           </div>
 
           <div id="decl-err" role="alert" aria-live="polite" style="font-size:12.5px;color:var(--err);margin:6px 0 10px;display:none;">Please accept all declarations to continue.</div>
@@ -1017,7 +838,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
           <div class="grid" style="margin-top:18px">
 
             <div class="field full">
-              <label class="lab" id="pep-label">Are you a Politically Exposed Person (PEP)?<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab" id="pep-label">Is any signatory or beneficiary a Politically Exposed Person (PEP)?<span class="req" aria-hidden="true">*</span></label>
               <div class="help">A PEP holds, or has held, a prominent public position — or is a close associate or family member of someone who does.</div>
               <div class="choices" data-radio="pep" role="radiogroup" aria-labelledby="pep-label" aria-describedby="e-pep">
                 <label class="choice"><input type="radio" name="pep" value="No" aria-required="true">No</label>
@@ -1031,49 +852,21 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               <textarea id="f-pepDetails" name="pepDetails" placeholder="Position held, organisation, and relevant dates"></textarea>
             </div>
 
-            <div class="field full">
-              <label class="lab" id="pepAssociate-label">Have any of your close relatives or associates occupied a political position?<span class="req" aria-hidden="true">*</span></label>
-              <div class="choices" data-radio="pepAssociate" role="radiogroup" aria-labelledby="pepAssociate-label" aria-describedby="e-pepAssociate">
-                <label class="choice"><input type="radio" name="pepAssociate" value="No" aria-required="true">No</label>
-                <label class="choice"><input type="radio" name="pepAssociate" value="Yes">Yes</label>
-              </div>
-              <div class="err-msg" id="e-pepAssociate" role="alert">Please answer.</div>
-            </div>
-
-            <div class="field full conditional" id="cond-pepAssociate">
-              <label class="lab" for="f-pepAssociateDetails">If yes, please give details</label>
-              <textarea id="f-pepAssociateDetails" name="pepAssociateDetails" placeholder="Position held, organisation, and relevant dates"></textarea>
-            </div>
-
-            <hr class="rule">
-            <div class="subhead">Indemnity mandate — instruction channel</div>
-
-            <div class="field full">
-              <label class="lab" id="instructionChannel-label">How will trade instructions be given?<span class="req" aria-hidden="true">*</span></label>
-              <div class="help">Please tick as appropriate.</div>
-              <div class="choices" data-radio="instructionChannel" role="radiogroup" aria-labelledby="instructionChannel-label" aria-describedby="e-instructionChannel">
-                <label class="choice"><input type="radio" name="instructionChannel" value="Walk-in" aria-required="true">Walk-in</label>
-                <label class="choice"><input type="radio" name="instructionChannel" value="Text Message">Text Message</label>
-                <label class="choice"><input type="radio" name="instructionChannel" value="Email">Email</label>
-              </div>
-              <div class="err-msg" id="e-instructionChannel" role="alert">Please choose one.</div>
-            </div>
-
             <hr class="rule">
             <div class="subhead">Electronic signature</div>
 
             <div class="field full">
               <label class="lab" for="f-sigName">Full name (as signature)<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-sigName" name="sigName" placeholder="Type your full name" aria-required="true" aria-describedby="e-sigName">
+              <input id="f-sigName" name="sigName" placeholder="Type the signing signatory's full name" aria-required="true" aria-describedby="e-sigName">
               <div class="err-msg" id="e-sigName" role="alert">Required.</div>
             </div>
 
             <div class="field full">
-              <label class="lab">Upload your signature<span class="req" aria-hidden="true">*</span></label>
+              <label class="lab">Upload signature<span class="req" aria-hidden="true">*</span></label>
               <div class="upload" data-upload="signature" role="group" aria-labelledby="ul-signature">
                 <div class="u-info">
                   <div class="u-label" id="ul-signature">Signature image</div>
-                  <div class="u-sub">A clear photo or scan of your signature on white paper. JPG or PNG.</div>
+                  <div class="u-sub">A clear photo or scan of the signature on white paper. JPG or PNG.</div>
                   <div class="u-file" aria-live="polite"></div>
                   <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
                 </div>
@@ -1089,36 +882,11 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               <input id="f-sigDate" name="sigDate" readonly aria-readonly="true">
             </div>
 
-            <hr class="rule">
-            <div class="subhead">Joint partner's signature</div>
-
-            <div class="field full">
-              <label class="lab" for="f-partnerSigName">Partner's full name (as signature)<span class="req" aria-hidden="true">*</span></label>
-              <input id="f-partnerSigName" name="partnerSigName" placeholder="Partner's full name" aria-required="true" aria-describedby="e-partnerSigName">
-              <div class="err-msg" id="e-partnerSigName" role="alert">Required.</div>
-            </div>
-
-            <div class="field full">
-              <label class="lab">Upload partner's signature<span class="req" aria-hidden="true">*</span></label>
-              <div class="upload" data-upload="partnerSignature" role="group" aria-labelledby="ul-partnerSignature">
-                <div class="u-info">
-                  <div class="u-label" id="ul-partnerSignature">Signature image</div>
-                  <div class="u-sub">A clear photo or scan of the partner's signature on white paper. JPG or PNG.</div>
-                  <div class="u-file" aria-live="polite"></div>
-                  <div class="u-err" role="alert">Required. 4 MB max, JPG or PNG only.</div>
-                </div>
-                <div class="u-actions">
-                  <button type="button" class="u-clear" aria-label="Remove partner's signature">&#x2715;</button>
-                  <label class="u-pick">Choose file<input type="file" accept="image/jpeg,image/png" aria-label="Upload partner's signature image"></label>
-                </div>
-              </div>
-            </div>
-
           </div>
         </section>
 
-        <!-- ===== STEP 6: REVIEW & SUBMIT ===== -->
-        <section class="step hidden" data-step="5" aria-labelledby="cardTitle">
+        <!-- ===== STEP 5: REVIEW & SUBMIT ===== -->
+        <section class="step hidden" data-step="4" aria-labelledby="cardTitle">
           <p class="step-hint">Check everything before you submit. Tap <strong>Edit</strong> on any section to make changes.</p>
           <div id="review" aria-live="polite"></div>
         </section>
@@ -1195,16 +963,15 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* ================================================================
    * CONSTANTS
    * ================================================================ */
-  var STEPS = 6;
+  var STEPS = 5;
   var MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB (keeps base64 body under Netlify's 6 MB limit)
   var pendingUploadRef = null; // set when a record is saved but its uploads still need to finish/retry
   var pendingFailedKeys = null; // which doc keys still need (re)uploading — avoids re-sending already-successful files
 
   var STEP_NAMES = [
-    "Personal & joint partner details",
-    "Contact & next of kin",
-    "Identification & documents",
-    "Financial & investment",
+    "Estate details",
+    "Signatories",
+    "Documents",
     "Declarations & signature",
     "Review & submit"
   ];
@@ -1279,148 +1046,33 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * INITIALISATION
    * ================================================================ */
 
-  // Populate DOB day/year dropdowns and sync hidden input
-  (function() {
-    var dayEl   = document.getElementById("f-dob-day");
-    var monthEl = document.getElementById("f-dob-month");
-    var yearEl  = document.getElementById("f-dob-year");
-    var hidden  = document.getElementById("f-dob");
-    for (var d = 1; d <= 31; d++) {
-      var o = document.createElement("option");
-      o.value = String(d).padStart(2, "0");
-      o.textContent = d;
-      dayEl.appendChild(o);
-    }
-    var curYear = new Date().getFullYear();
-    for (var y = curYear - 18; y >= curYear - 100; y--) {
-      var o2 = document.createElement("option");
-      o2.value = y;
-      o2.textContent = y;
-      yearEl.appendChild(o2);
-    }
-    function syncDob() {
-      var d2 = dayEl.value, m = monthEl.value, y2 = yearEl.value;
-      hidden.value = (d2 && m && y2) ? (y2 + "-" + m + "-" + d2) : "";
-    }
-    dayEl.addEventListener("change", syncDob);
-    monthEl.addEventListener("change", syncDob);
-    yearEl.addEventListener("change", syncDob);
-  })();
-
-  // Custom Day/Month/Year pickers for ID issue & expiry dates.
-  // Writes YYYY-MM-DD to the hidden input, matching the old native date field.
-  (function() {
-    function initDatePicker(prefix, yearStart, yearEnd) {
-      var dayEl   = document.getElementById(prefix + "-day");
-      var monthEl = document.getElementById(prefix + "-month");
-      var yearEl  = document.getElementById(prefix + "-year");
-      var hidden  = document.getElementById(prefix);
-      if (!dayEl || !monthEl || !yearEl || !hidden) return;
-      for (var d = 1; d <= 31; d++) {
+  // Clone principal's country list into signatory selects
+  (function () {
+    var principalNatSel = document.getElementById("f-principalNationality");
+    ["f-sig1Nationality", "f-sig2Nationality"].forEach(function (id) {
+      var sel = document.getElementById(id);
+      if (!sel || !principalNatSel) return;
+      Array.prototype.forEach.call(principalNatSel.options, function (opt) {
         var o = document.createElement("option");
-        o.value = String(d).padStart(2, "0");
-        o.textContent = d;
-        dayEl.appendChild(o);
-      }
-      var step = yearStart <= yearEnd ? 1 : -1;
-      for (var y = yearStart; step > 0 ? y <= yearEnd : y >= yearEnd; y += step) {
-        var o2 = document.createElement("option");
-        o2.value = y;
-        o2.textContent = y;
-        yearEl.appendChild(o2);
-      }
-      function sync() {
-        var dd = dayEl.value, mm = monthEl.value, yy = yearEl.value;
-        hidden.value = (dd && mm && yy) ? (yy + "-" + mm + "-" + dd) : "";
-      }
-      dayEl.addEventListener("change", sync);
-      monthEl.addEventListener("change", sync);
-      yearEl.addEventListener("change", sync);
-    }
-    var cur = new Date().getFullYear();
-    // Issue date: recent years first (this year back 40 years)
-    initDatePicker("f-idIssue", cur, cur - 40);
-    // Expiry date: near future first (this year forward 30 years)
-    initDatePicker("f-idExpiry", cur, cur + 30);
-    // Partner date of birth: this year back 18, then further back to 100
-    initDatePicker("f-partnerDob", cur - 18, cur - 100);
-    // Partner ID expiry: near future first
-    initDatePicker("f-partnerIdExpiry", cur, cur + 30);
-  })();
-
-  // Populate states dropdown
-  var stateSel = document.getElementById("f-stateOfOrigin");
-  NIGERIAN_STATES.forEach(function (s) {
-    var o = document.createElement("option");
-    o.textContent = s;
-    o.value = s;
-    stateSel.appendChild(o);
-  });
-
-  // Populate LGA dropdown based on selected state
-  var lgaSel = document.getElementById("f-lga");
-  stateSel.addEventListener("change", function () {
-    var state = this.value;
-    lgaSel.innerHTML = '<option value="">Select LGA</option>';
-    if (state && LGA_BY_STATE[state]) {
-      LGA_BY_STATE[state].forEach(function (lga) {
-        var o = document.createElement("option");
-        o.value = lga;
-        o.textContent = lga;
-        lgaSel.appendChild(o);
+        o.value = opt.value;
+        o.textContent = opt.textContent;
+        if (opt.selected) o.selected = true;
+        sel.appendChild(o);
       });
-      lgaSel.disabled = false;
-    } else {
-      lgaSel.innerHTML = '<option value="">Select state first</option>';
-      lgaSel.disabled = true;
-    }
-  });
-
-  // Populate partner's nationality (clone primary's country list), state & LGA
-  var partnerNatSel = document.getElementById("f-partnerNationality");
-  var primaryNatSel = document.getElementById("f-nationality");
-  if (partnerNatSel && primaryNatSel) {
-    Array.prototype.forEach.call(primaryNatSel.options, function (opt) {
-      if (opt.value === "") return;
-      var o = document.createElement("option");
-      o.value = opt.value;
-      o.textContent = opt.textContent;
-      if (opt.selected) o.selected = true;
-      partnerNatSel.appendChild(o);
     });
-  }
+  })();
 
-  var partnerStateSel = document.getElementById("f-partnerStateOfOrigin");
-  NIGERIAN_STATES.forEach(function (s) {
-    var o = document.createElement("option");
-    o.textContent = s;
-    o.value = s;
-    partnerStateSel.appendChild(o);
+  // Populate state-of-origin dropdowns (flat list, no LGA cascade)
+  ["f-principalStateOfOrigin", "f-sig1StateOfOrigin", "f-sig2StateOfOrigin"].forEach(function (id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    NIGERIAN_STATES.forEach(function (s) {
+      var o = document.createElement("option");
+      o.textContent = s;
+      o.value = s;
+      sel.appendChild(o);
+    });
   });
-
-  var partnerLgaSel = document.getElementById("f-partnerLga");
-  partnerStateSel.addEventListener("change", function () {
-    var state = this.value;
-    partnerLgaSel.innerHTML = '<option value="">Select LGA</option>';
-    if (state && LGA_BY_STATE[state]) {
-      LGA_BY_STATE[state].forEach(function (lga) {
-        var o = document.createElement("option");
-        o.value = lga;
-        o.textContent = lga;
-        partnerLgaSel.appendChild(o);
-      });
-      partnerLgaSel.disabled = false;
-    } else {
-      partnerLgaSel.innerHTML = '<option value="">Select state first</option>';
-      partnerLgaSel.disabled = true;
-    }
-  });
-
-  // Set date constraints for ID fields
-  var today = new Date().toISOString().split("T")[0];
-  document.getElementById("f-idIssue").setAttribute("max", today);
-  document.getElementById("f-idExpiry").setAttribute("min", today);
-  document.getElementById("f-partnerIdExpiry").setAttribute("min", today);
 
   // Set today's date on signature field
   document.getElementById("f-sigDate").value =
@@ -1550,15 +1202,10 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * CONDITIONAL FIELD VISIBILITY
    * ================================================================ */
   function syncConditionals() {
-    // Title → Other
-    toggleEl("cond-title", val("title") === "Other");
+    // Mandate rule → Two or more
+    toggleEl("cond-mandateSpecify", val("mandateRule") === "Two or more");
     // PEP details
     toggleEl("cond-pep", val("pep") === "Yes");
-    toggleEl("cond-pepAssociate", val("pepAssociate") === "Yes");
-    // Residence permit (non-Nigerian)
-    var nat = (val("nationality") || "").toLowerCase().trim();
-    var isForeign = nat !== "" && nat !== "nigerian";
-    toggleEl("cond-permit", isForeign);
   }
 
   function toggleEl(id, show) {
@@ -1619,26 +1266,21 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   var RULES = {
     0: [
-      ["surname","req"],["firstName","req"],["title","req"],
-      ["sex","req"],["dob","dob"],["nationality","req"],["maritalStatus","req"],
-      ["stateOfOrigin","req"],["lga","req"],["motherMaiden","req"],["bvn","11"],["nin","nin"],
-      ["partnerName","req"],["partnerRelationship","req"],["partnerDob","dob"],
-      ["partnerNationality","req"],["partnerStateOfOrigin","req"],["partnerLga","req"],
-      ["partnerPhone","phone"],["partnerEmail","email"],["partnerResidentialAddress","req"],
-      ["partnerIdType","req"],["partnerIdNumber","req"],["partnerIdExpiry","req"]
+      ["estateName","req"],["estateAddress","req"],["tin","req"],
+      ["bankName","req"],["bankAddress","req"],["accountNumber","10"],
+      ["mandateRule","radio"]
     ],
     1: [
-      ["residentialAddress","req"],["email","email"],["mobile","phone"],
-      ["nokName","req"],["nokRelationship","req"],["nokEmail","email"],
-      ["nokPhone","phone"],["nokAddress","req"]
+      ["principalSurname","req"],["principalFirstName","req"],["principalBvn","11"],
+      ["principalPhone","phone"],["principalEmail","email"],["principalNationality","req"],
+      ["principalStateOfOrigin","req"],["principalAddress","req"],["principalIdType","req"],
+      ["principalIdNumber","req"],["principalEmployerName","req"],["principalEmployerAddress","req"],
+      ["sig1Surname","req"],["sig1FirstName","req"],["sig1Bvn","11"],
+      ["sig1Phone","phone"],["sig1Email","email"],["sig1Nationality","req"],
+      ["sig1StateOfOrigin","req"],["sig1Address","req"],["sig1IdType","req"],["sig1IdNumber","req"]
     ],
-    2: [["idType","req"],["idNumber","req"]],
-    3: [
-      ["occupation","req"],["natureOfBusiness","req"],["employer","req"],["income","req"],
-      ["bankName","req"],["bankBranch","req"],["bankAccountNumber","10"],["bankAccountName","req"],
-      ["settlementMode","radio"]
-    ],
-    4: [["pep","radio"],["pepAssociate","radio"],["instructionChannel","radio"],["sigName","req"],["partnerSigName","req"]]
+    2: [],
+    3: [["pep","radio"],["sigName","req"]]
   };
 
   // Pure validity check for a single field — no DOM side effects
@@ -1676,16 +1318,17 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     }
     if (s === 2) {
-      if (!uploads.passportPhoto || !uploads.validId || !uploads.proofOfAddress) return false;
-      if (!uploads.partnerPassportPhoto || !uploads.partnerValidId) return false;
-      var permit = document.getElementById("cond-permit");
-      if (permit.classList.contains("show") && !uploads.residencePermit) return false;
+      var required = ["letterOfAdministration","deathCertificate","administratorResolution",
+        "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
+      for (var j = 0; j < required.length; j++) {
+        if (!uploads[required[j]]) return false;
+      }
     }
-    if (s === 4) {
+    if (s === 3) {
       var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
         .every(function (n) { return form.elements[n].checked; });
       if (!allDecl) return false;
-      if (!uploads.signature || !uploads.partnerSignature) return false;
+      if (!uploads.signature) return false;
     }
     return true;
   }
@@ -1716,37 +1359,30 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     // Step 2: required file uploads
     if (s === 2) {
-      ["passportPhoto", "validId", "proofOfAddress", "partnerPassportPhoto", "partnerValidId"].forEach(function (k) {
+      ["letterOfAdministration","deathCertificate","administratorResolution",
+       "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"].forEach(function (k) {
         var w = document.querySelector('[data-upload="' + k + '"]');
         var has = !!uploads[k];
         w.classList.toggle("has-error", !has);
         if (!has) ok = false;
       });
-      var permit = document.getElementById("cond-permit");
-      if (permit.classList.contains("show")) {
-        var hasPermit = !!uploads.residencePermit;
-        permit.classList.toggle("has-error", !hasPermit);
-        if (!hasPermit) ok = false;
-      }
     }
 
-    // Step 4: all declarations, signatures
-    if (s === 4) {
+    // Step 3: all declarations, signature
+    if (s === 3) {
       var allDecl = ["declTrue","declTerms","declIndemnity","declRisk","declPrivacy"]
         .every(function (n) { return form.elements[n].checked; });
       var declErr = document.getElementById("decl-err");
-      declErr.style.display = allDecl ? "none" : "block";
+      if (declErr) declErr.style.display = allDecl ? "none" : "block";
       if (!allDecl) ok = false;
 
-      ["signature", "partnerSignature"].forEach(function (k) {
-        var sigWidget = document.querySelector('[data-upload="' + k + '"]');
-        if (!uploads[k]) {
-          if (sigWidget) sigWidget.classList.add("has-error");
-          ok = false;
-        } else {
-          if (sigWidget) sigWidget.classList.remove("has-error");
-        }
-      });
+      var sigWidget = document.querySelector('[data-upload="signature"]');
+      if (!uploads.signature) {
+        if (sigWidget) sigWidget.classList.add("has-error");
+        ok = false;
+      } else {
+        if (sigWidget) sigWidget.classList.remove("has-error");
+      }
     }
 
     return ok;
@@ -1852,35 +1488,32 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * REVIEW BUILDER
    * ================================================================ */
   var REVIEW_MAP = [
-    ["Personal & joint partner details", 0, [
-      ["Surname","surname"],["First name","firstName"],["Middle name","middleName"],
-      ["Title","title"],["Gender","sex"],["Date of birth","dob"],["Nationality","nationality"],
-      ["Marital status","maritalStatus"],["State of origin","stateOfOrigin"],["LGA","lga"],
-      ["Maiden name","maidenName"],["Mother's maiden name","motherMaiden"],
-      ["BVN","bvn"],["NIN","nin"],["TIN","taxId"],["Anchoria Tag","anchoriaTag"],
-      ["Partner's name","partnerName"],["Relationship to primary holder","partnerRelationship"],
-      ["Partner's date of birth","partnerDob"],["Partner's nationality","partnerNationality"],
-      ["Partner's state of origin","partnerStateOfOrigin"],["Partner's LGA","partnerLga"],
-      ["Partner's phone","partnerPhone"],["Partner's email","partnerEmail"],
-      ["Partner's postal address","partnerPostalAddress"],["Partner's residential address","partnerResidentialAddress"],
-      ["Partner's ID type","partnerIdType"],["Partner's ID number","partnerIdNumber"],["Partner's ID expiry","partnerIdExpiry"],
-      ["Mandate signing instruction","partnerMandateInstruction"]
+    ["Estate details", 0, [
+      ["Estate name","estateName"],["Estate address","estateAddress"],["TIN","tin"],
+      ["Bank name","bankName"],["Bank address","bankAddress"],["Account number","accountNumber"],
+      ["Mandate rule","mandateRule"],["Mandate detail","mandateSpecify"]
     ]],
-    ["Contact & next of kin", 1, [
-      ["Residential address","residentialAddress"],["Mailing address","mailingAddress"],
-      ["Email","email"],["Mobile","mobile"],["Mobile 2","mobile2"],
-      ["NOK name","nokName"],["NOK relationship","nokRelationship"],
-      ["NOK email","nokEmail"],["NOK phone","nokPhone"],["NOK address","nokAddress"]
+    ["Principal contact person", 1, [
+      ["Surname","principalSurname"],["First name","principalFirstName"],["Middle name","principalMiddleName"],
+      ["BVN","principalBvn"],["Phone","principalPhone"],["Email","principalEmail"],
+      ["Nationality","principalNationality"],["State of origin","principalStateOfOrigin"],
+      ["Class of signatory","principalClass"],["Address","principalAddress"],
+      ["ID type","principalIdType"],["ID number","principalIdNumber"],
+      ["Employer","principalEmployerName"],["Employer's address","principalEmployerAddress"]
     ]],
-    ["Identification", 2, [
-      ["ID type","idType"],["ID number","idNumber"],["ID issue date","idIssue"],["ID expiry date","idExpiry"]
+    ["Authorized signatory 1", 1, [
+      ["Surname","sig1Surname"],["First name","sig1FirstName"],["Middle name","sig1MiddleName"],
+      ["BVN","sig1Bvn"],["Phone","sig1Phone"],["Email","sig1Email"],
+      ["Nationality","sig1Nationality"],["State of origin","sig1StateOfOrigin"],
+      ["Class of signatory","sig1Class"],["Address","sig1Address"],
+      ["ID type","sig1IdType"],["ID number","sig1IdNumber"]
     ]],
-    ["Financial & investment", 3, [
-      ["Occupation","occupation"],["Nature of business","natureOfBusiness"],["Employer","employer"],
-      ["Annual income","income"],["Bank","bankName"],["Branch","bankBranch"],
-      ["Account number","bankAccountNumber"],["Account name","bankAccountName"],
-      ["Settlement method","settlementMode"],
-      ["CSCS number","cscsNumber"],["CHN","chn"]
+    ["Authorized signatory 2 (optional)", 1, [
+      ["Surname","sig2Surname"],["First name","sig2FirstName"],["Middle name","sig2MiddleName"],
+      ["BVN","sig2Bvn"],["Phone","sig2Phone"],["Email","sig2Email"],
+      ["Nationality","sig2Nationality"],["State of origin","sig2StateOfOrigin"],
+      ["Class of signatory","sig2Class"],["Address","sig2Address"],
+      ["ID type","sig2IdType"],["ID number","sig2IdNumber"]
     ]]
   ];
 
@@ -1893,30 +1526,25 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         var v = val(row[1]) || "—";
         html += rrow(row[0], v);
       });
-      if (g[1] === 3) {
-        html += rrow("Mode of communication", checks("modeOfComm").join(", ") || "—");
-      }
       html += '</div></div>';
     });
 
     // Documents
     html += '<div class="review-group"><div class="review-head">Documents'
       + '<button type="button" data-goto="2" aria-label="Edit documents">Edit</button></div><div class="review-body">';
-    [["Passport photo","passportPhoto"],["Valid ID","validId"],
-     ["Proof of address","proofOfAddress"],["Residence permit","residencePermit"],
-     ["Partner's passport photo","partnerPassportPhoto"],["Partner's valid ID","partnerValidId"]].forEach(function (d) {
+    [["Letter of administration","letterOfAdministration"],["Death certificate","deathCertificate"],
+     ["Administrator resolution","administratorResolution"],["Proof of address","utilityBill"],
+     ["Principal's passport photo","principalPassportPhoto"],["Principal's valid ID","principalValidId"],
+     ["Signatory 1's passport photo","sig1PassportPhoto"]].forEach(function (d) {
       html += rrow(d[0], uploads[d[1]] ? uploads[d[1]].name : "—");
     });
     html += '</div></div>';
 
     // Declarations & signature
     html += '<div class="review-group"><div class="review-head">Declarations & signature'
-      + '<button type="button" data-goto="4" aria-label="Edit declarations and signature">Edit</button></div><div class="review-body">';
-    html += rrow("PEP (primary holder)", val("pep") || "—");
-    html += rrow("PEP (relatives/associates)", val("pepAssociate") || "—");
-    html += rrow("Instruction channel", val("instructionChannel") || "—");
-    html += rrow("Signed by (primary)", val("sigName") || "—");
-    html += rrow("Signed by (partner)", val("partnerSigName") || "—");
+      + '<button type="button" data-goto="3" aria-label="Edit declarations and signature">Edit</button></div><div class="review-body">';
+    html += rrow("PEP", val("pep") || "—");
+    html += rrow("Signed by", val("sigName") || "—");
     html += rrow("Date", document.getElementById("f-sigDate").value);
     html += '</div></div>';
 
@@ -1946,26 +1574,22 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * ================================================================ */
   function collectFields() {
     var d = {};
-    // Primary holder — personal
-    ["surname","firstName","middleName","title","titleOther","sex","dob",
-     "nationality","maritalStatus","stateOfOrigin","lga","maidenName","motherMaiden",
-     "bvn","nin","taxId","anchoriaTag"].forEach(function(n){ d[n] = val(n); });
-    // Joint partner — personal & ID
-    ["partnerName","partnerRelationship","partnerDob","partnerNationality",
-     "partnerStateOfOrigin","partnerLga","partnerPhone","partnerEmail",
-     "partnerPostalAddress","partnerResidentialAddress","partnerMandateInstruction",
-     "partnerIdType","partnerIdNumber","partnerIdExpiry","partnerSigName"].forEach(function(n){ d[n] = val(n); });
-    // Contact
-    ["residentialAddress","mailingAddress","email","mobile","mobile2",
-     "nokName","nokRelationship","nokEmail","nokPhone","nokAddress"].forEach(function(n){ d[n] = val(n); });
-    // ID
-    ["idType","idNumber","idIssue","idExpiry"].forEach(function(n){ d[n] = val(n); });
-    // Financial
-    ["occupation","natureOfBusiness","employer","income",
-     "bankName","bankBranch","bankAccountNumber","bankAccountName","settlementMode",
-     "cscsNumber","chn"].forEach(function(n){ d[n] = val(n); });
-    // Arrays
-    d.modeOfComm = checks("modeOfComm");
+    // Estate details
+    ["estateName","estateAddress","tin","bankName","bankAddress","accountNumber",
+     "mandateRule","mandateSpecify"].forEach(function(n){ d[n] = val(n); });
+    // Principal contact person
+    ["principalSurname","principalFirstName","principalMiddleName","principalBvn",
+     "principalPhone","principalEmail","principalNationality","principalStateOfOrigin",
+     "principalClass","principalAddress","principalIdType","principalIdNumber",
+     "principalEmployerName","principalEmployerAddress"].forEach(function(n){ d[n] = val(n); });
+    // Authorized signatory 1
+    ["sig1Surname","sig1FirstName","sig1MiddleName","sig1Bvn","sig1Phone","sig1Email",
+     "sig1Nationality","sig1StateOfOrigin","sig1Class","sig1Address",
+     "sig1IdType","sig1IdNumber"].forEach(function(n){ d[n] = val(n); });
+    // Authorized signatory 2 (optional)
+    ["sig2Surname","sig2FirstName","sig2MiddleName","sig2Bvn","sig2Phone","sig2Email",
+     "sig2Nationality","sig2StateOfOrigin","sig2Class","sig2Address",
+     "sig2IdType","sig2IdNumber"].forEach(function(n){ d[n] = val(n); });
     // Declarations
     d.declarations = {
       accurateAndTrue: form.elements.declTrue.checked,
@@ -1976,9 +1600,6 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     };
     d.pep = val("pep");
     d.pepDetails = val("pepDetails");
-    d.pepAssociate = val("pepAssociate");
-    d.pepAssociateDetails = val("pepAssociateDetails");
-    d.instructionChannel = val("instructionChannel");
     return d;
   }
 
@@ -1995,7 +1616,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* Build the complete backend-ready payload (async — sig as base64, docs as metadata only) */
   function buildPayload(ref) {
     var fields = collectFields();
-    var docKeys = ["passportPhoto","validId","proofOfAddress","residencePermit","partnerPassportPhoto","partnerValidId"];
+    var docKeys = ["letterOfAdministration","deathCertificate","administratorResolution",
+      "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto"];
     var docs = [];
 
     docKeys.forEach(function (k) {
@@ -2134,7 +1756,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   /* Upload documents one-by-one, verifying each and retrying once.
      Returns a promise resolving to the list of keys that still failed. */
   function uploadDocuments(ref, onlyKeys) {
-    var docKeys = onlyKeys || ["passportPhoto","validId","proofOfAddress","residencePermit","partnerPassportPhoto","partnerValidId","signature","partnerSignature"];
+    var docKeys = onlyKeys || ["letterOfAdministration","deathCertificate","administratorResolution",
+      "utilityBill","principalPassportPhoto","principalValidId","sig1PassportPhoto","signature"];
     var queue = [];
     docKeys.forEach(function (k) {
       if (uploads[k] && uploads[k].file) {
