@@ -198,6 +198,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 .p-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .p-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--black);background:var(--gold);border-radius:5px;padding:2px 7px;}
 .p-acct{font-size:11.5px;color:var(--muted);margin-top:3px;}
+.p-min{font-size:11px;color:var(--gold-2);margin-top:4px;font-weight:600;}
 .p-amt{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);}
 .product.sel .p-amt{display:block;}
 .p-words{font-size:11.5px;color:var(--gold-2);font-style:italic;margin-top:6px;min-height:14px;}
@@ -340,8 +341,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       <li data-step="5" role="listitem"><span class="dot" aria-hidden="true">6</span><span class="t-label">Review &amp; submit</span></li>
     </ul>
     <div class="trust">
-      <strong>Anchoria Securities Limited</strong><br>
-      SEC-registered and NGX-licensed. Your data is encrypted in transit and processed only to open and manage your account, in accordance with the Nigeria Data Protection Act (NDPA) 2023.
+      <strong>Anchoria Capital Group</strong><br>
+      Registered and regulated by the Securities and Exchange Commission (SEC), Nigeria. Your data is encrypted in transit and processed only to open and manage your account, in accordance with the Nigeria Data Protection Act (NDPA) 2023.
     </div>
   </aside>
 
@@ -853,6 +854,11 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
               <button type="button" id="investmentSelectAll" class="sel-all-btn">Select all exchanges</button>
             </div>
 
+            <hr class="rule">
+            <div class="subhead">Fund &amp; product investment (optional)</div>
+            <div class="note">Select any Anchoria fund(s) or products you'd like to invest in now. You can also open your account first and fund it later.</div>
+            <div id="products"></div>
+
             <div class="field full">
               <label class="lab" for="f-referralSource">How did you hear about us?</label>
               <select id="f-referralSource" name="referralSource">
@@ -1101,11 +1107,67 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
   var PRODUCTS = [
     {
+      key: "moneyMarket",
+      name: "Anchoria Money Market Fund",
+      nominee: "UBA Nom - FBN Quest Trustees/Anchoria Money Market Fund",
+      acct: "1022033131",
+      bank: "UBA",
+      currency: "NGN",
+      min: 5000
+    },
+    {
+      key: "fixedIncome",
+      name: "Anchoria Fixed Income Fund",
+      nominee: "UBA Nom - United Capital Trustees/Anchoria Fixed Income Fund",
+      acct: "1022033148",
+      bank: "UBA",
+      currency: "NGN",
+      min: 5000
+    },
+    {
+      key: "equity",
+      name: "Anchoria Equity Fund",
+      nominee: "UBA Nom - United Capital Trustees/Anchoria Equity Fund",
+      acct: "1022033155",
+      bank: "UBA",
+      currency: "NGN",
+      min: 5000
+    },
+    {
+      key: "fixedTermNGN",
+      name: "Anchoria Fixed Term Investment (NGN)",
+      nominee: "UBA Nom - AnchoriaAml/Fixed Term Investment (NGN)",
+      acct: "1024539424",
+      bank: "UBA",
+      currency: "NGN",
+      min: 100000
+    },
+    {
+      key: "fixedTermUSD",
+      name: "Anchoria Fixed Term Investment (USD)",
+      nominee: "UBA Nom - AnchoriaAml/Fixed Term Investment (USD)",
+      acct: "1024539431",
+      bank: "UBA",
+      currency: "USD",
+      min: 1000
+    },
+    {
+      key: "euroBond",
+      name: "Anchoria Euro Bond Linked Note (USD)",
+      nominee: "Stanbic Nominee / Anchoria Euro Bond Linked Note (USD)",
+      acct: "0039434624",
+      bank: "Stanbic IBTC",
+      currency: "USD",
+      min: 10000
+    },
+    {
       key: "securities",
       name: "Stockbroking Account",
       nominee: "Anchoria Securities Ltd",
       acct: "1305430510",
-      bank: "Providus"
+      bank: "Providus",
+      currency: "NGN",
+      min: null
     }
   ];
 
@@ -1238,29 +1300,46 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   function buildProductCards() {
     var pc = document.getElementById("products");
     var html = "";
+    var prodByKey = {};
     PRODUCTS.forEach(function (p) {
+      prodByKey[p.key] = p;
+      var symbol = p.currency === "USD" ? "$" : "₦";
+      var minNote = p.min ? '<div class="p-min">Minimum investment: ' + symbol + Number(p.min).toLocaleString("en-NG") + '</div>' : "";
       html += '<div class="product" data-prod="' + p.key + '">'
         + '<div class="p-top">'
         + '<input type="checkbox" id="psel-' + p.key + '" data-psel="' + p.key + '" aria-label="Select ' + p.name + '">'
         + '<div style="flex:1">'
         + '<div class="p-name">' + p.name + (p.badge ? '<span class="p-badge">' + p.badge + '</span>' : '') + '</div>'
         + '<div class="p-acct">Pay to: ' + p.nominee + ' &middot; ' + p.bank + ' &middot; ' + p.acct + '</div>'
+        + minNote
         + '</div></div>'
         + '<div class="p-amt">'
-        + '<label class="lab" for="pamt-' + p.key + '">Amount to invest (₦)</label>'
+        + '<label class="lab" for="pamt-' + p.key + '">Amount to invest (' + symbol + ')</label>'
         + '<input type="text" id="pamt-' + p.key + '" inputmode="numeric" data-pamt="' + p.key + '" placeholder="e.g. 500,000" aria-describedby="pwords-' + p.key + '">'
         + '<div class="p-words" id="pwords-' + p.key + '" data-pwords="' + p.key + '" aria-live="polite"></div>'
+        + '<div class="p-err" id="perr-' + p.key + '" role="alert" style="display:none;color:var(--err);font-size:11.5px;margin-top:4px;"></div>'
         + '</div></div>';
     });
     pc.innerHTML = html;
 
-    // Amount-to-words + formatting
+    // Amount-to-words + formatting + minimum-amount validation
     pc.addEventListener("input", function (e) {
       if (e.target.dataset.pamt) {
+        var key = e.target.dataset.pamt;
+        var p = prodByKey[key];
         var raw = e.target.value.replace(/[^0-9]/g, "");
         e.target.value = raw ? Number(raw).toLocaleString("en-NG") : "";
-        var words = document.querySelector('[data-pwords="' + e.target.dataset.pamt + '"]');
-        if (words) words.textContent = inWords(raw);
+        var words = document.querySelector('[data-pwords="' + key + '"]');
+        if (words) words.textContent = inWords(raw, p.currency);
+        var err = document.getElementById("perr-" + key);
+        if (err) {
+          if (p.min && raw && Number(raw) < p.min) {
+            err.textContent = "Minimum investment is " + (p.currency === "USD" ? "$" : "₦") + Number(p.min).toLocaleString("en-NG") + ".";
+            err.style.display = "block";
+          } else {
+            err.style.display = "none";
+          }
+        }
       }
     });
 
@@ -1271,11 +1350,12 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       }
     });
   }
+  buildProductCards();
 
   /* ================================================================
    * AMOUNT-TO-WORDS
    * ================================================================ */
-  function inWords(n) {
+  function inWords(n, currency) {
     n = Math.floor(Number(n) || 0);
     if (n <= 0) return "";
     var a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
@@ -1298,7 +1378,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       if (q) { w += hundreds(q) + " " + u[0] + " "; rem %= u[1]; }
     });
     if (rem) w += hundreds(rem) + " ";
-    return w.trim() + " Naira Only";
+    return w.trim() + (currency === "USD" ? " Dollars Only" : " Naira Only");
   }
 
   /* ================================================================
@@ -1542,6 +1622,26 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       var sofField = form.querySelector('[data-check="sourceOfFunds"]').closest(".field");
       sofField.classList.toggle("has-error", !sofOk);
       if (!sofOk) ok = false;
+
+      // Any selected fund/product must have a valid amount meeting its minimum
+      var prodByKey = {};
+      PRODUCTS.forEach(function (p) { prodByKey[p.key] = p; });
+      document.querySelectorAll(".product.sel").forEach(function (card) {
+        var key = card.dataset.prod;
+        var p = prodByKey[key];
+        var raw = (card.querySelector("[data-pamt]").value || "").replace(/[^0-9]/g, "");
+        var err = document.getElementById("perr-" + key);
+        var invalid = !raw || (p.min && Number(raw) < p.min);
+        if (invalid) {
+          ok = false;
+          if (err) {
+            err.textContent = !raw
+              ? "Enter an amount to invest, or untick this product."
+              : "Minimum investment is " + (p.currency === "USD" ? "$" : "₦") + Number(p.min).toLocaleString("en-NG") + ".";
+            err.style.display = "block";
+          }
+        }
+      });
     }
 
     // Step 4: all declarations, signature
@@ -1702,6 +1802,16 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
         html += rrow("Source of funds", checks("sourceOfFunds").join(", ") || "—");
         html += rrow("Investor category", checks("investorCategory").join(", ") || "—");
         html += rrow("Investment option", checks("investmentOption").join(", ") || "—");
+        var prodByKeyR = {};
+        PRODUCTS.forEach(function (p) { prodByKeyR[p.key] = p; });
+        var prodLines = [];
+        document.querySelectorAll(".product.sel").forEach(function (card) {
+          var key = card.dataset.prod, p = prodByKeyR[key];
+          var raw = (card.querySelector("[data-pamt]").value || "").replace(/[^0-9]/g, "");
+          var symbol = p.currency === "USD" ? "$" : "₦";
+          prodLines.push(p.name + ": " + symbol + (raw ? Number(raw).toLocaleString("en-NG") : "0"));
+        });
+        html += rrow("Funds/products selected", prodLines.length ? prodLines.join("; ") : "None (account only)");
       }
       html += '</div></div>';
     });
@@ -1768,10 +1878,15 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     d.investorCategory = checks("investorCategory");
     d.investmentOption = checks("investmentOption");
     // Products
+    var prodByKeyC = {};
+    PRODUCTS.forEach(function (pr) { prodByKeyC[pr.key] = pr; });
     d.products = [];
     document.querySelectorAll(".product.sel").forEach(function (p) {
+      var meta = prodByKeyC[p.dataset.prod] || {};
       d.products.push({
         product: p.dataset.prod,
+        name: meta.name || p.dataset.prod,
+        currency: meta.currency || "NGN",
         amount: (p.querySelector("[data-pamt]").value || "").replace(/[^0-9]/g, "")
       });
     });

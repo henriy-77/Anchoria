@@ -94,7 +94,11 @@ exports.handler = async (event) => {
 
   const products = Array.isArray(payload.products)
     ? payload.products
-        .map((p) => `${p.product}: ₦${Number(p.amount || 0).toLocaleString("en-NG")}`)
+        .map((p) => {
+          const symbol = p.currency === "USD" ? "$" : "₦";
+          const label  = p.name || p.product;
+          return `${label}: ${symbol}${Number(p.amount || 0).toLocaleString("en-NG")}`;
+        })
         .join(", ")
     : "";
 
