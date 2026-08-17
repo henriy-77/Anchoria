@@ -89,6 +89,8 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 .radio-opt input{-webkit-appearance:auto;appearance:auto;width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--gold-2);}
 .radio-opt:has(input:checked){border-color:var(--gold);background:var(--gold-soft);}
 .check-group{display:flex;flex-direction:column;gap:0;margin-top:2px;}
+.conditional{display:none;}
+.conditional.show{display:block;}
 .check{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line);font-size:13px;color:#3B362E;cursor:pointer;line-height:1.4;}
 .check:first-child{border-top:none;}
 .check input[type=checkbox]{-webkit-appearance:auto;appearance:auto;width:16px;height:16px;margin-top:3px;flex-shrink:0;padding:0;border:none;border-radius:0;background:transparent;accent-color:var(--gold-2);cursor:pointer;}
@@ -175,11 +177,12 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
     <p class="lede">Open your corporate Anchoria account online. No paperwork — takes about 15 minutes.</p>
     <ul class="tracker" id="tracker">
       <li data-step="0"><span class="dot">1</span><span class="t-label">Entity details</span></li>
-      <li data-step="1"><span class="dot">2</span><span class="t-label">Directors</span></li>
-      <li data-step="2"><span class="dot">3</span><span class="t-label">Signatories</span></li>
-      <li data-step="3"><span class="dot">4</span><span class="t-label">Financial info</span></li>
-      <li data-step="4"><span class="dot">5</span><span class="t-label">Documents</span></li>
-      <li data-step="5"><span class="dot">6</span><span class="t-label">Declarations</span></li>
+      <li data-step="1"><span class="dot">2</span><span class="t-label">Directors &amp; UBOs</span></li>
+      <li data-step="2"><span class="dot">3</span><span class="t-label">Account signatories</span></li>
+      <li data-step="3"><span class="dot">4</span><span class="t-label">Mandate &amp; signatories</span></li>
+      <li data-step="4"><span class="dot">5</span><span class="t-label">Financial info</span></li>
+      <li data-step="5"><span class="dot">6</span><span class="t-label">Documents</span></li>
+      <li data-step="6"><span class="dot">7</span><span class="t-label">Declarations</span></li>
     </ul>
     <div class="trust">
       <strong>Anchoria Capital Group</strong><br>
@@ -196,7 +199,7 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
       </a>
       <div class="pbar"><div class="pfill" id="pfill"></div></div>
       <div class="pmeta">
-        <span id="pstep">Step 1 of 6</span>
+        <span id="pstep">Step 1 of 7</span>
         <span id="pname">Entity details</span>
       </div>
     </div>
@@ -207,7 +210,7 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 
     <form class="card" id="mainCard" novalidate>
       <div class="card-head">
-        <div class="ey" id="eyebrow">Step 1 of 6</div>
+        <div class="ey" id="eyebrow">Step 1 of 7</div>
         <h1 id="cardTitle">Entity details</h1>
       </div>
       <div class="card-body">
@@ -263,6 +266,10 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
               <input type="text" id="natureBusiness" placeholder="e.g. Manufacturing, Trading">
               <span class="err-msg" id="err-natureBusiness">This field is required</span>
             </div>
+            <div class="field">
+              <label class="lab" for="placeOfIncorporation">Place of Incorporation <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="placeOfIncorporation" placeholder="e.g. Lagos, Nigeria">
+            </div>
             <div class="field full">
               <label class="lab" for="registeredAddress">Registered Address <span class="req">*</span></label>
               <textarea id="registeredAddress" rows="2" placeholder="Full registered address"></textarea>
@@ -297,26 +304,674 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
 
         <!-- STEP 1 -->
         <div class="step" id="step-1">
-          <p class="step-hint">Add up to 3 directors or partners of the entity.</p>
-          <div id="directors-container"></div>
-          <button class="add-btn" id="add-director-btn" type="button">
-            <svg viewBox="0 0 20 20"><path d="M10 4a1 1 0 011 1v4h4a1 1 0 010 2h-4v4a1 1 0 01-2 0v-4H5a1 1 0 010-2h4V5a1 1 0 011-1z"/></svg>
-            Add Director
-          </button>
+          <p class="step-hint">Provide details for the entity's directors and ultimate beneficial owners (UBOs).</p>
+        <div class="entity-block" id="block-dir1">
+          <div class="entity-block-title">Director / Partner 1</div>
+          <div class="grid">
+            <div class="field">
+              <label class="lab" for="dir1-surname">Surname <span class="req">*</span></label>
+              <input type="text" id="dir1-surname">
+              <span class="err-msg" id="err-dir1-surname">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-firstName">First Name <span class="req">*</span></label>
+              <input type="text" id="dir1-firstName">
+              <span class="err-msg" id="err-dir1-firstName">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir1-middleName">
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-title">Title <span class="req">*</span></label>
+              <select id="dir1-title">
+                <option value="">Select</option>
+                <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option>
+              </select>
+              <span class="err-msg" id="err-dir1-title">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab">Sex <span class="req">*</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="dir1-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="dir1-sex" value="Female">Female</label>
+              </div>
+              <span class="err-msg" id="err-dir1-sex">Please select</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-nationality">Nationality <span class="req">*</span></label>
+              <select id="dir1-nationality">
+                <option value="">Select country</option>
+                <option value="Nigerian" selected>Nigerian</option>
+                <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
+              </select>
+              <span class="err-msg" id="err-dir1-nationality">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-bvn">BVN <span class="req">*</span></label>
+              <input type="text" id="dir1-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-dir1-bvn">BVN must be exactly 11 digits</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-dob-day">Date of Birth <span class="req">*</span></label>
+              <div class="date-row">
+                <select id="dir1-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="dir1-dob-month" aria-label="Month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="dir1-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="dir1-dob">
+              <span class="err-msg" id="err-dir1-dob">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="dir1-phone" placeholder="0801 234 5678">
+              <span class="err-msg" id="err-dir1-phone">Enter a valid Nigerian phone number</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-idType">Means of Identification <span class="req">*</span></label>
+              <select id="dir1-idType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+              <span class="err-msg" id="err-dir1-idType">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-idNumber">ID Number <span class="req">*</span></label>
+              <input type="text" id="dir1-idNumber">
+              <span class="err-msg" id="err-dir1-idNumber">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir1-idIssueDate" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-email">Email Address <span class="req">*</span></label>
+              <input type="email" id="dir1-email">
+              <span class="err-msg" id="err-dir1-email">Enter a valid email address</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir1-pctHolding">% Holding <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir1-pctHolding" placeholder="e.g. 25%">
+            </div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-dir2">
+          <div class="entity-block-title">Director / Partner 2</div>
+          <div class="grid">
+            <div class="field">
+              <label class="lab" for="dir2-surname">Surname <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-surname">
+              <span class="err-msg" id="err-dir2-surname">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-firstName">First Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-firstName">
+              <span class="err-msg" id="err-dir2-firstName">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-middleName">
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-title">Title <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="dir2-title">
+                <option value="">Select</option>
+                <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option>
+              </select>
+              <span class="err-msg" id="err-dir2-title">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab">Sex <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="dir2-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="dir2-sex" value="Female">Female</label>
+              </div>
+              <span class="err-msg" id="err-dir2-sex">Please select</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-nationality">Nationality <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="dir2-nationality">
+                <option value="">Select country</option>
+                <option value="Nigerian" selected>Nigerian</option>
+                <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
+              </select>
+              <span class="err-msg" id="err-dir2-nationality">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-bvn">BVN <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-dir2-bvn">BVN must be exactly 11 digits</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-dob-day">Date of Birth <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="date-row">
+                <select id="dir2-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="dir2-dob-month" aria-label="Month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="dir2-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="dir2-dob">
+              <span class="err-msg" id="err-dir2-dob">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-phone">Phone Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="tel" id="dir2-phone" placeholder="0801 234 5678">
+              <span class="err-msg" id="err-dir2-phone">Enter a valid Nigerian phone number</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-idType">Means of Identification</label>
+              <select id="dir2-idType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+              <span class="err-msg" id="err-dir2-idType">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-idNumber">ID Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-idNumber">
+              <span class="err-msg" id="err-dir2-idNumber">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-idIssueDate" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-email">Email Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="email" id="dir2-email">
+              <span class="err-msg" id="err-dir2-email">Enter a valid email address</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="dir2-pctHolding">% Holding <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="dir2-pctHolding" placeholder="e.g. 25%">
+            </div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-ubo1">
+          <div class="entity-block-title">Ultimate Beneficial Owner 1</div>
+          <div class="grid">
+            <div class="field">
+              <label class="lab" for="ubo1-surname">Surname <span class="req">*</span></label>
+              <input type="text" id="ubo1-surname">
+              <span class="err-msg" id="err-ubo1-surname">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-firstName">First Name <span class="req">*</span></label>
+              <input type="text" id="ubo1-firstName">
+              <span class="err-msg" id="err-ubo1-firstName">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo1-middleName">
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-title">Title <span class="req">*</span></label>
+              <select id="ubo1-title">
+                <option value="">Select</option>
+                <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option>
+              </select>
+              <span class="err-msg" id="err-ubo1-title">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab">Sex <span class="req">*</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="ubo1-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="ubo1-sex" value="Female">Female</label>
+              </div>
+              <span class="err-msg" id="err-ubo1-sex">Please select</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-nationality">Nationality <span class="req">*</span></label>
+              <select id="ubo1-nationality">
+                <option value="">Select country</option>
+                <option value="Nigerian" selected>Nigerian</option>
+                <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
+              </select>
+              <span class="err-msg" id="err-ubo1-nationality">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-bvn">BVN <span class="req">*</span></label>
+              <input type="text" id="ubo1-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-ubo1-bvn">BVN must be exactly 11 digits</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-dob-day">Date of Birth <span class="req">*</span></label>
+              <div class="date-row">
+                <select id="ubo1-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="ubo1-dob-month" aria-label="Month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="ubo1-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="ubo1-dob">
+              <span class="err-msg" id="err-ubo1-dob">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="ubo1-phone" placeholder="0801 234 5678">
+              <span class="err-msg" id="err-ubo1-phone">Enter a valid Nigerian phone number</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-idType">Means of Identification <span class="req">*</span></label>
+              <select id="ubo1-idType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+              <span class="err-msg" id="err-ubo1-idType">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-idNumber">ID Number <span class="req">*</span></label>
+              <input type="text" id="ubo1-idNumber">
+              <span class="err-msg" id="err-ubo1-idNumber">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo1-idIssueDate" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-email">Email Address <span class="req">*</span></label>
+              <input type="email" id="ubo1-email">
+              <span class="err-msg" id="err-ubo1-email">Enter a valid email address</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo1-pctHolding">% Holding <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo1-pctHolding" placeholder="e.g. 25%">
+            </div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-ubo2">
+          <div class="entity-block-title">Ultimate Beneficial Owner 2</div>
+          <div class="grid">
+            <div class="field">
+              <label class="lab" for="ubo2-surname">Surname <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-surname">
+              <span class="err-msg" id="err-ubo2-surname">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-firstName">First Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-firstName">
+              <span class="err-msg" id="err-ubo2-firstName">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-middleName">
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-title">Title <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="ubo2-title">
+                <option value="">Select</option>
+                <option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option>
+              </select>
+              <span class="err-msg" id="err-ubo2-title">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab">Sex <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="ubo2-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="ubo2-sex" value="Female">Female</label>
+              </div>
+              <span class="err-msg" id="err-ubo2-sex">Please select</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-nationality">Nationality <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="ubo2-nationality">
+                <option value="">Select country</option>
+                <option value="Nigerian" selected>Nigerian</option>
+                <option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option>
+              </select>
+              <span class="err-msg" id="err-ubo2-nationality">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-bvn">BVN <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-ubo2-bvn">BVN must be exactly 11 digits</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-dob-day">Date of Birth <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="date-row">
+                <select id="ubo2-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="ubo2-dob-month" aria-label="Month">
+                  <option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option>
+                  <option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option>
+                  <option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option>
+                  <option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="ubo2-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="ubo2-dob">
+              <span class="err-msg" id="err-ubo2-dob">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-phone">Phone Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="tel" id="ubo2-phone" placeholder="0801 234 5678">
+              <span class="err-msg" id="err-ubo2-phone">Enter a valid Nigerian phone number</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-idType">Means of Identification</label>
+              <select id="ubo2-idType">
+                <option value="">Select</option>
+                <option>International Passport</option>
+                <option>National ID Card</option>
+                <option>Driver's Licence</option>
+                <option>INEC Voter's Card</option>
+              </select>
+              <span class="err-msg" id="err-ubo2-idType">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-idNumber">ID Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-idNumber">
+              <span class="err-msg" id="err-ubo2-idNumber">This field is required</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-idIssueDate" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-email">Email Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="email" id="ubo2-email">
+              <span class="err-msg" id="err-ubo2-email">Enter a valid email address</span>
+            </div>
+            <div class="field">
+              <label class="lab" for="ubo2-pctHolding">% Holding <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="ubo2-pctHolding" placeholder="e.g. 25%">
+            </div>
+          </div>
+        </div>
+
         </div>
 
         <!-- STEP 2 -->
         <div class="step" id="step-2">
-          <p class="step-hint">Add up to 2 authorized signatories for the account.</p>
-          <div id="signatories-container"></div>
-          <button class="add-btn" id="add-signatory-btn" type="button">
-            <svg viewBox="0 0 20 20"><path d="M10 4a1 1 0 011 1v4h4a1 1 0 010 2h-4v4a1 1 0 01-2 0v-4H5a1 1 0 010-2h4V5a1 1 0 011-1z"/></svg>
-            Add Signatory
-          </button>
+          <p class="step-hint">Provide detailed KYC information for the account signatories.</p>
+        <div class="entity-block" id="block-sigA">
+          <div class="entity-block-title">Account Signatory A</div>
+          <div class="grid">
+            <div class="field"><label class="lab" for="sigA-surname">Surname <span class="req">*</span></label>
+              <input type="text" id="sigA-surname"><span class="err-msg" id="err-sigA-surname">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-firstName">First Name <span class="req">*</span></label>
+              <input type="text" id="sigA-firstName"><span class="err-msg" id="err-sigA-firstName">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-middleName"></div>
+            <div class="field"><label class="lab" for="sigA-title">Title <span class="req">*</span></label>
+              <select id="sigA-title"><option value="">Select</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option></select>
+              <span class="err-msg" id="err-sigA-title">This field is required</span></div>
+            <div class="field"><label class="lab">Sex <span class="req">*</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sigA-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="sigA-sex" value="Female">Female</label>
+              </div><span class="err-msg" id="err-sigA-sex">Please select</span></div>
+            <div class="field"><label class="lab" for="sigA-nationality">Nationality <span class="req">*</span></label>
+              <select id="sigA-nationality"><option value="">Select country</option><option value="Nigerian" selected>Nigerian</option><option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option></select>
+              <span class="err-msg" id="err-sigA-nationality">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-stateOfOrigin">State of Origin <span class="req">*</span></label>
+              <select id="sigA-stateOfOrigin"><option value="">Select state</option><option value="Abia">Abia</option><option value="Adamawa">Adamawa</option><option value="Akwa Ibom">Akwa Ibom</option><option value="Anambra">Anambra</option><option value="Bauchi">Bauchi</option><option value="Bayelsa">Bayelsa</option><option value="Benue">Benue</option><option value="Borno">Borno</option><option value="Cross River">Cross River</option><option value="Delta">Delta</option><option value="Ebonyi">Ebonyi</option><option value="Edo">Edo</option><option value="Ekiti">Ekiti</option><option value="Enugu">Enugu</option><option value="FCT (Abuja)">FCT (Abuja)</option><option value="Gombe">Gombe</option><option value="Imo">Imo</option><option value="Jigawa">Jigawa</option><option value="Kaduna">Kaduna</option><option value="Kano">Kano</option><option value="Katsina">Katsina</option><option value="Kebbi">Kebbi</option><option value="Kogi">Kogi</option><option value="Kwara">Kwara</option><option value="Lagos">Lagos</option><option value="Nasarawa">Nasarawa</option><option value="Niger">Niger</option><option value="Ogun">Ogun</option><option value="Ondo">Ondo</option><option value="Osun">Osun</option><option value="Oyo">Oyo</option><option value="Plateau">Plateau</option><option value="Rivers">Rivers</option><option value="Sokoto">Sokoto</option><option value="Taraba">Taraba</option><option value="Yobe">Yobe</option><option value="Zamfara">Zamfara</option></select>
+              <span class="err-msg" id="err-sigA-stateOfOrigin">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-lga">Local Government <span class="req">*</span></label>
+              <input type="text" id="sigA-lga"><span class="err-msg" id="err-sigA-lga">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-bvn">BVN <span class="req">*</span></label>
+              <input type="text" id="sigA-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-sigA-bvn">BVN must be exactly 11 digits</span></div>
+            <div class="field"><label class="lab" for="sigA-maritalStatus">Marital Status <span class="req">*</span></label>
+              <select id="sigA-maritalStatus"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select>
+              <span class="err-msg" id="err-sigA-maritalStatus">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-maidenName">Maiden Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if applicable)</span></label>
+              <input type="text" id="sigA-maidenName"></div>
+            <div class="field"><label class="lab" for="sigA-dob-day">Date of Birth <span class="req">*</span></label>
+              <div class="date-row">
+                <select id="sigA-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="sigA-dob-month" aria-label="Month"><option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="sigA-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="sigA-dob"><span class="err-msg" id="err-sigA-dob">This field is required</span></div>
+            <div class="field full"><label class="lab" for="sigA-residentialAddress">Residential Address (incl. nearest landmark) <span class="req">*</span></label>
+              <textarea id="sigA-residentialAddress" rows="2"></textarea><span class="err-msg" id="err-sigA-residentialAddress">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-mothersMaidenName">Mother's Maiden Name <span class="req">*</span></label>
+              <input type="text" id="sigA-mothersMaidenName"><span class="err-msg" id="err-sigA-mothersMaidenName">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-mailingAddress">Mailing Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if different)</span></label>
+              <input type="text" id="sigA-mailingAddress"></div>
+            <div class="field"><label class="lab" for="sigA-nationalId">National Identity No. <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-nationalId"></div>
+            <div class="field"><label class="lab" for="sigA-idType">ID Type <span class="req">*</span></label>
+              <select id="sigA-idType"><option value="">Select</option><option>International Passport</option><option>National ID Card</option><option>Driver's Licence</option><option>INEC Voter's Card</option></select>
+              <span class="err-msg" id="err-sigA-idType">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-idNumber">ID Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-idNumber"></div>
+            <div class="field"><label class="lab" for="sigA-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-idIssueDate" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigA-email">Email Address <span class="req">*</span></label>
+              <input type="email" id="sigA-email"><span class="err-msg" id="err-sigA-email">Enter a valid email address</span></div>
+            <div class="field"><label class="lab" for="sigA-mobile">Mobile No <span class="req">*</span></label>
+              <input type="tel" id="sigA-mobile" placeholder="0801 234 5678"><span class="err-msg" id="err-sigA-mobile">Enter a valid Nigerian phone number</span></div>
+            <div class="field"><label class="lab" for="sigA-mobile2">Mobile 2 <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="tel" id="sigA-mobile2"></div>
+            <div class="field"><label class="lab" for="sigA-taxCountry">Country of Tax Residence <span class="req">*</span></label>
+              <input type="text" id="sigA-taxCountry" placeholder="e.g. Nigeria"><span class="err-msg" id="err-sigA-taxCountry">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-taxId">Tax ID <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-taxId"></div>
+            <div class="field"><label class="lab" for="sigA-lei">Legal Entity Identifier <span class="req">*</span></label>
+              <input type="text" id="sigA-lei"><span class="err-msg" id="err-sigA-lei">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-occupation">Occupation <span class="req">*</span></label>
+              <input type="text" id="sigA-occupation"><span class="err-msg" id="err-sigA-occupation">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigA-employer">Employer (incl. address) <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if applicable)</span></label>
+              <input type="text" id="sigA-employer"></div>
+            <div class="field"><label class="lab">Dual Citizenship? <span class="req">*</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sigA-dualCitizenship" value="Yes">Yes</label>
+                <label class="choice"><input type="radio" name="sigA-dualCitizenship" value="No">No</label>
+              </div><span class="err-msg" id="err-sigA-dualCitizenship">Please select</span></div>
+            <div class="field"><label class="lab" for="sigA-otherNationality">If yes, other Nationality <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-otherNationality"></div>
+            <div class="field"><label class="lab" for="sigA-permitIssuance">Permit Issuance Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-permitIssuance" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigA-permitExpiry">Permit Expiry Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigA-permitExpiry" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigA-classOfSignatory">Class of Signatory <span class="req">*</span></label>
+              <input type="text" id="sigA-classOfSignatory" placeholder="A / B / C"><span class="err-msg" id="err-sigA-classOfSignatory">This field is required</span></div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-sigB">
+          <div class="entity-block-title">Account Signatory B</div>
+          <div class="grid">
+            <div class="field"><label class="lab" for="sigB-surname">Surname <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-surname"><span class="err-msg" id="err-sigB-surname">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-firstName">First Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-firstName"><span class="err-msg" id="err-sigB-firstName">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-middleName"></div>
+            <div class="field"><label class="lab" for="sigB-title">Title <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="sigB-title"><option value="">Select</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option></select>
+              <span class="err-msg" id="err-sigB-title">This field is required</span></div>
+            <div class="field"><label class="lab">Sex <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sigB-sex" value="Male">Male</label>
+                <label class="choice"><input type="radio" name="sigB-sex" value="Female">Female</label>
+              </div><span class="err-msg" id="err-sigB-sex">Please select</span></div>
+            <div class="field"><label class="lab" for="sigB-nationality">Nationality <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="sigB-nationality"><option value="">Select country</option><option value="Nigerian" selected>Nigerian</option><option value="Afghan">Afghan</option><option value="Albanian">Albanian</option><option value="Algerian">Algerian</option><option value="American">American</option><option value="Andorran">Andorran</option><option value="Angolan">Angolan</option><option value="Antiguan">Antiguan</option><option value="Argentine">Argentine</option><option value="Armenian">Armenian</option><option value="Australian">Australian</option><option value="Austrian">Austrian</option><option value="Azerbaijani">Azerbaijani</option><option value="Bahamian">Bahamian</option><option value="Bahraini">Bahraini</option><option value="Bangladeshi">Bangladeshi</option><option value="Barbadian">Barbadian</option><option value="Belarusian">Belarusian</option><option value="Belgian">Belgian</option><option value="Belizean">Belizean</option><option value="Beninese">Beninese</option><option value="Bhutanese">Bhutanese</option><option value="Bolivian">Bolivian</option><option value="Bosnian">Bosnian</option><option value="Botswanan">Botswanan</option><option value="Brazilian">Brazilian</option><option value="British">British</option><option value="Bruneian">Bruneian</option><option value="Bulgarian">Bulgarian</option><option value="Burkinabe">Burkinabe</option><option value="Burundian">Burundian</option><option value="Cambodian">Cambodian</option><option value="Cameroonian">Cameroonian</option><option value="Canadian">Canadian</option><option value="Cape Verdean">Cape Verdean</option><option value="Central African">Central African</option><option value="Chadian">Chadian</option><option value="Chilean">Chilean</option><option value="Chinese">Chinese</option><option value="Colombian">Colombian</option><option value="Comorian">Comorian</option><option value="Congolese">Congolese</option><option value="Costa Rican">Costa Rican</option><option value="Croatian">Croatian</option><option value="Cuban">Cuban</option><option value="Cypriot">Cypriot</option><option value="Czech">Czech</option><option value="Danish">Danish</option><option value="Djiboutian">Djiboutian</option><option value="Dominican">Dominican</option><option value="Dutch">Dutch</option><option value="Ecuadorian">Ecuadorian</option><option value="Egyptian">Egyptian</option><option value="Emirati">Emirati</option><option value="Equatorial Guinean">Equatorial Guinean</option><option value="Eritrean">Eritrean</option><option value="Estonian">Estonian</option><option value="Eswatini">Eswatini</option><option value="Ethiopian">Ethiopian</option><option value="Fijian">Fijian</option><option value="Finnish">Finnish</option><option value="French">French</option><option value="Gabonese">Gabonese</option><option value="Gambian">Gambian</option><option value="Georgian">Georgian</option><option value="German">German</option><option value="Ghanaian">Ghanaian</option><option value="Greek">Greek</option><option value="Grenadian">Grenadian</option><option value="Guatemalan">Guatemalan</option><option value="Guinean">Guinean</option><option value="Guinea-Bissauan">Guinea-Bissauan</option><option value="Guyanese">Guyanese</option><option value="Haitian">Haitian</option><option value="Honduran">Honduran</option><option value="Hungarian">Hungarian</option><option value="Icelandic">Icelandic</option><option value="Indian">Indian</option><option value="Indonesian">Indonesian</option><option value="Iranian">Iranian</option><option value="Iraqi">Iraqi</option><option value="Irish">Irish</option><option value="Israeli">Israeli</option><option value="Italian">Italian</option><option value="Ivorian">Ivorian</option><option value="Jamaican">Jamaican</option><option value="Japanese">Japanese</option><option value="Jordanian">Jordanian</option><option value="Kazakhstani">Kazakhstani</option><option value="Kenyan">Kenyan</option><option value="Kiribatian">Kiribatian</option><option value="Kuwaiti">Kuwaiti</option><option value="Kyrgyz">Kyrgyz</option><option value="Laotian">Laotian</option><option value="Latvian">Latvian</option><option value="Lebanese">Lebanese</option><option value="Lesotho">Lesotho</option><option value="Liberian">Liberian</option><option value="Libyan">Libyan</option><option value="Liechtensteiner">Liechtensteiner</option><option value="Lithuanian">Lithuanian</option><option value="Luxembourgish">Luxembourgish</option><option value="Macedonian">Macedonian</option><option value="Malagasy">Malagasy</option><option value="Malawian">Malawian</option><option value="Malaysian">Malaysian</option><option value="Maldivian">Maldivian</option><option value="Malian">Malian</option><option value="Maltese">Maltese</option><option value="Marshallese">Marshallese</option><option value="Mauritanian">Mauritanian</option><option value="Mauritian">Mauritian</option><option value="Mexican">Mexican</option><option value="Micronesian">Micronesian</option><option value="Moldovan">Moldovan</option><option value="Monacan">Monacan</option><option value="Mongolian">Mongolian</option><option value="Montenegrin">Montenegrin</option><option value="Moroccan">Moroccan</option><option value="Mozambican">Mozambican</option><option value="Namibian">Namibian</option><option value="Nauruan">Nauruan</option><option value="Nepalese">Nepalese</option><option value="New Zealander">New Zealander</option><option value="Nicaraguan">Nicaraguan</option><option value="Nigerien">Nigerien</option><option value="Norwegian">Norwegian</option><option value="Omani">Omani</option><option value="Pakistani">Pakistani</option><option value="Palauan">Palauan</option><option value="Panamanian">Panamanian</option><option value="Papua New Guinean">Papua New Guinean</option><option value="Paraguayan">Paraguayan</option><option value="Peruvian">Peruvian</option><option value="Filipino">Filipino</option><option value="Polish">Polish</option><option value="Portuguese">Portuguese</option><option value="Qatari">Qatari</option><option value="Romanian">Romanian</option><option value="Russian">Russian</option><option value="Rwandan">Rwandan</option><option value="Samoan">Samoan</option><option value="Saudi Arabian">Saudi Arabian</option><option value="Senegalese">Senegalese</option><option value="Serbian">Serbian</option><option value="Seychellois">Seychellois</option><option value="Sierra Leonean">Sierra Leonean</option><option value="Singaporean">Singaporean</option><option value="Slovak">Slovak</option><option value="Slovenian">Slovenian</option><option value="Solomon Islander">Solomon Islander</option><option value="Somali">Somali</option><option value="South African">South African</option><option value="South Korean">South Korean</option><option value="South Sudanese">South Sudanese</option><option value="Spanish">Spanish</option><option value="Sri Lankan">Sri Lankan</option><option value="Sudanese">Sudanese</option><option value="Surinamese">Surinamese</option><option value="Swedish">Swedish</option><option value="Swiss">Swiss</option><option value="Syrian">Syrian</option><option value="Taiwanese">Taiwanese</option><option value="Tajik">Tajik</option><option value="Tanzanian">Tanzanian</option><option value="Thai">Thai</option><option value="Timorese">Timorese</option><option value="Togolese">Togolese</option><option value="Tongan">Tongan</option><option value="Trinidadian">Trinidadian</option><option value="Tunisian">Tunisian</option><option value="Turkish">Turkish</option><option value="Turkmen">Turkmen</option><option value="Tuvaluan">Tuvaluan</option><option value="Ugandan">Ugandan</option><option value="Ukrainian">Ukrainian</option><option value="Uruguayan">Uruguayan</option><option value="Uzbek">Uzbek</option><option value="Vanuatuan">Vanuatuan</option><option value="Venezuelan">Venezuelan</option><option value="Vietnamese">Vietnamese</option><option value="Yemeni">Yemeni</option><option value="Zambian">Zambian</option><option value="Zimbabwean">Zimbabwean</option></select>
+              <span class="err-msg" id="err-sigB-nationality">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-stateOfOrigin">State of Origin <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="sigB-stateOfOrigin"><option value="">Select state</option><option value="Abia">Abia</option><option value="Adamawa">Adamawa</option><option value="Akwa Ibom">Akwa Ibom</option><option value="Anambra">Anambra</option><option value="Bauchi">Bauchi</option><option value="Bayelsa">Bayelsa</option><option value="Benue">Benue</option><option value="Borno">Borno</option><option value="Cross River">Cross River</option><option value="Delta">Delta</option><option value="Ebonyi">Ebonyi</option><option value="Edo">Edo</option><option value="Ekiti">Ekiti</option><option value="Enugu">Enugu</option><option value="FCT (Abuja)">FCT (Abuja)</option><option value="Gombe">Gombe</option><option value="Imo">Imo</option><option value="Jigawa">Jigawa</option><option value="Kaduna">Kaduna</option><option value="Kano">Kano</option><option value="Katsina">Katsina</option><option value="Kebbi">Kebbi</option><option value="Kogi">Kogi</option><option value="Kwara">Kwara</option><option value="Lagos">Lagos</option><option value="Nasarawa">Nasarawa</option><option value="Niger">Niger</option><option value="Ogun">Ogun</option><option value="Ondo">Ondo</option><option value="Osun">Osun</option><option value="Oyo">Oyo</option><option value="Plateau">Plateau</option><option value="Rivers">Rivers</option><option value="Sokoto">Sokoto</option><option value="Taraba">Taraba</option><option value="Yobe">Yobe</option><option value="Zamfara">Zamfara</option></select>
+              <span class="err-msg" id="err-sigB-stateOfOrigin">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-lga">Local Government <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-lga"><span class="err-msg" id="err-sigB-lga">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-bvn">BVN <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-bvn" inputmode="numeric" maxlength="11" placeholder="11 digits">
+              <span class="err-msg" id="err-sigB-bvn">BVN must be exactly 11 digits</span></div>
+            <div class="field"><label class="lab" for="sigB-maritalStatus">Marital Status <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="sigB-maritalStatus"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select>
+              <span class="err-msg" id="err-sigB-maritalStatus">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-maidenName">Maiden Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if applicable)</span></label>
+              <input type="text" id="sigB-maidenName"></div>
+            <div class="field"><label class="lab" for="sigB-dob-day">Date of Birth <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="date-row">
+                <select id="sigB-dob-day" aria-label="Day"><option value="">Day</option></select>
+                <select id="sigB-dob-month" aria-label="Month"><option value="">Month</option>
+                  <option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option>
+                  <option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option>
+                  <option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="sigB-dob-year" aria-label="Year"><option value="">Year</option></select>
+              </div>
+              <input type="hidden" id="sigB-dob"><span class="err-msg" id="err-sigB-dob">This field is required</span></div>
+            <div class="field full"><label class="lab" for="sigB-residentialAddress">Residential Address (incl. nearest landmark) <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <textarea id="sigB-residentialAddress" rows="2"></textarea><span class="err-msg" id="err-sigB-residentialAddress">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-mothersMaidenName">Mother's Maiden Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-mothersMaidenName"><span class="err-msg" id="err-sigB-mothersMaidenName">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-mailingAddress">Mailing Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if different)</span></label>
+              <input type="text" id="sigB-mailingAddress"></div>
+            <div class="field"><label class="lab" for="sigB-nationalId">National Identity No. <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-nationalId"></div>
+            <div class="field"><label class="lab" for="sigB-idType">ID Type <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="sigB-idType"><option value="">Select</option><option>International Passport</option><option>National ID Card</option><option>Driver's Licence</option><option>INEC Voter's Card</option></select>
+              <span class="err-msg" id="err-sigB-idType">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-idNumber">ID Number <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-idNumber"></div>
+            <div class="field"><label class="lab" for="sigB-idIssueDate">ID Issue Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-idIssueDate" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigB-email">Email Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="email" id="sigB-email"><span class="err-msg" id="err-sigB-email">Enter a valid email address</span></div>
+            <div class="field"><label class="lab" for="sigB-mobile">Mobile No <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="tel" id="sigB-mobile" placeholder="0801 234 5678"><span class="err-msg" id="err-sigB-mobile">Enter a valid Nigerian phone number</span></div>
+            <div class="field"><label class="lab" for="sigB-mobile2">Mobile 2 <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="tel" id="sigB-mobile2"></div>
+            <div class="field"><label class="lab" for="sigB-taxCountry">Country of Tax Residence <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-taxCountry" placeholder="e.g. Nigeria"><span class="err-msg" id="err-sigB-taxCountry">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-taxId">Tax ID <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-taxId"></div>
+            <div class="field"><label class="lab" for="sigB-lei">Legal Entity Identifier <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-lei"><span class="err-msg" id="err-sigB-lei">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-occupation">Occupation <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-occupation"><span class="err-msg" id="err-sigB-occupation">This field is required</span></div>
+            <div class="field"><label class="lab" for="sigB-employer">Employer (incl. address) <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(if applicable)</span></label>
+              <input type="text" id="sigB-employer"></div>
+            <div class="field"><label class="lab">Dual Citizenship? <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="sigB-dualCitizenship" value="Yes">Yes</label>
+                <label class="choice"><input type="radio" name="sigB-dualCitizenship" value="No">No</label>
+              </div><span class="err-msg" id="err-sigB-dualCitizenship">Please select</span></div>
+            <div class="field"><label class="lab" for="sigB-otherNationality">If yes, other Nationality <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-otherNationality"></div>
+            <div class="field"><label class="lab" for="sigB-permitIssuance">Permit Issuance Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-permitIssuance" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigB-permitExpiry">Permit Expiry Date <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-permitExpiry" placeholder="DD/MM/YYYY"></div>
+            <div class="field"><label class="lab" for="sigB-classOfSignatory">Class of Signatory <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="sigB-classOfSignatory" placeholder="A / B / C"><span class="err-msg" id="err-sigB-classOfSignatory">This field is required</span></div>
+          </div>
+        </div>
+
         </div>
 
         <!-- STEP 3 -->
         <div class="step" id="step-3">
+          <p class="step-hint">Indicate the mandate rule and the authorized signatories for withdrawals/instructions.</p>
+          <div class="field full" style="margin-bottom:16px;">
+            <label class="lab">Mandate Authorisation / Combination Rule <span class="req">*</span></label>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="mandateRule" value="Sole Signatory">Sole Signatory</label>
+              <label class="choice"><input type="radio" name="mandateRule" value="Two or more">Two or more</label>
+            </div>
+            <span class="err-msg" id="err-mandateRule">Please select a mandate rule</span>
+          </div>
+          <div class="field full conditional" id="cond-mandateSpecify" style="margin-bottom:8px;">
+            <label class="lab" for="mandateSpecify">If two or more to sign, please specify</label>
+            <input type="text" id="mandateSpecify" placeholder="e.g. Any two of three signatories">
+          </div>
+        <div class="entity-block" id="block-msig1">
+          <div class="entity-block-title">Signatory 1</div>
+          <div class="grid">
+            <div class="field"><label class="lab" for="msig1-title">Title <span class="req">*</span></label>
+              <select id="msig1-title"><option value="">Select</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option></select>
+              <span class="err-msg" id="err-msig1-title">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig1-surname">Surname <span class="req">*</span></label>
+              <input type="text" id="msig1-surname"><span class="err-msg" id="err-msig1-surname">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig1-firstName">First Name <span class="req">*</span></label>
+              <input type="text" id="msig1-firstName"><span class="err-msg" id="err-msig1-firstName">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig1-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig1-middleName"></div>
+            <div class="field"><label class="lab" for="msig1-classOfSignatory">Class of Signatory <span class="req">*</span></label>
+              <input type="text" id="msig1-classOfSignatory" placeholder="A / B / C"><span class="err-msg" id="err-msig1-classOfSignatory">This field is required</span></div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-msig2">
+          <div class="entity-block-title">Signatory 2</div>
+          <div class="grid">
+            <div class="field"><label class="lab" for="msig2-title">Title <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="msig2-title"><option value="">Select</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option></select>
+              <span class="err-msg" id="err-msig2-title">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig2-surname">Surname <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig2-surname"><span class="err-msg" id="err-msig2-surname">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig2-firstName">First Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig2-firstName"><span class="err-msg" id="err-msig2-firstName">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig2-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig2-middleName"></div>
+            <div class="field"><label class="lab" for="msig2-classOfSignatory">Class of Signatory <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig2-classOfSignatory" placeholder="A / B / C"><span class="err-msg" id="err-msig2-classOfSignatory">This field is required</span></div>
+          </div>
+        </div>
+
+        <div class="entity-block" id="block-msig3">
+          <div class="entity-block-title">Signatory 3</div>
+          <div class="grid">
+            <div class="field"><label class="lab" for="msig3-title">Title <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <select id="msig3-title"><option value="">Select</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Other</option></select>
+              <span class="err-msg" id="err-msig3-title">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig3-surname">Surname <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig3-surname"><span class="err-msg" id="err-msig3-surname">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig3-firstName">First Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig3-firstName"><span class="err-msg" id="err-msig3-firstName">This field is required</span></div>
+            <div class="field"><label class="lab" for="msig3-middleName">Middle Name <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig3-middleName"></div>
+            <div class="field"><label class="lab" for="msig3-classOfSignatory">Class of Signatory <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <input type="text" id="msig3-classOfSignatory" placeholder="A / B / C"><span class="err-msg" id="err-msig3-classOfSignatory">This field is required</span></div>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- STEP 4 (Financial info) -->
+        <div class="step" id="step-4">
           <p class="step-hint">Provide banking details and investment preferences.</p>
           <div class="grid">
             <div class="subhead">Bank Details</div>
@@ -400,8 +1055,8 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
           </div>
         </div>
 
-        <!-- STEP 4 -->
-        <div class="step" id="step-4">
+        <!-- STEP 5 (Documents) -->
+        <div class="step" id="step-5">
           <p class="step-hint">Upload the required documents. Files must be PDF, JPG, or PNG (max 4 MB each).</p>
           <div class="grid">
             <div class="field full">
@@ -411,81 +1066,255 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
                 <span class="upload-icon">📄</span>
                 <div class="upload-info">
                   <span class="upload-label">CAC Certificate of Incorporation</span>
-                  <span class="upload-sub">Click or drag &amp; drop · PDF / JPG / PNG</span>
+                  <span class="upload-sub">Click or drag & drop · PDF / JPG / PNG</span>
                   <span class="upload-name" id="name-cac"></span>
                 </div>
               </div>
               <span class="err-msg" id="err-cac">This document is required</span>
             </div>
             <div class="field full">
-              <label class="lab">MEMART (Memorandum &amp; Articles of Association) <span class="req">*</span></label>
+              <label class="lab">CAC Status Report <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-cacStatus">
+                <input type="file" id="file-cacStatus" accept=".pdf,.jpg,.jpeg,.png" data-key="cacStatus">
+                <span class="upload-icon">📄</span>
+                <div class="upload-info">
+                  <span class="upload-label">CAC Status Report</span>
+                  <span class="upload-sub">Not more than 3 months old · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-cacStatus"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-cacStatus">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">MEMART (Memorandum & Articles of Association) <span class="req">*</span></label>
               <div class="upload-slot" id="slot-memart">
                 <input type="file" id="file-memart" accept=".pdf,.jpg,.jpeg,.png" data-key="memart">
                 <span class="upload-icon">📋</span>
                 <div class="upload-info">
-                  <span class="upload-label">MEMART</span>
-                  <span class="upload-sub">Click or drag &amp; drop · PDF / JPG / PNG</span>
+                  <span class="upload-label">MEMART (Memorandum & Articles of Association)</span>
+                  <span class="upload-sub">Click or drag & drop · PDF / JPG / PNG</span>
                   <span class="upload-name" id="name-memart"></span>
                 </div>
               </div>
               <span class="err-msg" id="err-memart">This document is required</span>
             </div>
             <div class="field full">
-              <label class="lab">Board Resolution / Mandate Letter <span class="req">*</span></label>
+              <label class="lab">Board Resolution (authorized signatories with withdrawal mandate) <span class="req">*</span></label>
               <div class="upload-slot" id="slot-resolution">
                 <input type="file" id="file-resolution" accept=".pdf,.jpg,.jpeg,.png" data-key="resolution">
                 <span class="upload-icon">🏛️</span>
                 <div class="upload-info">
-                  <span class="upload-label">Board Resolution / Mandate Letter</span>
-                  <span class="upload-sub">Click or drag &amp; drop · PDF / JPG / PNG</span>
+                  <span class="upload-label">Board Resolution (authorized signatories with withdrawal mandate)</span>
+                  <span class="upload-sub">Click or drag & drop · PDF / JPG / PNG</span>
                   <span class="upload-name" id="name-resolution"></span>
                 </div>
               </div>
               <span class="err-msg" id="err-resolution">This document is required</span>
             </div>
             <div class="field full">
-              <label class="lab">Proof of Company Address <span class="req">*</span></label>
+              <label class="lab">Evidence of Operating License <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-operatingLicense">
+                <input type="file" id="file-operatingLicense" accept=".pdf,.jpg,.jpeg,.png" data-key="operatingLicense">
+                <span class="upload-icon">📃</span>
+                <div class="upload-info">
+                  <span class="upload-label">Evidence of Operating License</span>
+                  <span class="upload-sub">Where applicable · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-operatingLicense"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Proof of Address for the Business <span class="req">*</span></label>
               <div class="upload-slot" id="slot-address">
                 <input type="file" id="file-address" accept=".pdf,.jpg,.jpeg,.png" data-key="address">
                 <span class="upload-icon">🏢</span>
                 <div class="upload-info">
-                  <span class="upload-label">Utility Bill / Tenancy Agreement</span>
-                  <span class="upload-sub">Not older than 3 months · PDF / JPG / PNG</span>
+                  <span class="upload-label">Proof of Address for the Business</span>
+                  <span class="upload-sub">Utility bill, not older than 3 months</span>
                   <span class="upload-name" id="name-address"></span>
                 </div>
               </div>
               <span class="err-msg" id="err-address">This document is required</span>
             </div>
             <div class="field full">
-              <label class="lab">Valid ID – Director 1 <span class="req">*</span></label>
-              <div class="upload-slot" id="slot-id1">
-                <input type="file" id="file-id1" accept=".pdf,.jpg,.jpeg,.png" data-key="id1">
+              <label class="lab">UBO 1 – ID & Utility Bill <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-uboId1">
+                <input type="file" id="file-uboId1" accept=".pdf,.jpg,.jpeg,.png" data-key="uboId1">
                 <span class="upload-icon">🪪</span>
                 <div class="upload-info">
-                  <span class="upload-label">Director 1 – Government Issued ID</span>
-                  <span class="upload-sub">NIN slip, International Passport, Driver's Licence</span>
-                  <span class="upload-name" id="name-id1"></span>
+                  <span class="upload-label">UBO 1 – ID & Utility Bill</span>
+                  <span class="upload-sub">Government ID + recent utility bill · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-uboId1"></span>
                 </div>
               </div>
-              <span class="err-msg" id="err-id1">This document is required</span>
+              <span class="err-msg" id="err-uboId1">This document is required</span>
             </div>
             <div class="field full">
-              <label class="lab">Valid ID – Director 2 <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
-              <div class="upload-slot" id="slot-id2">
-                <input type="file" id="file-id2" accept=".pdf,.jpg,.jpeg,.png" data-key="id2">
+              <label class="lab">UBO 2 – ID & Utility Bill <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-uboId2">
+                <input type="file" id="file-uboId2" accept=".pdf,.jpg,.jpeg,.png" data-key="uboId2">
                 <span class="upload-icon">🪪</span>
                 <div class="upload-info">
-                  <span class="upload-label">Director 2 – Government Issued ID</span>
-                  <span class="upload-sub">NIN slip, International Passport, Driver's Licence</span>
-                  <span class="upload-name" id="name-id2"></span>
+                  <span class="upload-label">UBO 2 – ID & Utility Bill</span>
+                  <span class="upload-sub">Government ID + recent utility bill · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-uboId2"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Director 1 – ID & Utility Bill <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-dirId1">
+                <input type="file" id="file-dirId1" accept=".pdf,.jpg,.jpeg,.png" data-key="dirId1">
+                <span class="upload-icon">🪪</span>
+                <div class="upload-info">
+                  <span class="upload-label">Director 1 – ID & Utility Bill</span>
+                  <span class="upload-sub">Government ID + recent utility bill · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-dirId1"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-dirId1">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">Director 2 – ID & Utility Bill <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-dirId2">
+                <input type="file" id="file-dirId2" accept=".pdf,.jpg,.jpeg,.png" data-key="dirId2">
+                <span class="upload-icon">🪪</span>
+                <div class="upload-info">
+                  <span class="upload-label">Director 2 – ID & Utility Bill</span>
+                  <span class="upload-sub">Government ID + recent utility bill · PDF / JPG / PNG</span>
+                  <span class="upload-name" id="name-dirId2"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory A – Passport Photograph <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-sigAPhoto">
+                <input type="file" id="file-sigAPhoto" accept=".pdf,.jpg,.jpeg,.png" data-key="sigAPhoto">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory A – Passport Photograph</span>
+                  <span class="upload-sub">Recent, clear, light background · JPG / PNG</span>
+                  <span class="upload-name" id="name-sigAPhoto"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-sigAPhoto">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory A – Valid Means of ID <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-sigAId">
+                <input type="file" id="file-sigAId" accept=".pdf,.jpg,.jpeg,.png" data-key="sigAId">
+                <span class="upload-icon">🪪</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory A – Valid Means of ID</span>
+                  <span class="upload-sub">Showing name, photo, DOB, address & signature</span>
+                  <span class="upload-name" id="name-sigAId"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-sigAId">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory A – Proof of Address <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-sigAAddress">
+                <input type="file" id="file-sigAAddress" accept=".pdf,.jpg,.jpeg,.png" data-key="sigAAddress">
+                <span class="upload-icon">🏠</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory A – Proof of Address</span>
+                  <span class="upload-sub">Utility bill, not older than 3 months</span>
+                  <span class="upload-name" id="name-sigAAddress"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-sigAAddress">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory B – Passport Photograph <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-sigBPhoto">
+                <input type="file" id="file-sigBPhoto" accept=".pdf,.jpg,.jpeg,.png" data-key="sigBPhoto">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory B – Passport Photograph</span>
+                  <span class="upload-sub">Recent, clear, light background · JPG / PNG</span>
+                  <span class="upload-name" id="name-sigBPhoto"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory B – Valid Means of ID <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-sigBId">
+                <input type="file" id="file-sigBId" accept=".pdf,.jpg,.jpeg,.png" data-key="sigBId">
+                <span class="upload-icon">🪪</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory B – Valid Means of ID</span>
+                  <span class="upload-sub">Showing name, photo, DOB, address & signature</span>
+                  <span class="upload-name" id="name-sigBId"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Signatory B – Proof of Address <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-sigBAddress">
+                <input type="file" id="file-sigBAddress" accept=".pdf,.jpg,.jpeg,.png" data-key="sigBAddress">
+                <span class="upload-icon">🏠</span>
+                <div class="upload-info">
+                  <span class="upload-label">Signatory B – Proof of Address</span>
+                  <span class="upload-sub">Utility bill, not older than 3 months</span>
+                  <span class="upload-name" id="name-sigBAddress"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Mandate Signatory 1 – Passport Photograph <span class="req">*</span></label>
+              <div class="upload-slot" id="slot-msig1Photo">
+                <input type="file" id="file-msig1Photo" accept=".pdf,.jpg,.jpeg,.png" data-key="msig1Photo">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Mandate Signatory 1 – Passport Photograph</span>
+                  <span class="upload-sub">Recent, clear, light background · JPG / PNG</span>
+                  <span class="upload-name" id="name-msig1Photo"></span>
+                </div>
+              </div>
+              <span class="err-msg" id="err-msig1Photo">This document is required</span>
+            </div>
+            <div class="field full">
+              <label class="lab">Mandate Signatory 2 – Passport Photograph <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-msig2Photo">
+                <input type="file" id="file-msig2Photo" accept=".pdf,.jpg,.jpeg,.png" data-key="msig2Photo">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Mandate Signatory 2 – Passport Photograph</span>
+                  <span class="upload-sub">Recent, clear, light background · JPG / PNG</span>
+                  <span class="upload-name" id="name-msig2Photo"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Mandate Signatory 3 – Passport Photograph <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-msig3Photo">
+                <input type="file" id="file-msig3Photo" accept=".pdf,.jpg,.jpeg,.png" data-key="msig3Photo">
+                <span class="upload-icon">🖼️</span>
+                <div class="upload-info">
+                  <span class="upload-label">Mandate Signatory 3 – Passport Photograph</span>
+                  <span class="upload-sub">Recent, clear, light background · JPG / PNG</span>
+                  <span class="upload-name" id="name-msig3Photo"></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label class="lab">Resident Permit <span style="font-weight:400;font-size:11px;color:var(--muted-2);">(optional)</span></label>
+              <div class="upload-slot" id="slot-residentPermit">
+                <input type="file" id="file-residentPermit" accept=".pdf,.jpg,.jpeg,.png" data-key="residentPermit">
+                <span class="upload-icon">🛂</span>
+                <div class="upload-info">
+                  <span class="upload-label">Resident Permit</span>
+                  <span class="upload-sub">For non-Nigerian signatories residing in Nigeria, if applicable</span>
+                  <span class="upload-name" id="name-residentPermit"></span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- STEP 5 -->
-        <div class="step" id="step-5">
+        <!-- STEP 6 (Declarations) -->
+        <div class="step" id="step-6">
           <p class="step-hint">Please read and accept all declarations before signing.</p>
           <div class="field full">
             <label class="lab">Declarations <span class="req">*</span> — all must be accepted</label>
@@ -512,6 +1341,18 @@ input.err-field,select.err-field,textarea.err-field{border-color:var(--err);back
               </label>
             </div>
             <span class="err-msg" id="err-declarations">All five declarations must be accepted</span>
+          </div>
+          <div class="field full" style="margin-top:20px;">
+            <label class="lab">Is any director, signatory, or beneficial owner a Politically Exposed Person (PEP)? <span class="req">*</span></label>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="pep" value="No">No</label>
+              <label class="choice"><input type="radio" name="pep" value="Yes">Yes</label>
+            </div>
+            <span class="err-msg" id="err-pep">Please select</span>
+          </div>
+          <div class="field full conditional" id="cond-pep">
+            <label class="lab" for="pepDetails">PEP details</label>
+            <textarea id="pepDetails" rows="2" placeholder="Position held, organisation, and relevant dates"></textarea>
           </div>
           <div class="grid" style="margin-top:20px;">
             <div class="field">
@@ -593,15 +1434,9 @@ var ENDPOINT_URL  = "/.netlify/functions/submit-corporate";
 var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
 var currentStep = 0;
-var totalSteps  = 6;
-var STEP_LABELS = ["Entity details","Directors","Signatories","Financial info","Documents","Declarations"];
-var STEP_TITLES = ["Entity details","Directors / Partners","Authorised Signatories","Financial Information","Supporting Documents","Declarations & Signature"];
-
-var directors   = [buildDirectorState(1)];
-var signatories = [buildSignatoryState(1)];
-
-function buildDirectorState(n){ return {n:n,fullName:"",bvn:"",nin:"",phone:"",email:"",address:""}; }
-function buildSignatoryState(n){ return {n:n,fullName:"",title:"",phone:"",email:"",mandate:"Sole signatory"}; }
+var totalSteps  = 7;
+var STEP_LABELS = ["Entity details","Directors & UBOs","Account signatories","Mandate & signatories","Financial info","Documents","Declarations"];
+var STEP_TITLES = ["Entity details","Directors & Ultimate Beneficial Owners","Account Signatories","Mandate & Authorized Signatories","Financial Information","Supporting Documents","Declarations & Signature"];
 
 function updateNav(){
   document.querySelectorAll("#tracker li").forEach(function(li){
@@ -622,89 +1457,6 @@ function updateNav(){
   document.querySelector("#nextBtn .btn-label").textContent = currentStep===totalSteps-1 ? "Submit application" : "Continue";
 }
 
-function renderDirectors(){
-  var c=document.getElementById("directors-container");
-  c.innerHTML="";
-  directors.forEach(function(d){
-    var n=d.n;
-    var b=document.createElement("div");
-    b.className="entity-block";b.id="director-block-"+n;
-    b.innerHTML='<div class="entity-block-title">Director / Partner '+n+'</div>'+
-      '<div class="grid">'+
-      '<div class="field full"><label class="lab">Full Name <span class="req">*</span></label>'+
-        '<input type="text" id="dir'+n+'-fullName" placeholder="Full legal name" value="'+esc(d.fullName)+'">'+
-        '<span class="err-msg" id="err-dir'+n+'-fullName">This field is required</span></div>'+
-      '<div class="field"><label class="lab">BVN <span class="req">*</span></label>'+
-        '<input type="text" id="dir'+n+'-bvn" placeholder="11-digit BVN" maxlength="11" value="'+esc(d.bvn)+'">'+
-        '<span class="err-msg" id="err-dir'+n+'-bvn">BVN must be exactly 11 digits</span></div>'+
-      '<div class="field"><label class="lab">NIN <span class="req">*</span></label>'+
-        '<input type="text" id="dir'+n+'-nin" placeholder="11-digit NIN" maxlength="11" value="'+esc(d.nin)+'">'+
-        '<span class="err-msg" id="err-dir'+n+'-nin">NIN must be exactly 11 digits</span></div>'+
-      '<div class="field"><label class="lab">Phone <span class="req">*</span></label>'+
-        '<input type="tel" id="dir'+n+'-phone" placeholder="0801 234 5678" value="'+esc(d.phone)+'">'+
-        '<span class="err-msg" id="err-dir'+n+'-phone">Enter a valid Nigerian phone number</span></div>'+
-      '<div class="field"><label class="lab">Email <span class="req">*</span></label>'+
-        '<input type="email" id="dir'+n+'-email" placeholder="director@example.com" value="'+esc(d.email)+'">'+
-        '<span class="err-msg" id="err-dir'+n+'-email">Enter a valid email address</span></div>'+
-      '<div class="field full"><label class="lab">Residential Address <span class="req">*</span></label>'+
-        '<textarea id="dir'+n+'-address" rows="2" placeholder="Full residential address">'+esc(d.address)+'</textarea>'+
-        '<span class="err-msg" id="err-dir'+n+'-address">This field is required</span></div>'+
-      '</div>';
-    c.appendChild(b);
-    ["fullName","bvn","nin","phone","email","address"].forEach(function(k){ bindBlur("dir"+n+"-"+k); });
-  });
-  document.getElementById("add-director-btn").style.display = directors.length>=3?"none":"";
-}
-
-function renderSignatories(){
-  var c=document.getElementById("signatories-container");
-  c.innerHTML="";
-  signatories.forEach(function(s){
-    var n=s.n;
-    var b=document.createElement("div");
-    b.className="entity-block";b.id="signatory-block-"+n;
-    b.innerHTML='<div class="entity-block-title">Signatory '+n+'</div>'+
-      '<div class="grid">'+
-      '<div class="field full"><label class="lab">Full Name <span class="req">*</span></label>'+
-        '<input type="text" id="sig'+n+'-fullName" placeholder="Full legal name" value="'+esc(s.fullName)+'">'+
-        '<span class="err-msg" id="err-sig'+n+'-fullName">This field is required</span></div>'+
-      '<div class="field"><label class="lab">Title <span class="req">*</span></label>'+
-        '<input type="text" id="sig'+n+'-title" placeholder="e.g. CEO, CFO, Director" value="'+esc(s.title)+'">'+
-        '<span class="err-msg" id="err-sig'+n+'-title">This field is required</span></div>'+
-      '<div class="field"><label class="lab">Phone <span class="req">*</span></label>'+
-        '<input type="tel" id="sig'+n+'-phone" placeholder="0801 234 5678" value="'+esc(s.phone)+'">'+
-        '<span class="err-msg" id="err-sig'+n+'-phone">Enter a valid Nigerian phone number</span></div>'+
-      '<div class="field full"><label class="lab">Email <span class="req">*</span></label>'+
-        '<input type="email" id="sig'+n+'-email" placeholder="signatory@example.com" value="'+esc(s.email)+'">'+
-        '<span class="err-msg" id="err-sig'+n+'-email">Enter a valid email address</span></div>'+
-      '<div class="field full"><label class="lab">Mandate Type <span class="req">*</span></label>'+
-        '<div class="choices">'+
-          '<label class="choice'+(s.mandate==="Sole signatory"?" sel":"")+'">'+
-            '<input type="radio" name="mandate'+n+'" value="Sole signatory"'+(s.mandate==="Sole signatory"?" checked":"")+'>Sole signatory</label>'+
-          '<label class="choice'+(s.mandate==="Joint signatory"?" sel":"")+'">'+
-            '<input type="radio" name="mandate'+n+'" value="Joint signatory"'+(s.mandate==="Joint signatory"?" checked":"")+'>Joint signatory</label>'+
-        '</div>'+
-        '<span class="err-msg" id="err-sig'+n+'-mandate">Please select mandate type</span></div>'+
-      '</div>';
-    c.appendChild(b);
-    b.querySelectorAll('input[name="mandate'+n+'"]').forEach(function(r){
-      r.addEventListener("change",function(){
-        b.querySelectorAll(".choice").forEach(function(ch){ch.classList.remove("sel");});
-        r.closest(".choice").classList.add("sel");
-      });
-    });
-    ["fullName","title","phone","email"].forEach(function(k){ bindBlur("sig"+n+"-"+k); });
-  });
-  document.getElementById("add-signatory-btn").style.display = signatories.length>=2?"none":"";
-}
-
-document.getElementById("add-director-btn").addEventListener("click",function(){
-  if(directors.length<3){ directors.push(buildDirectorState(directors.length+1)); renderDirectors(); }
-});
-document.getElementById("add-signatory-btn").addEventListener("click",function(){
-  if(signatories.length<2){ signatories.push(buildSignatoryState(signatories.length+1)); renderSignatories(); }
-});
-
 document.querySelectorAll(".choices").forEach(function(g){
   g.querySelectorAll(".choice").forEach(function(c){
     c.addEventListener("change",function(){
@@ -724,71 +1476,189 @@ document.getElementById("registeredAddress").addEventListener("input",function()
   if(document.getElementById("sameAddress").checked) document.getElementById("operatingAddress").value=this.value;
 });
 
-var FILE_KEYS=["cac","memart","resolution","address","id1","id2","signature"];
-var fileStore={};
-FILE_KEYS.forEach(function(key){
-  var slot=document.getElementById("slot-"+key);
-  var input=document.getElementById("file-"+key);
-  if(!slot||!input) return;
-  input.addEventListener("change",function(){ handleFile(key,this.files[0]); });
-  slot.addEventListener("dragover",function(e){ e.preventDefault(); slot.classList.add("drag"); });
-  slot.addEventListener("dragleave",function(){ slot.classList.remove("drag"); });
-  slot.addEventListener("drop",function(e){ e.preventDefault(); slot.classList.remove("drag"); var f=e.dataTransfer.files[0]; if(f) handleFile(key,f); });
-});
-function handleFile(key,file){
-  if(!file) return;
-  var n=document.getElementById("name-"+key);
-  if(file.size > 4*1024*1024){
-    delete fileStore[key];
-    var s0=document.getElementById("slot-"+key); if(s0) s0.classList.remove("filled");
-    if(n){ n.textContent="File too large — maximum 4 MB"; n.style.display="block"; n.style.color="#B23A3A"; }
-    return;
-  }
-  fileStore[key]=file;
-  if(n){ n.textContent="✓ "+file.name; n.style.display="block"; n.style.color=""; }
-  var s=document.getElementById("slot-"+key);
-  if(s) s.classList.add("filled");
-  clearErr("err-"+key);
+/* ================================================================
+ * CONDITIONAL FIELD VISIBILITY
+ * ================================================================ */
+function syncConditionals(){
+  var mr=document.querySelector('input[name="mandateRule"]:checked');
+  toggleEl("cond-mandateSpecify", !!mr && mr.value==="Two or more");
+  var pep=document.querySelector('input[name="pep"]:checked');
+  toggleEl("cond-pep", !!pep && pep.value==="Yes");
 }
+function toggleEl(id, show){
+  var el=document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle("show", show);
+}
+document.getElementById("mainCard").addEventListener("change", syncConditionals);
+document.getElementById("mainCard").addEventListener("input", syncConditionals);
 
-// Signature is now provided as an uploaded image (data-key="signature"),
-// handled by the FILE_KEYS wiring above.
-document.getElementById("sigDate").value=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
-
-// Populate the Date of Incorporation Day/Month/Year picker and sync hidden input (YYYY-MM-DD)
+/* ================================================================
+ * DOB / DATE PICKERS
+ * ================================================================ */
+function initDatePicker(prefix, yearStart, yearEnd){
+  var dayEl=document.getElementById(prefix+"-day");
+  var monthEl=document.getElementById(prefix+"-month");
+  var yearEl=document.getElementById(prefix+"-year");
+  var hidden=document.getElementById(prefix);
+  if(!dayEl||!monthEl||!yearEl||!hidden) return;
+  for(var d=1;d<=31;d++){var o=document.createElement("option");o.value=String(d).padStart(2,"0");o.textContent=d;dayEl.appendChild(o);}
+  var step = yearStart<=yearEnd ? 1 : -1;
+  for(var y=yearStart; step>0 ? y<=yearEnd : y>=yearEnd; y+=step){var o2=document.createElement("option");o2.value=y;o2.textContent=y;yearEl.appendChild(o2);}
+  function sync(){var dd=dayEl.value,mm=monthEl.value,yy=yearEl.value;hidden.value=(dd&&mm&&yy)?(yy+"-"+mm+"-"+dd):"";}
+  dayEl.addEventListener("change",sync);
+  monthEl.addEventListener("change",sync);
+  yearEl.addEventListener("change",sync);
+}
 (function(){
   var dayEl=document.getElementById("incorporationDate-day");
   var monthEl=document.getElementById("incorporationDate-month");
   var yearEl=document.getElementById("incorporationDate-year");
   var hidden=document.getElementById("incorporationDate");
-  if(!dayEl||!monthEl||!yearEl||!hidden) return;
-  for(var d=1;d<=31;d++){var o=document.createElement("option");o.value=String(d).padStart(2,"0");o.textContent=d;dayEl.appendChild(o);}
-  var cur=new Date().getFullYear();
-  for(var y=cur;y>=1950;y--){var o2=document.createElement("option");o2.value=y;o2.textContent=y;yearEl.appendChild(o2);}
-  function sync(){var dd=dayEl.value,mm=monthEl.value,yy=yearEl.value;hidden.value=(dd&&mm&&yy)?(yy+"-"+mm+"-"+dd):"";}
-  dayEl.addEventListener("change",sync);
-  monthEl.addEventListener("change",sync);
-  yearEl.addEventListener("change",sync);
+  if(dayEl&&monthEl&&yearEl&&hidden){
+    for(var d=1;d<=31;d++){var o=document.createElement("option");o.value=String(d).padStart(2,"0");o.textContent=d;dayEl.appendChild(o);}
+    var cur=new Date().getFullYear();
+    for(var y=cur;y>=1950;y--){var o2=document.createElement("option");o2.value=y;o2.textContent=y;yearEl.appendChild(o2);}
+    function sync(){var dd=dayEl.value,mm=monthEl.value,yy=yearEl.value;hidden.value=(dd&&mm&&yy)?(yy+"-"+mm+"-"+dd):"";}
+    dayEl.addEventListener("change",sync);
+    monthEl.addEventListener("change",sync);
+    yearEl.addEventListener("change",sync);
+  }
 })();
+var curYear = new Date().getFullYear();
+["dir1-dob","dir2-dob","ubo1-dob","ubo2-dob","sigA-dob","sigB-dob"].forEach(function(p){
+  initDatePicker(p, curYear-18, curYear-100);
+});
 
+document.getElementById("sigDate").value=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+
+/* ================================================================
+ * HELPERS
+ * ================================================================ */
 function esc(v){ return (v||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
 function val(id){ var el=document.getElementById(id); return el?el.value.trim():""; }
+function radioVal(name){ var el=document.querySelector('input[name="'+name+'"]:checked'); return el?el.value:""; }
 function setErr(id,show){ var el=document.getElementById(id); if(!el) return; if(show) el.classList.add("show"); else el.classList.remove("show"); }
 function clearErr(id){ setErr(id,false); }
 function setFieldErr(id,show){ var el=document.getElementById(id); if(!el) return; if(show) el.classList.add("err-field"); else el.classList.remove("err-field"); }
 function markField(fid,eid,ok){ setFieldErr(fid,!ok); setErr(eid,!ok); return ok; }
 function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function isNigerianPhone(v){ var d=v.replace(/[\s\-().+]/g,""); if(v.startsWith("+234")) return /^234\d{10}$/.test(d); return /^0\d{10}$/.test(d); }
-function bindBlur(id){ var el=document.getElementById(id); if(el) el.addEventListener("blur",function(){ validateFieldById(id); }); }
-function validateFieldById(id){
-  var v=document.getElementById(id)?document.getElementById(id).value.trim():"";
-  if(id.indexOf("bvn")!==-1) return markField(id,"err-"+id,/^\d{11}$/.test(v));
-  if(id.indexOf("nin")!==-1) return markField(id,"err-"+id,/^\d{11}$/.test(v));
-  if(id.indexOf("phone")!==-1||id.indexOf("Phone")!==-1) return markField(id,"err-"+id,isNigerianPhone(v));
-  if(id.indexOf("email")!==-1||id.indexOf("Email")!==-1) return markField(id,"err-"+id,isEmail(v));
-  return markField(id,"err-"+id,v.length>0);
+
+/* Person-block field definitions (Director / UBO): [suffix, checkFn] */
+var PERSON_FIELDS = [
+  ["surname", function(v){return v.length>0;}],
+  ["firstName", function(v){return v.length>0;}],
+  ["bvn", function(v){return /^\d{11}$/.test(v);}],
+  ["dob", function(v){return v.length>0;}],
+  ["phone", function(v){return isNigerianPhone(v);}],
+  ["idType", function(v){return v.length>0;}],
+  ["idNumber", function(v){return v.length>0;}],
+  ["email", function(v){return isEmail(v);}]
+];
+function validatePerson(pfx, required){
+  var ok=true;
+  PERSON_FIELDS.forEach(function(f){
+    var id=pfx+"-"+f[0];
+    if(!required && val(id)==="") return; // optional person: skip unfilled fields
+    if(!markField(id,"err-"+id,f[1](val(id)))) ok=false;
+  });
+  if(required){
+    if(!radioVal(pfx+"-sex")){ setErr("err-"+pfx+"-sex",true); ok=false; } else setErr("err-"+pfx+"-sex",false);
+    if(!markField(pfx+"-title","err-"+pfx+"-title", val(pfx+"-title").length>0)) ok=false;
+    if(!markField(pfx+"-nationality","err-"+pfx+"-nationality", val(pfx+"-nationality").length>0)) ok=false;
+  }
+  return ok;
+}
+function isPersonComplete(pfx, required){
+  if(!required){
+    var anyFilled = PERSON_FIELDS.some(function(f){ return val(pfx+"-"+f[0])!==""; });
+    if(!anyFilled) return true;
+  }
+  var ok = PERSON_FIELDS.every(function(f){ return f[1](val(pfx+"-"+f[0])); });
+  if(required){
+    ok = ok && !!radioVal(pfx+"-sex") && val(pfx+"-title").length>0 && val(pfx+"-nationality").length>0;
+  }
+  return ok;
 }
 
+/* Account Signatory field definitions (superset of PERSON_FIELDS) */
+var SIG_FIELDS = [
+  ["surname", function(v){return v.length>0;}],
+  ["firstName", function(v){return v.length>0;}],
+  ["bvn", function(v){return /^\d{11}$/.test(v);}],
+  ["dob", function(v){return v.length>0;}],
+  ["mobile", function(v){return isNigerianPhone(v);}],
+  ["email", function(v){return isEmail(v);}],
+  ["stateOfOrigin", function(v){return v.length>0;}],
+  ["lga", function(v){return v.length>0;}],
+  ["maritalStatus", function(v){return v.length>0;}],
+  ["residentialAddress", function(v){return v.length>0;}],
+  ["mothersMaidenName", function(v){return v.length>0;}],
+  ["idType", function(v){return v.length>0;}],
+  ["taxCountry", function(v){return v.length>0;}],
+  ["lei", function(v){return v.length>0;}],
+  ["occupation", function(v){return v.length>0;}],
+  ["classOfSignatory", function(v){return v.length>0;}]
+];
+function validateSignatory(pfx, required){
+  var ok=true;
+  SIG_FIELDS.forEach(function(f){
+    var id=pfx+"-"+f[0];
+    if(!required && val(id)==="") return;
+    if(!markField(id,"err-"+id,f[1](val(id)))) ok=false;
+  });
+  if(required){
+    if(!radioVal(pfx+"-sex")){ setErr("err-"+pfx+"-sex",true); ok=false; } else setErr("err-"+pfx+"-sex",false);
+    if(!markField(pfx+"-title","err-"+pfx+"-title", val(pfx+"-title").length>0)) ok=false;
+    if(!markField(pfx+"-nationality","err-"+pfx+"-nationality", val(pfx+"-nationality").length>0)) ok=false;
+    if(!radioVal(pfx+"-dualCitizenship")){ setErr("err-"+pfx+"-dualCitizenship",true); ok=false; } else setErr("err-"+pfx+"-dualCitizenship",false);
+  }
+  return ok;
+}
+function isSignatoryComplete(pfx, required){
+  if(!required){
+    var anyFilled = SIG_FIELDS.some(function(f){ return val(pfx+"-"+f[0])!==""; });
+    if(!anyFilled) return true;
+  }
+  var ok = SIG_FIELDS.every(function(f){ return f[1](val(pfx+"-"+f[0])); });
+  if(required){
+    ok = ok && !!radioVal(pfx+"-sex") && val(pfx+"-title").length>0 && val(pfx+"-nationality").length>0 && !!radioVal(pfx+"-dualCitizenship");
+  }
+  return ok;
+}
+
+/* Mandate signatory field definitions */
+var MSIG_FIELDS = [
+  ["surname", function(v){return v.length>0;}],
+  ["firstName", function(v){return v.length>0;}],
+  ["classOfSignatory", function(v){return v.length>0;}]
+];
+function validateMandateSig(pfx, required){
+  var ok=true;
+  MSIG_FIELDS.forEach(function(f){
+    var id=pfx+"-"+f[0];
+    if(!required && val(id)==="") return;
+    if(!markField(id,"err-"+id,f[1](val(id)))) ok=false;
+  });
+  if(required){
+    if(!markField(pfx+"-title","err-"+pfx+"-title", val(pfx+"-title").length>0)) ok=false;
+  }
+  return ok;
+}
+function isMandateSigComplete(pfx, required){
+  if(!required){
+    var anyFilled = MSIG_FIELDS.some(function(f){ return val(pfx+"-"+f[0])!==""; }) || val(pfx+"-title")!=="";
+    if(!anyFilled) return true;
+  }
+  var ok = MSIG_FIELDS.every(function(f){ return f[1](val(pfx+"-"+f[0])); });
+  if(required) ok = ok && val(pfx+"-title").length>0;
+  return ok;
+}
+
+/* ================================================================
+ * STEP VALIDATION
+ * ================================================================ */
 function validateStep0(){
   var ok=true;
   var et=document.querySelector('input[name="entityType"]:checked');
@@ -806,34 +1676,27 @@ function validateStep0(){
   return ok;
 }
 function validateStep1(){
-  var ok=true;
-  directors.forEach(function(d){
-    var n=d.n;
-    [{id:"dir"+n+"-fullName",fn:function(v){return v.length>0;}},
-     {id:"dir"+n+"-bvn",fn:function(v){return /^\d{11}$/.test(v);}},
-     {id:"dir"+n+"-nin",fn:function(v){return /^\d{11}$/.test(v);}},
-     {id:"dir"+n+"-phone",fn:function(v){return isNigerianPhone(v);}},
-     {id:"dir"+n+"-email",fn:function(v){return isEmail(v);}},
-     {id:"dir"+n+"-address",fn:function(v){return v.length>0;}}
-    ].forEach(function(c){ if(!markField(c.id,"err-"+c.id,c.fn(val(c.id)))) ok=false; });
-  });
-  return ok;
+  var okDir1 = validatePerson("dir1",true);
+  var okDir2 = validatePerson("dir2",false);
+  var okUbo1 = validatePerson("ubo1",true);
+  var okUbo2 = validatePerson("ubo2",false);
+  return okDir1 && okDir2 && okUbo1 && okUbo2;
 }
 function validateStep2(){
-  var ok=true;
-  signatories.forEach(function(s){
-    var n=s.n;
-    [{id:"sig"+n+"-fullName",fn:function(v){return v.length>0;}},
-     {id:"sig"+n+"-title",fn:function(v){return v.length>0;}},
-     {id:"sig"+n+"-phone",fn:function(v){return isNigerianPhone(v);}},
-     {id:"sig"+n+"-email",fn:function(v){return isEmail(v);}}
-    ].forEach(function(c){ if(!markField(c.id,"err-"+c.id,c.fn(val(c.id)))) ok=false; });
-    var m=document.querySelector('input[name="mandate'+n+'"]:checked');
-    if(!m){setErr("err-sig"+n+"-mandate",true);ok=false;}else{setErr("err-sig"+n+"-mandate",false);}
-  });
-  return ok;
+  var okA = validateSignatory("sigA",true);
+  var okB = validateSignatory("sigB",false);
+  return okA && okB;
 }
 function validateStep3(){
+  var ok=true;
+  var mr=document.querySelector('input[name="mandateRule"]:checked');
+  if(!mr){setErr("err-mandateRule",true);ok=false;}else{setErr("err-mandateRule",false);}
+  var ok1=validateMandateSig("msig1",true);
+  var ok2=validateMandateSig("msig2",false);
+  var ok3=validateMandateSig("msig3",false);
+  return ok && ok1 && ok2 && ok3;
+}
+function validateStep4(){
   var ok=true;
   [{id:"bankName",err:"err-bankName",fn:function(v){return v.length>0;}},
    {id:"bankBranch",err:"err-bankBranch",fn:function(v){return v.length>0;}},
@@ -848,24 +1711,29 @@ function validateStep3(){
   if(!markField("annualTurnover","err-annualTurnover",val("annualTurnover").length>0)) ok=false;
   return ok;
 }
-function validateStep4(){
+var REQUIRED_DOC_KEYS=["cac","cacStatus","memart","resolution","address","uboId1","dirId1","sigAPhoto","sigAId","sigAAddress","msig1Photo"];
+var ALL_DOC_KEYS=["cac","cacStatus","memart","resolution","operatingLicense","address","uboId1","uboId2","dirId1","dirId2",
+  "sigAPhoto","sigAId","sigAAddress","sigBPhoto","sigBId","sigBAddress","msig1Photo","msig2Photo","msig3Photo","residentPermit","signature"];
+function validateStep5(){
   var ok=true;
-  ["cac","memart","resolution","address","id1"].forEach(function(key){
+  REQUIRED_DOC_KEYS.forEach(function(key){
     if(!fileStore[key]){setErr("err-"+key,true);ok=false;}else{setErr("err-"+key,false);}
   });
   return ok;
 }
-function validateStep5(){
+function validateStep6(){
   var ok=true,allChecked=true;
   for(var i=1;i<=5;i++){ if(!document.getElementById("decl-"+i).checked){allChecked=false;break;} }
   if(!allChecked){setErr("err-declarations",true);ok=false;}else{setErr("err-declarations",false);}
+  var pep=document.querySelector('input[name="pep"]:checked');
+  if(!pep){setErr("err-pep",true);ok=false;}else{setErr("err-pep",false);}
   if(!markField("signatoryName","err-signatoryName",val("signatoryName").length>0)) ok=false;
   if(!markField("sigDate","err-sigDate",val("sigDate").length>0)) ok=false;
   if(!fileStore.signature){ setErr("err-signature",true); ok=false; } else { setErr("err-signature",false); }
   return ok;
 }
 
-var stepValidators=[validateStep0,validateStep1,validateStep2,validateStep3,validateStep4,validateStep5];
+var stepValidators=[validateStep0,validateStep1,validateStep2,validateStep3,validateStep4,validateStep5,validateStep6];
 
 // Read-only: is a step's required content complete? Reads saved data (no DOM mutation).
 function isStepComplete(n){
@@ -883,18 +1751,17 @@ function isStepComplete(n){
     return true;
   }
   if(n===1){
-    return directors.every(function(d){
-      return (d.fullName||"").length>0 && /^\d{11}$/.test(d.bvn||"") && /^\d{11}$/.test(d.nin||"")
-        && isNigerianPhone(d.phone||"") && isEmail(d.email||"") && (d.address||"").length>0;
-    });
+    return isPersonComplete("dir1",true) && isPersonComplete("dir2",false)
+      && isPersonComplete("ubo1",true) && isPersonComplete("ubo2",false);
   }
   if(n===2){
-    return signatories.every(function(s){
-      return (s.fullName||"").length>0 && (s.title||"").length>0
-        && isNigerianPhone(s.phone||"") && isEmail(s.email||"") && !!(s.mandate);
-    });
+    return isSignatoryComplete("sigA",true) && isSignatoryComplete("sigB",false);
   }
   if(n===3){
+    if(!document.querySelector('input[name="mandateRule"]:checked')) return false;
+    return isMandateSigComplete("msig1",true) && isMandateSigComplete("msig2",false) && isMandateSigComplete("msig3",false);
+  }
+  if(n===4){
     if(!val("bankName").length) return false;
     if(!val("bankBranch").length) return false;
     if(!/^\d{10}$/.test(val("accountNumber"))) return false;
@@ -905,11 +1772,12 @@ function isStepComplete(n){
     if(!val("annualTurnover").length) return false;
     return true;
   }
-  if(n===4){
-    return ["cac","memart","resolution","address","id1"].every(function(k){ return !!fileStore[k]; });
-  }
   if(n===5){
+    return REQUIRED_DOC_KEYS.every(function(k){ return !!fileStore[k]; });
+  }
+  if(n===6){
     for(var i=1;i<=5;i++){ if(!document.getElementById("decl-"+i).checked) return false; }
+    if(!document.querySelector('input[name="pep"]:checked')) return false;
     if(!val("signatoryName").length) return false;
     if(!val("sigDate").length) return false;
     if(!fileStore.signature) return false;
@@ -931,7 +1799,6 @@ function refreshStepStatus(active){
 }
 
 function showStep(n){
-  saveDirectorValues(); saveSignatoryValues();
   document.getElementById("step-"+currentStep).classList.remove("active");
   currentStep=n;
   document.getElementById("step-"+currentStep).classList.add("active");
@@ -939,6 +1806,7 @@ function showStep(n){
   window.scrollTo({top:0,behavior:"smooth"});
   maxReached=Math.max(maxReached,n);
   refreshStepStatus(n);
+  syncConditionals();
 }
 
 document.getElementById("mainCard").addEventListener("input", function(){ refreshStepStatus(currentStep); });
@@ -956,12 +1824,6 @@ document.querySelectorAll("#tracker li").forEach(function(li){
   li.addEventListener("click",jump);
   li.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){e.preventDefault();jump();} });
 });
-function saveDirectorValues(){
-  directors.forEach(function(d){ var n=d.n; ["fullName","bvn","nin","phone","email","address"].forEach(function(k){ var el=document.getElementById("dir"+n+"-"+k); if(el) d[k]=el.value; }); });
-}
-function saveSignatoryValues(){
-  signatories.forEach(function(s){ var n=s.n; ["fullName","title","phone","email"].forEach(function(k){ var el=document.getElementById("sig"+n+"-"+k); if(el) s[k]=el.value; }); var m=document.querySelector('input[name="mandate'+n+'"]:checked'); if(m) s.mandate=m.value; });
-}
 
 document.getElementById("backBtn").addEventListener("click",function(){ if(currentStep>0) showStep(currentStep-1); });
 document.getElementById("nextBtn").addEventListener("click",function(){
@@ -969,7 +1831,7 @@ document.getElementById("nextBtn").addEventListener("click",function(){
     if(!stepValidators[currentStep]()){ showErrBanner("Please correct the errors above before continuing."); return; }
     hideErrBanner(); showStep(currentStep+1);
   } else {
-    if(!stepValidators[5]()){ showErrBanner("Please correct the errors above before submitting."); return; }
+    if(!stepValidators[totalSteps-1]()){ showErrBanner("Please correct the errors above before submitting."); return; }
     hideErrBanner(); submitForm();
   }
 });
@@ -977,16 +1839,54 @@ document.getElementById("nextBtn").addEventListener("click",function(){
 function showErrBanner(msg){ var b=document.getElementById("errBanner"); b.textContent=msg; b.classList.add("show"); b.scrollIntoView({behavior:"smooth",block:"nearest"}); }
 function hideErrBanner(){ document.getElementById("errBanner").classList.remove("show"); }
 
+function personPayload(pfx){
+  return {
+    surname:val(pfx+"-surname"), firstName:val(pfx+"-firstName"), middleName:val(pfx+"-middleName"),
+    title:val(pfx+"-title"), sex:radioVal(pfx+"-sex"), nationality:val(pfx+"-nationality"),
+    bvn:val(pfx+"-bvn"), dob:val(pfx+"-dob"), phone:val(pfx+"-phone"),
+    idType:val(pfx+"-idType"), idNumber:val(pfx+"-idNumber"), idIssueDate:val(pfx+"-idIssueDate"),
+    email:val(pfx+"-email"), pctHolding:val(pfx+"-pctHolding")
+  };
+}
+function signatoryPayload(pfx){
+  return {
+    surname:val(pfx+"-surname"), firstName:val(pfx+"-firstName"), middleName:val(pfx+"-middleName"),
+    title:val(pfx+"-title"), sex:radioVal(pfx+"-sex"), nationality:val(pfx+"-nationality"),
+    stateOfOrigin:val(pfx+"-stateOfOrigin"), lga:val(pfx+"-lga"), bvn:val(pfx+"-bvn"),
+    maritalStatus:val(pfx+"-maritalStatus"), maidenName:val(pfx+"-maidenName"), dob:val(pfx+"-dob"),
+    residentialAddress:val(pfx+"-residentialAddress"), mothersMaidenName:val(pfx+"-mothersMaidenName"),
+    mailingAddress:val(pfx+"-mailingAddress"), nationalId:val(pfx+"-nationalId"),
+    idType:val(pfx+"-idType"), idNumber:val(pfx+"-idNumber"), idIssueDate:val(pfx+"-idIssueDate"),
+    email:val(pfx+"-email"), mobile:val(pfx+"-mobile"), mobile2:val(pfx+"-mobile2"),
+    taxCountry:val(pfx+"-taxCountry"), taxId:val(pfx+"-taxId"), lei:val(pfx+"-lei"),
+    occupation:val(pfx+"-occupation"), employer:val(pfx+"-employer"),
+    dualCitizenship:radioVal(pfx+"-dualCitizenship"), otherNationality:val(pfx+"-otherNationality"),
+    permitIssuance:val(pfx+"-permitIssuance"), permitExpiry:val(pfx+"-permitExpiry"),
+    classOfSignatory:val(pfx+"-classOfSignatory")
+  };
+}
+function mandateSigPayload(pfx){
+  return {
+    title:val(pfx+"-title"), surname:val(pfx+"-surname"), firstName:val(pfx+"-firstName"),
+    middleName:val(pfx+"-middleName"), classOfSignatory:val(pfx+"-classOfSignatory")
+  };
+}
+
 function collectPayload(){
-  saveDirectorValues(); saveSignatoryValues();
   var et=document.querySelector('input[name="entityType"]:checked');
   var sof=[]; document.querySelectorAll('input[name="sourceOfFunds"]:checked').forEach(function(c){sof.push(c.value);});
   var inv=[]; document.querySelectorAll('input[name="investmentOptions"]:checked').forEach(function(c){inv.push(c.value);});
   return {
-    entityDetails:{entityType:et?et.value:"",companyName:val("companyName"),rcNumber:val("rcNumber"),tin:val("tin"),incorporationDate:val("incorporationDate"),natureBusiness:val("natureBusiness"),registeredAddress:val("registeredAddress"),operatingAddress:val("operatingAddress"),email:val("corpEmail"),phone:val("corpPhone"),website:val("website")},
-    directors:directors.map(function(d){return {n:d.n,fullName:d.fullName,bvn:d.bvn,nin:d.nin,phone:d.phone,email:d.email,address:d.address};}),
-    signatories:signatories.map(function(s){return {n:s.n,fullName:s.fullName,title:s.title,phone:s.phone,email:s.email,mandate:s.mandate};}),
+    entityDetails:{entityType:et?et.value:"",companyName:val("companyName"),rcNumber:val("rcNumber"),tin:val("tin"),
+      incorporationDate:val("incorporationDate"),placeOfIncorporation:val("placeOfIncorporation"),natureBusiness:val("natureBusiness"),
+      registeredAddress:val("registeredAddress"),operatingAddress:val("operatingAddress"),email:val("corpEmail"),phone:val("corpPhone"),website:val("website")},
+    director1:personPayload("dir1"), director2:personPayload("dir2"),
+    ubo1:personPayload("ubo1"), ubo2:personPayload("ubo2"),
+    signatoryA:signatoryPayload("sigA"), signatoryB:signatoryPayload("sigB"),
+    mandate:{rule:radioVal("mandateRule"), specify:val("mandateSpecify")},
+    mandateSig1:mandateSigPayload("msig1"), mandateSig2:mandateSigPayload("msig2"), mandateSig3:mandateSigPayload("msig3"),
     financial:{bankName:val("bankName"),bankBranch:val("bankBranch"),accountNumber:val("accountNumber"),accountName:val("accountName"),dcsNumber:val("dcsNumber"),sourceOfFunds:sof,sourceDetails:val("sourceDetails"),annualTurnover:val("annualTurnover"),investmentOptions:inv,referralSource:val("referralSource"),relationshipManager:val("relationshipManager")},
+    pep:radioVal("pep"), pepDetails:val("pepDetails"),
     declaration:{signatoryName:val("signatoryName"),date:val("sigDate")}
   };
 }
@@ -1042,7 +1942,7 @@ function finishUploads(ref,btn,lbl,onlyKeys){
 
 // Upload all files, verifying each and retrying once. Resolves to the list of failed keys.
 function uploadDocuments(ref,onlyKeys){
-  var keys=onlyKeys || Object.keys(fileStore).filter(function(k){return fileStore[k];});
+  var keys=onlyKeys || ALL_DOC_KEYS.filter(function(k){return fileStore[k];});
   var failures=[];
   function readAsDataURL(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(e){res(e.target.result);}; r.onerror=function(){rej(new Error("read failed"));}; r.readAsDataURL(file); }); }
   function uploadOne(key,attempt){
@@ -1067,10 +1967,37 @@ function uploadDocuments(ref,onlyKeys){
 
 document.getElementById("accountNumber").addEventListener("input",function(){ this.value=this.value.replace(/\D/g,"").slice(0,10); });
 
-renderDirectors();
-renderSignatories();
-updateNav();
+/* ================================================================
+ * FILE UPLOADS
+ * ================================================================ */
+var fileStore={};
+ALL_DOC_KEYS.forEach(function(key){
+  var slot=document.getElementById("slot-"+key);
+  var input=document.getElementById("file-"+key);
+  if(!slot||!input) return;
+  input.addEventListener("change",function(){ handleFile(key,this.files[0]); });
+  slot.addEventListener("dragover",function(e){ e.preventDefault(); slot.classList.add("drag"); });
+  slot.addEventListener("dragleave",function(){ slot.classList.remove("drag"); });
+  slot.addEventListener("drop",function(e){ e.preventDefault(); slot.classList.remove("drag"); var f=e.dataTransfer.files[0]; if(f) handleFile(key,f); });
+});
+function handleFile(key,file){
+  if(!file) return;
+  var n=document.getElementById("name-"+key);
+  if(file.size > 4*1024*1024){
+    delete fileStore[key];
+    var s0=document.getElementById("slot-"+key); if(s0) s0.classList.remove("filled");
+    if(n){ n.textContent="File too large — maximum 4 MB"; n.style.display="block"; n.style.color="#B23A3A"; }
+    return;
+  }
+  fileStore[key]=file;
+  if(n){ n.textContent="✓ "+file.name; n.style.display="block"; n.style.color=""; }
+  var s=document.getElementById("slot-"+key);
+  if(s) s.classList.add("filled");
+  clearErr("err-"+key);
+}
 
+updateNav();
+syncConditionals();
 })();
 </script>
 </body>
