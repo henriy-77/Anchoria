@@ -42,8 +42,12 @@ a{color:inherit;}
 }
 #page-landing .hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(ellipse 820px 480px at 80% 58%, rgba(194,151,43,.16), transparent 62%),
-    linear-gradient(180deg, rgba(11,10,8,.96) 0%, rgba(11,10,8,.84) 13%, rgba(11,10,8,.44) 30%, rgba(11,10,8,.24) 46%, rgba(11,10,8,.42) 68%, rgba(11,10,8,.84) 100%);
+    radial-gradient(ellipse 820px 480px at 80% 58%, rgba(194,151,43,.22), transparent 62%),
+    linear-gradient(180deg, rgba(6,5,4,.97) 0px, rgba(6,5,4,.97) 210px, rgba(6,5,4,0) 430px),
+    linear-gradient(180deg, rgba(6,5,4,.3) 0%, rgba(6,5,4,.15) 40%, rgba(6,5,4,.55) 78%, rgba(6,5,4,.9) 100%);
+}
+#page-landing .hero::after{content:"";position:absolute;left:0;right:0;top:210px;height:3px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg, rgba(194,151,43,0) 0%, rgba(194,151,43,.75) 35%, rgba(194,151,43,.75) 65%, rgba(194,151,43,0) 100%);
 }
 #page-landing .topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 5vw;position:relative;z-index:2;border-bottom:1px solid rgba(255,255,255,.08);}
 #page-landing .brand{display:flex;align-items:center;gap:14px;}
