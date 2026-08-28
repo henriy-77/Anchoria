@@ -41,10 +41,11 @@ a{color:inherit;}
   background-repeat:no-repeat;
 }
 #page-landing .hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 820px 480px at 80% 58%, rgba(194,151,43,.22), transparent 62%),
-    linear-gradient(180deg, rgba(6,5,4,.97) 0px, rgba(6,5,4,.97) 210px, rgba(6,5,4,0) 430px),
-    linear-gradient(180deg, rgba(6,5,4,.3) 0%, rgba(6,5,4,.15) 40%, rgba(6,5,4,.55) 78%, rgba(6,5,4,.9) 100%);
+  background:rgba(133,98,32,.6);
+  mix-blend-mode:multiply;
+}
+#page-landing .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg, rgba(6,5,4,.55) 0%, rgba(6,5,4,.12) 30%, rgba(6,5,4,.12) 60%, rgba(6,5,4,.55) 100%);
 }
 #page-landing .topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 5vw;position:relative;z-index:2;border-bottom:1px solid rgba(255,255,255,.08);}
 #page-landing .brand{display:flex;align-items:center;gap:14px;}
