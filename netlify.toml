@@ -11,15 +11,16 @@
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
-# On the invest.anchoriaonline.com domain, the IPO onboarding page is the
-# homepage -- not the KYC account-type chooser that index.html serves on
-# the main netlify.app domain.
+# The IPO onboarding page is the site's homepage. The KYC account-type
+# chooser that used to sit at "/" is still reachable at /index.html.
+# (Netlify redirects apply to the whole site, not per attached domain --
+# there's no way to route "/" differently for invest.anchoriaonline.com
+# vs. the netlify.app URL on a single site.)
 [[redirects]]
   from = "/"
   to = "/ipo-onboarding.html"
   status = 200
   force = true
-  conditions = {Host = ["invest.anchoriaonline.com"]}
 
 # Send the old form URLs to the current renamed pages
 [[redirects]]
