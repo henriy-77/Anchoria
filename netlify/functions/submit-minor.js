@@ -108,7 +108,7 @@ exports.handler = async (event) => {
     "Documents Submitted":          Array.isArray(payload.documents)
                                       ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                       : "",
-    "View Application":             `https://onboard.anchoriaonline.com/.netlify/functions/minor-pdf?ref=${encodeURIComponent(ref)}`,
+    "View Application":             `https://signup.anchoriaonline.com/.netlify/functions/minor-pdf?ref=${encodeURIComponent(ref)}`,
     "Source":                       str(payload.source) || "Direct",
     "Status":                       "New",
   };

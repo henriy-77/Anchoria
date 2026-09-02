@@ -25,7 +25,7 @@ exports.handler = async (event) => {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SITE_ID          = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
   const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
-  const SITE_URL         = "https://onboard.anchoriaonline.com";
+  const SITE_URL         = "https://signup.anchoriaonline.com";
 
   if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) return { statusCode: 500, body: "Server misconfiguration" };
 

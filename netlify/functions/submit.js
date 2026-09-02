@@ -167,7 +167,7 @@ exports.handler = async (event) => {
                                   ? payload.documents.map((d) => `${d.key}: ${d.name}`).join("\n")
                                   : "",
     "Document Links":           docLinks.join("\n"),
-    "View Application":         `https://onboard.anchoriaonline.com/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
+    "View Application":         `https://signup.anchoriaonline.com/.netlify/functions/application-pdf?ref=${encodeURIComponent(ref)}`,
     "Source":                   str(payload.source) || "Direct",
     "Status":                   "New",
     "Notes":                    "",
