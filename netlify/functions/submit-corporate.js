@@ -58,7 +58,7 @@ exports.handler = async (event) => {
     `Signatory ${i + 1}: ${s.fullName || s.name || ""}${s.title ? " (" + s.title + ")" : ""}${s.mandate ? " | Mandate: " + s.mandate : ""}${s.phone ? " | Phone: " + s.phone : ""}${s.email ? " | Email: " + s.email : ""}`
   ).join("\n");
 
-  const siteUrl = "https://signup.anchoriaonline.com";
+  const siteUrl = "https://onboard.anchoriaonline.com";
 
   const fields = {
     "Reference":              ref,
