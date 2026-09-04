@@ -11,10 +11,17 @@
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
-# Send the old form URLs to the current renamed pages
+# The Individual form is retired — send any bookmarked/indexed links to
+# the external customer signup flow instead of a 404.
 [[redirects]]
   from = "/accountopening.html"
-  to = "/individualaccountopening.html"
+  to = "https://app.anchoriaonline.com/customers/signup"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/individualaccountopening.html"
+  to = "https://app.anchoriaonline.com/customers/signup"
   status = 301
   force = true
 
