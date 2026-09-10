@@ -45,18 +45,10 @@ exports.handler = async (event) => {
 
   /* ── Upload documents to Netlify Blobs ── */
   const docLinks = [];
-  const SITE_ID    = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
-  const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
-  const blobsReady = !!(SITE_ID && BLOB_TOKEN);
-
-  if (!blobsReady) {
-    console.warn("Netlify Blobs not configured (missing NETLIFY_TOKEN). Documents will not be stored.");
-  }
-
-  if (blobsReady) {
+  {
     let store;
     try {
-      store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+      store = getStore("documents");
     } catch (err) {
       console.error("Failed to init Blobs store:", err.message);
     }
