@@ -25,8 +25,6 @@ exports.handler = async (event) => {
   const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SHARED_SECRET    = process.env.SHARED_SECRET;
-  const SITE_ID          = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
-  const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
 
   const incomingSecret = event.headers["x-shared-secret"] || "";
   if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
@@ -45,14 +43,15 @@ exports.handler = async (event) => {
     return json(400, { error: "Missing ref, key, or data" });
   }
 
-  // Store in Netlify Blobs
+  // Store in Netlify Blobs (uses automatic in-function credentials — no
+  // manual site ID/token needed when running inside a Netlify Function)
   let downloadUrl = null;
-  if (SITE_ID && BLOB_TOKEN) {
+  {
     try {
       const base64   = data.includes(",") ? data.split(",")[1] : data;
       const mimeType = data.includes(";") ? data.split(";")[0].replace("data:", "") : "application/octet-stream";
       const buffer   = Buffer.from(base64, "base64");
-      const store    = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+      const store    = getStore("documents");
       await store.set(`${ref}/${key}`, buffer, { metadata: { name: name || key, mimeType, ref } });
       const siteUrl  = process.env.URL || "https://tourmaline-longma-857abb.netlify.app";
       downloadUrl    = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(key)}`;
@@ -61,8 +60,6 @@ exports.handler = async (event) => {
       console.error("Blobs store error:", err.message);
       return json(500, { error: "Failed to store document", detail: err.message });
     }
-  } else {
-    return json(500, { error: "Blobs not configured" });
   }
 
   // Fetch the Airtable record ID for this ref
