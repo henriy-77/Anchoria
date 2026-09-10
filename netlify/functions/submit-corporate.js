@@ -127,12 +127,10 @@ exports.handler = async (event) => {
     console.log("Corporate application saved:", ref, "→ Airtable", result.id);
 
     // Save canvas signature to Netlify Blobs
-    const SITE_ID   = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
-    const BLOB_TOKEN = process.env.NETLIFY_TOKEN  || process.env.NETLIFY_BLOBS_TOKEN;
     const sigData = decl.signature;
-    if (sigData && SITE_ID && BLOB_TOKEN) {
+    if (sigData) {
       try {
-        const store  = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+        const store  = getStore("documents");
         const base64 = sigData.includes(",") ? sigData.split(",")[1] : sigData;
         const buffer = Buffer.from(base64, "base64");
         await store.set(`${ref}/signature`, buffer, { metadata: { name: "signature.png", mimeType: "image/png", ref } });
