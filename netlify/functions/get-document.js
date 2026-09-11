@@ -14,7 +14,9 @@ exports.handler = async (event) => {
   }
 
   try {
-    const store = getStore("documents");
+    const SITE_ID    = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
+    const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
+    const store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
     const key = `${ref}/${doc}`;
     const result = await store.getWithMetadata(key, { type: "arrayBuffer" });
 

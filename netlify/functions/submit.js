@@ -45,10 +45,12 @@ exports.handler = async (event) => {
 
   /* ── Upload documents to Netlify Blobs ── */
   const docLinks = [];
+  const SITE_ID    = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
+  const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
   {
     let store;
     try {
-      store = getStore("documents");
+      store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
     } catch (err) {
       console.error("Failed to init Blobs store:", err.message);
     }

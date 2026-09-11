@@ -24,6 +24,8 @@ exports.handler = async (event) => {
   const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SITE_URL         = process.env.URL             || "https://tourmaline-longma-857abb.netlify.app";
+  const SITE_ID          = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
+  const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
 
   if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
     return { statusCode: 500, body: "Server misconfiguration" };
@@ -46,7 +48,7 @@ exports.handler = async (event) => {
   // Check which docs exist in Blobs (metadata only — no data fetched here)
   const existingDocs = [];
   {
-    const store = getStore("documents");
+    const store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
     for (const def of DOC_DEFS) {
       try {
         const meta = await store.getMetadata(`${ref}/${def.key}`);
