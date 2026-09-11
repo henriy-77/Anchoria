@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 
   /* ── Upload documents to Netlify Blobs ── */
   const docLinks = [];
-  const SITE_ID    = process.env.NETLIFY_SITE_ID || "6527e150-8acb-473f-a3a2-84f159b37389";
+  const SITE_ID    = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
   const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
   {
     let store;
