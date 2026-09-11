@@ -1507,6 +1507,48 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
   });
 
   /* ================================================================
+   * IMAGE COMPRESSION — shrink large photos client-side before upload.
+   * PDFs and already-small files pass through untouched; any failure
+   * (decode error, unsupported format) falls back to the original file.
+   * ================================================================ */
+  function compressImageFile(file, maxDim, quality) {
+    return new Promise(function (resolve) {
+      if (!file.type || file.type.indexOf("image/") !== 0 || file.type === "image/gif" || file.size < 500 * 1024) {
+        resolve(file);
+        return;
+      }
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        try {
+          var w = img.naturalWidth, h = img.naturalHeight;
+          var scale = Math.min(1, maxDim / Math.max(w, h));
+          var cw = Math.max(1, Math.round(w * scale));
+          var ch = Math.max(1, Math.round(h * scale));
+          var canvas = document.createElement("canvas");
+          canvas.width = cw; canvas.height = ch;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, cw, ch);
+          canvas.toBlob(function (blob) {
+            if (!blob || blob.size >= file.size) { resolve(file); return; }
+            var newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+            try {
+              resolve(new File([blob], newName, { type: "image/jpeg" }));
+            } catch (e) {
+              resolve(blob);
+            }
+          }, "image/jpeg", quality);
+        } catch (e) {
+          resolve(file);
+        }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  /* ================================================================
    * FILE UPLOADS
    * ================================================================ */
   document.querySelectorAll(".upload").forEach(function (widget) {
@@ -1518,24 +1560,26 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
 
     input.addEventListener("change", function () {
       if (!input.files || !input.files[0]) return;
-      var f = input.files[0];
+      var original = input.files[0];
 
-      // Size check
-      if (f.size > MAX_FILE_BYTES) {
-        errMsg.textContent = "File is too large. Maximum size is 4 MB.";
-        widget.classList.add("has-error");
-        widget.classList.remove("filled");
-        fileLabel.textContent = "";
-        delete uploads[key];
-        input.value = "";
-        return;
-      }
+      compressImageFile(original, 1600, 0.8).then(function (f) {
+        // Size check
+        if (f.size > MAX_FILE_BYTES) {
+          errMsg.textContent = "File is too large. Maximum size is 4 MB.";
+          widget.classList.add("has-error");
+          widget.classList.remove("filled");
+          fileLabel.textContent = "";
+          delete uploads[key];
+          input.value = "";
+          return;
+        }
 
-      uploads[key] = { name: f.name, size: f.size, type: f.type, file: f };
-      widget.classList.add("filled");
-      widget.classList.remove("has-error");
-      fileLabel.textContent = "✓ " + f.name;
-      errMsg.textContent = "Required. 4 MB max, JPG/PNG/PDF."; // reset default msg
+        uploads[key] = { name: f.name, size: f.size, type: f.type, file: f };
+        widget.classList.add("filled");
+        widget.classList.remove("has-error");
+        fileLabel.textContent = "✓ " + f.name;
+        errMsg.textContent = "Required. 4 MB max, JPG/PNG/PDF."; // reset default msg
+      });
     });
 
     clearBtn.addEventListener("click", function () {

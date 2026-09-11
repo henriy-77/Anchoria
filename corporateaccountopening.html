@@ -724,16 +724,45 @@ document.getElementById("registeredAddress").addEventListener("input",function()
   if(document.getElementById("sameAddress").checked) document.getElementById("operatingAddress").value=this.value;
 });
 
+// Shrink large photos client-side before upload. PDFs and already-small
+// files pass through untouched; any failure falls back to the original file.
+function compressImageFile(file,maxDim,quality){
+  return new Promise(function(resolve){
+    if(!file.type||file.type.indexOf("image/")!==0||file.type==="image/gif"||file.size<500*1024){ resolve(file); return; }
+    var img=new Image();
+    var url=URL.createObjectURL(file);
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      try{
+        var w=img.naturalWidth,h=img.naturalHeight;
+        var scale=Math.min(1,maxDim/Math.max(w,h));
+        var cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
+        var canvas=document.createElement("canvas");
+        canvas.width=cw; canvas.height=ch;
+        canvas.getContext("2d").drawImage(img,0,0,cw,ch);
+        canvas.toBlob(function(blob){
+          if(!blob||blob.size>=file.size){ resolve(file); return; }
+          var newName=file.name.replace(/\.[^.]+$/,"")+".jpg";
+          try{ resolve(new File([blob],newName,{type:"image/jpeg"})); }
+          catch(e){ resolve(blob); }
+        },"image/jpeg",quality);
+      }catch(e){ resolve(file); }
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); resolve(file); };
+    img.src=url;
+  });
+}
+
 var FILE_KEYS=["cac","memart","resolution","address","id1","id2","signature"];
 var fileStore={};
 FILE_KEYS.forEach(function(key){
   var slot=document.getElementById("slot-"+key);
   var input=document.getElementById("file-"+key);
   if(!slot||!input) return;
-  input.addEventListener("change",function(){ handleFile(key,this.files[0]); });
+  input.addEventListener("change",function(){ var f=this.files[0]; if(f) compressImageFile(f,1600,0.8).then(function(c){ handleFile(key,c); }); });
   slot.addEventListener("dragover",function(e){ e.preventDefault(); slot.classList.add("drag"); });
   slot.addEventListener("dragleave",function(){ slot.classList.remove("drag"); });
-  slot.addEventListener("drop",function(e){ e.preventDefault(); slot.classList.remove("drag"); var f=e.dataTransfer.files[0]; if(f) handleFile(key,f); });
+  slot.addEventListener("drop",function(e){ e.preventDefault(); slot.classList.remove("drag"); var f=e.dataTransfer.files[0]; if(f) compressImageFile(f,1600,0.8).then(function(c){ handleFile(key,c); }); });
 });
 function handleFile(key,file){
   if(!file) return;
