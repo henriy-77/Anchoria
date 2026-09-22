@@ -15,13 +15,13 @@
 # the external customer signup flow instead of a 404.
 [[redirects]]
   from = "/accountopening.html"
-  to = "https://app.anchoriaonline.com/customers/signup"
+  to = "https://app.anchoriang.com/signup"
   status = 301
   force = true
 
 [[redirects]]
   from = "/individualaccountopening.html"
-  to = "https://app.anchoriaonline.com/customers/signup"
+  to = "https://app.anchoriang.com/signup"
   status = 301
   force = true
 
