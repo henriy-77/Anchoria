@@ -16,11 +16,11 @@ exports.handler = async (event) => {
   }
 
   const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_CRF_BASE_ID;
   const SHARED_SECRET    = process.env.SHARED_SECRET;
 
   if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
-    console.error("Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars");
+    console.error("Missing AIRTABLE_TOKEN or AIRTABLE_CRF_BASE_ID env vars");
     return json(500, { error: "Server misconfiguration — contact admin" });
   }
 
