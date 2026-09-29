@@ -136,6 +136,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 <header><div class="hd">
   <a class="brand" id="home"><img src="anchoria-emblem.png" alt=""><b>Anchoria <span>Admin</span></b></a>
   <div class="chip hide" id="chip"><div class="avatar" id="av"></div><div class="who"><span id="wn"></span><small id="wr"></small></div></div>
+  <button class="btn ghost sm hide" id="actBtn">Activity</button>
   <button class="btn ghost sm hide" id="acctBtn">Password</button>
   <button class="btn ghost sm hide" id="usersBtn">Staff</button>
   <button class="btn ghost sm hide" id="outBtn">Sign out</button>
@@ -184,13 +185,42 @@ function busy(btn,on,label){if(on){btn.dataset.l=btn.innerHTML;btn.disabled=true
 /* ── Session ── */
 function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
 function shell(){
-  $("#chip").classList.remove("hide");$("#acctBtn").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");
+  $("#chip").classList.remove("hide");$("#acctBtn").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");$("#actBtn").classList.toggle("hide",me.role!=="admin");
   $("#wn").textContent=me.name;$("#wr").textContent=me.role;$("#av").textContent=(me.name||"?").trim().charAt(0).toUpperCase();
 }
 $("#home").onclick=function(){if(me)showList()};
 $("#outBtn").onclick=function(){api("logout",{}).then(function(){showLogin()})};
 $("#usersBtn").onclick=function(){showUsers()};
 $("#acctBtn").onclick=function(){showAccount()};
+$("#actBtn").onclick=function(){showActivity()};
+
+var ACT={login:"Signed in",login_failed:"Failed sign-in",logout:"Signed out",view_application:"Opened application",view_document:"Opened document",view_printable:"Opened printable application",
+  update_application:"Updated application",export_csv:"Exported CSV",password_change:"Changed own password",staff_created:"Added staff",staff_updated:"Updated staff",staff_removed:"Removed staff"};
+function actLabel(a){return ACT[a]||a}
+function actTarget(e){return[e.ref,e.doc,e.detail].filter(Boolean).join(" · ")}
+function actRows(list){
+  return list.map(function(e){return'<tr><td title="'+esc(e.at)+'">'+esc(when(e.at))+'</td><td><div class="nm">'+esc(e.name||e.by)+'</div><div class="sub">'+esc(e.by)+'</div></td><td>'+
+    '<span class="pill '+(/failed/.test(e.action)?"Rejected":/update|staff|password|export/.test(e.action)?"In-review":"New")+'">'+esc(actLabel(e.action))+'</span></td><td>'+esc(actTarget(e))+'</td><td class="mono">'+esc(e.ip)+'</td></tr>'}).join("");
+}
+function showActivity(){
+  app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Activity</h2><p>Who signed in, opened, changed or exported what. Most recent 400 events.</p></div></div>'+
+    '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="as" placeholder="Search person, action, reference or IP"></div>'+
+    '<select id="af"><option value="">All activity</option><option value="view">Views</option><option value="update">Changes</option><option value="login">Sign-ins</option></select></div><div id="at"><div class="sk" style="margin:18px 6px"></div></div></div>';
+  $("#back").onclick=function(e){e.preventDefault();showList()};
+  api("activity").then(function(j){
+    var all=j.entries;
+    function paint(){
+      var q=$("#as").value.toLowerCase(),f=$("#af").value;
+      var r=all.filter(function(e){
+        if(f==="view"&&e.action.indexOf("view")!==0)return false;
+        if(f==="update"&&!/update|staff|password|export/.test(e.action))return false;
+        if(f==="login"&&e.action.indexOf("log")!==0)return false;
+        return!q||(e.by+" "+e.name+" "+actLabel(e.action)+" "+actTarget(e)+" "+e.ip).toLowerCase().indexOf(q)>-1});
+      $("#at").innerHTML=r.length?'<table class="tbl"><thead><tr><th>When</th><th>Person</th><th>Action</th><th>Target</th><th>IP</th></tr></thead><tbody>'+actRows(r)+'</tbody></table>':'<div class="empty"><b>No activity found</b>Try clearing the search or filter.</div>';
+    }
+    $("#as").oninput=paint;$("#af").onchange=paint;paint();
+  }).catch(guard);
+}
 function showAccount(){
   app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Change password</h2><p>'+esc(me.email)+'</p></div></div>'+
     '<form class="card" id="cf" style="max-width:460px" autocomplete="off"><div id="ce"></div>'+
@@ -210,7 +240,7 @@ function showAccount(){
 }
 
 function showLogin(){
-  me=null;["#chip","#outBtn","#usersBtn","#acctBtn"].forEach(function(s){$(s).classList.add("hide")});
+  me=null;["#chip","#outBtn","#usersBtn","#acctBtn","#actBtn"].forEach(function(s){$(s).classList.add("hide")});
   app.innerHTML='<div class="login-wrap"><form class="card login" id="lf" novalidate><div class="logo"><img src="anchoria-emblem.png" alt=""><h2>Staff sign in</h2><p>Anchoria Capital Group · Account applications</p></div><div id="le"></div>'+
     '<div class="field"><label class="lbl" for="em">Email</label><input type="email" id="em" autocomplete="username" required autofocus></div>'+
     '<div class="field"><label class="lbl" for="pw">Password</label>'+pwField("pw","",true).replace('autocomplete="off"','autocomplete="current-password"')+'</div>'+
@@ -279,6 +309,13 @@ function renderDetail(r){
      (r.audit&&r.audit.length?'<ul class="tl">'+r.audit.slice().reverse().map(function(a){return'<li><b>'+esc(a.change)+'</b><br>'+esc(a.by)+' · '+esc(when(a.at))+'</li>'}).join("")+'</ul>':'<p class="muted" style="margin:14px 0 0;font-size:12.5px">No changes recorded yet.</p>')+
    '</div></aside></div>';
   $("#back").onclick=function(e){e.preventDefault();showList()};
+  if(me.role==="admin"){
+    var hc=document.createElement("div");hc.className="card";hc.innerHTML='<h3>Access history</h3><div class="sk" style="margin:8px 0"></div>';
+    app.querySelector(".dgrid > div").appendChild(hc);
+    api("activity",null,"&ref="+encodeURIComponent(ref)).then(function(j){
+      hc.innerHTML='<h3>Access history</h3>'+(j.entries.length?'<table class="tbl"><thead><tr><th>When</th><th>Person</th><th>Action</th><th>Target</th><th>IP</th></tr></thead><tbody>'+actRows(j.entries)+'</tbody></table>':'<p class="muted" style="margin:0">No access recorded yet.</p>');
+    }).catch(function(){hc.remove()});
+  }
   $$(".copy").forEach(function(el){el.onclick=function(){if(navigator.clipboard)navigator.clipboard.writeText(el.dataset.c).then(function(){toast("Copied")})}});
   $("#sv").onclick=function(){
     var b=$("#sv");busy(b,true,"Saving…");
