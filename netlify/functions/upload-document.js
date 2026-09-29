@@ -1,118 +1,75 @@
 /**
- * Anchoria Securities — Document Upload Handler
- * Accepts a single document as base64, stores in Netlify Blobs,
- * then patches the Airtable record with the download URL.
+ * Anchoria — Document Upload Handler
+ * Stores one uploaded document (base64) in Netlify Blobs.
+ *
+ * Hardened: the application must already exist (uploads follow a submission),
+ * uploads are only accepted for a short window after it was saved, file type is
+ * verified from the file's own bytes, size is capped, and requests are rate limited.
+ * No Airtable calls — staff read documents through the admin dashboard.
  */
-
 const { getStore } = require("@netlify/blobs");
+const { store: appStore } = require("./lib/records");
+const { REF_RE, KEY_RE, overLimit } = require("./lib/guard");
 
-// Detect table from ref prefix: CASL- = Corporate, MINOR- = Minor, JOINT- = Joint, else individual
-function getAirtableTable(ref) {
-  if (ref && ref.startsWith("CASL-")) return "Corporate Applications";
-  if (ref && ref.startsWith("MINOR-")) return "Minor Applications";
-  if (ref && ref.startsWith("JOINT-")) return "Joint Applications";
-  return "Applications";
+const WINDOW_MS = 2 * 60 * 60 * 1000;   // uploads accepted for 2h after submission
+const MAX_BYTES = 5 * 1024 * 1024;
+
+function detect(buf) {
+  if (buf.length > 4 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (buf.length > 8 && buf.slice(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "image/png";
+  if (buf.length > 4 && buf.slice(0, 4).toString("latin1") === "%PDF") return "application/pdf";
+  if (buf.length > 12 && buf.slice(0, 4).toString("latin1") === "RIFF" && buf.slice(8, 12).toString("latin1") === "WEBP") return "image/webp";
+  return null;
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: cors(), body: "" };
-  }
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: cors(), body: "Method Not Allowed" };
-  }
+  if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: cors(), body: "" };
+  if (event.httpMethod !== "POST") return { statusCode: 405, headers: cors(), body: "Method Not Allowed" };
 
-  const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-  const SHARED_SECRET    = process.env.SHARED_SECRET;
-  const SITE_ID          = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
-  const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
+  if (await overLimit("upload", event, 60, 3600)) return json(429, { error: "Too many uploads. Please try again later." });
 
-  const incomingSecret = event.headers["x-shared-secret"] || "";
-  if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
-    return json(401, { error: "Unauthorized" });
-  }
+  const SITE_ID    = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
+  const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
+  if (!SITE_ID || !BLOB_TOKEN) return json(500, { error: "Storage not configured" });
 
   let payload;
-  try {
-    payload = JSON.parse(event.body || "{}");
-  } catch {
-    return json(400, { error: "Invalid JSON" });
-  }
-
+  try { payload = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Invalid JSON" }); }
   const { ref, key, name, data } = payload;
-  if (!ref || !key || !data) {
-    return json(400, { error: "Missing ref, key, or data" });
+  if (!REF_RE.test(String(ref || "")) || !KEY_RE.test(String(key || "")) || typeof data !== "string" || !data) {
+    return json(400, { error: "Missing or invalid ref, key, or data" });
   }
 
-  // Store in Netlify Blobs. This environment does not expose automatic
-  // in-function credentials, so an explicit site ID + token is required.
-  let downloadUrl = null;
-  if (!SITE_ID || !BLOB_TOKEN) {
-    console.error("Blobs not configured: missing NETLIFY_TOKEN/NETLIFY_BLOBS_TOKEN env var");
-    return json(500, { error: "Blobs not configured" });
-  }
-  {
-    try {
-      const base64   = data.includes(",") ? data.split(",")[1] : data;
-      const mimeType = data.includes(";") ? data.split(";")[0].replace("data:", "") : "application/octet-stream";
-      const buffer   = Buffer.from(base64, "base64");
-      const store    = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
-      await store.set(`${ref}/${key}`, buffer, { metadata: { name: name || key, mimeType, ref } });
-      const siteUrl  = process.env.URL || "https://tourmaline-longma-857abb.netlify.app";
-      downloadUrl    = `${siteUrl}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(key)}`;
-      console.log("Stored document:", `${ref}/${key}`);
-    } catch (err) {
-      console.error("Blobs store error:", err.message);
-      return json(500, { error: "Failed to store document", detail: err.message });
-    }
-  }
-
-  // Fetch the Airtable record ID for this ref
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
-    return json(200, { stored: true, airtableSkipped: true });
-  }
-
-  const AIRTABLE_TABLE = getAirtableTable(ref);
+  // The application must exist and be recent.
+  let rec = null;
   try {
-    const searchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}?filterByFormula=${encodeURIComponent(`{Reference}="${ref}"`)}`;
-    const searchRes = await fetch(searchUrl, {
-      headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
-    });
-    const searchData = await searchRes.json();
-    if (!searchData.records || searchData.records.length === 0) {
-      return json(404, { error: "Record not found in Airtable" });
+    for (const kind of ["corporate", "joint", "minor"]) {
+      rec = await appStore().get(`${kind}/${ref}`, { type: "json" });
+      if (rec) break;
     }
+  } catch (err) { console.error("record lookup failed:", err.message); }
+  if (!rec || Date.now() - Date.parse(rec.savedAt) > WINDOW_MS) return json(403, { error: "Uploads are not accepted for this reference" });
 
-    const record    = searchData.records[0];
-    const recordId  = record.id;
-    const existing  = record.fields["Document Links"] || "";
-    const newEntry  = `${key} (${name || key}): ${downloadUrl}`;
-    const updated   = existing ? existing + "\n" + newEntry : newEntry;
+  const buffer = Buffer.from(data.includes(",") ? data.split(",")[1] : data, "base64");
+  if (!buffer.length || buffer.length > MAX_BYTES) return json(413, { error: "File must be under 5 MB" });
+  const mimeType = detect(buffer);
+  if (!mimeType) return json(415, { error: "Only JPG, PNG, WebP or PDF files are accepted" });
 
-    const patchUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}/${recordId}`;
-    await fetch(patchUrl, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ fields: { "Document Links": updated } }),
+  try {
+    const store = getStore({ name: "documents", siteID: SITE_ID, token: BLOB_TOKEN });
+    await store.set(`${ref}/${key}`, buffer, {
+      metadata: { name: String(name || key).replace(/[^\w.\- ]/g, "_").slice(0, 120), mimeType, ref },
     });
-
-    console.log("Updated Document Links for", ref);
-    return json(200, { success: true, downloadUrl });
+    console.log("Stored document:", `${ref}/${key}`, mimeType, buffer.length);
+    return json(200, { success: true, stored: true });
   } catch (err) {
-    console.error("Airtable patch error:", err.message);
-    return json(500, { error: "Stored but failed to update Airtable", detail: err.message });
+    console.error("Blobs store error:", err.message);
+    return json(500, { error: "Failed to store document" });
   }
 };
 
 function json(status, body) {
   return { statusCode: status, headers: { "Content-Type": "application/json", ...cors() }, body: JSON.stringify(body) };
 }
-
 function cors() {
-  return {
-    "Access-Control-Allow-Origin":  "*",
-    "Access-Control-Allow-Headers": "Content-Type, X-Shared-Secret",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
+  return { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type, X-Shared-Secret", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 }

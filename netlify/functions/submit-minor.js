@@ -7,6 +7,7 @@
  */
 
 const { saveApplication } = require("./lib/records");
+const { REF_RE, overLimit } = require("./lib/guard");
 const AIRTABLE_TABLE = "Minor Applications";
 
 exports.handler = async (event) => {
@@ -23,6 +24,8 @@ exports.handler = async (event) => {
   if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
     return json(401, { error: "Unauthorized" });
   }
+
+  if (await overLimit("submit", event, 20, 3600)) return json(429, { error: "Too many submissions from your network. Please try again later." });
 
   let payload;
   try {
@@ -113,7 +116,9 @@ exports.handler = async (event) => {
   });
 
   try {
+    if (!REF_RE.test(ref)) return json(400, { error: "Invalid reference" });
     const r = await saveApplication("minor", AIRTABLE_TABLE, ref, fields);
+    if (r.exists) return json(409, { error: "This reference has already been submitted" });
     if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
     console.log("minor application saved:", ref, "airtable:", r.airtable);
     return json(200, { success: true, reference: ref, airtable: r.airtable, airtableId: r.airtableId });

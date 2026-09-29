@@ -4,7 +4,8 @@
  *   users, user-save (POST), user-delete (POST)   ← last three: admin role only
  */
 const { store } = require("./lib/records");
-const { staffStore, hashPassword, verifyLogin, sessionCookie, clearCookie, getUser } = require("./lib/auth");
+const { staffStore, hashPassword, checkPassword, verifyLogin, sessionCookie, clearCookie, getUser, lockedFor, recordFailure, clearFailures, tkey } = require("./lib/auth");
+const { clientIp } = require("./lib/guard");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
 const KINDS    = ["corporate", "joint", "minor"];
@@ -17,14 +18,20 @@ exports.handler = async (event) => {
 
   if (action === "login") {
     if (event.httpMethod !== "POST") return out(405, { error: "POST only" });
+    const email = String(body.email || "").trim().toLowerCase();
+    const keys  = [tkey("email", email), tkey("ip", clientIp(event))];
+    const wait  = await lockedFor(keys);
+    if (wait) return out(429, { error: `Too many attempts. Try again in ${Math.ceil(wait / 60000)} minute(s).` });
     await new Promise((r) => setTimeout(r, 400)); // slow down password guessing
-    const user = await verifyLogin(body.email, body.password);
-    if (!user) return out(401, { error: "Incorrect email or password" });
-    return out(200, { user }, { "Set-Cookie": sessionCookie(user) });
+    const user = await verifyLogin(email, body.password);
+    if (!user) { await recordFailure(keys); return out(401, { error: "Incorrect email or password" }); }
+    await clearFailures(keys);
+    const { builtin, ...pub } = user;
+    return out(200, { user: pub }, { "Set-Cookie": sessionCookie(user) });
   }
   if (action === "logout") return out(200, { ok: true }, { "Set-Cookie": clearCookie() });
 
-  const user = getUser(event);
+  const user = await getUser(event);
   if (!user) return out(401, { error: "Not signed in" });
   if (action === "me") return out(200, { user });
 
@@ -72,9 +79,21 @@ exports.handler = async (event) => {
     const kind = KINDS.includes(q.kind) ? q.kind : null;
     const list = recs.filter((r) => !kind || r.kind === kind).sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""));
     const cols = ["Type", "Saved At", ...Array.from(new Set(list.flatMap((r) => Object.keys(r.fields || {}))))];
-    const esc = (v) => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const esc = (v) => { let t = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
     const lines = [cols.map(esc).join(",")].concat(list.map((r) => cols.map((c) => esc(c === "Type" ? r.kind : c === "Saved At" ? r.savedAt : r.fields[c])).join(",")));
     return { statusCode: 200, headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="applications${kind ? "-" + kind : ""}.csv"`, "Cache-Control": "no-store" }, body: "﻿" + lines.join("\n") };
+  }
+
+  if (action === "change-password") {
+    const np = String(body.newPassword || "");
+    if (np.length < 10) return out(400, { error: "New password must be at least 10 characters" });
+    const ss = staffStore();
+    const rec = await ss.get(user.email, { type: "json" }).catch(() => null);
+    if (!rec) return out(400, { error: "This built-in admin password is set in Netlify (ADMIN_PASSWORD), not here." });
+    if (!checkPassword(String(body.currentPassword || ""), rec.hash)) return out(401, { error: "Current password is incorrect" });
+    rec.hash = hashPassword(np);
+    await ss.setJSON(user.email, rec);
+    return out(200, { ok: true });
   }
 
   /* ── Staff management (admin only) ── */
