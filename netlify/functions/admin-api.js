@@ -6,6 +6,7 @@
 const { store } = require("./lib/records");
 const { staffStore, hashPassword, checkPassword, verifyLogin, sessionCookie, clearCookie, getUser, lockedFor, recordFailure, clearFailures, tkey } = require("./lib/auth");
 const { clientIp } = require("./lib/guard");
+const { logAccess, readLog } = require("./lib/audit");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
 const KINDS    = ["corporate", "joint", "minor"];
@@ -24,12 +25,13 @@ exports.handler = async (event) => {
     if (wait) return out(429, { error: `Too many attempts. Try again in ${Math.ceil(wait / 60000)} minute(s).` });
     await new Promise((r) => setTimeout(r, 400)); // slow down password guessing
     const user = await verifyLogin(email, body.password);
-    if (!user) { await recordFailure(keys); return out(401, { error: "Incorrect email or password" }); }
+    if (!user) { await recordFailure(keys); await logAccess(event, null, "login_failed", { email }); return out(401, { error: "Incorrect email or password" }); }
     await clearFailures(keys);
+    await logAccess(event, user, "login");
     const { builtin, ...pub } = user;
     return out(200, { user: pub }, { "Set-Cookie": sessionCookie(user) });
   }
-  if (action === "logout") return out(200, { ok: true }, { "Set-Cookie": clearCookie() });
+  if (action === "logout") { await logAccess(event, await getUser(event), "logout"); return out(200, { ok: true }, { "Set-Cookie": clearCookie() }); }
 
   const user = await getUser(event);
   if (!user) return out(401, { error: "Not signed in" });
@@ -51,6 +53,7 @@ exports.handler = async (event) => {
   if (action === "get") {
     const r = await loadRec(s, q.kind, q.ref);
     if (!r) return out(404, { error: "Not found" });
+    await logAccess(event, user, "view_application", { kind: r.kind, ref: r.ref });
     return out(200, { record: r });
   }
 
@@ -69,10 +72,13 @@ exports.handler = async (event) => {
       r.fields.Notes = body.notes;
     }
     await s.setJSON(`${r.kind}/${r.ref}`, r);
+    const changes = r.audit.filter((a) => a.at === now).map((a) => a.change).join("; ");
+    if (changes) await logAccess(event, user, "update_application", { kind: r.kind, ref: r.ref, detail: changes });
     return out(200, { record: r });
   }
 
   if (action === "export") {
+    await logAccess(event, user, "export_csv", { detail: KINDS.includes(q.kind) ? q.kind : "all" });
     const { blobs } = await s.list();
     const recs = [];
     for (const b of blobs) { const r = await s.get(b.key, { type: "json" }); if (r) recs.push(r); }
@@ -93,6 +99,7 @@ exports.handler = async (event) => {
     if (!checkPassword(String(body.currentPassword || ""), rec.hash)) return out(401, { error: "Current password is incorrect" });
     rec.hash = hashPassword(np);
     await ss.setJSON(user.email, rec);
+    await logAccess(event, user, "password_change");
     return out(200, { ok: true });
   }
 
@@ -108,7 +115,7 @@ exports.handler = async (event) => {
     }
     const email = String(body.email || "").trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(email)) return out(400, { error: "Valid email required" });
-    if (action === "user-delete") { await ss.delete(email); return out(200, { ok: true }); }
+    if (action === "user-delete") { await ss.delete(email); await logAccess(event, user, "staff_removed", { detail: email }); return out(200, { ok: true }); }
     const existing = await ss.get(email, { type: "json" }).catch(() => null);
     if (!existing && String(body.password || "").length < 10) return out(400, { error: "Password must be at least 10 characters" });
     if (body.password && String(body.password).length < 10) return out(400, { error: "Password must be at least 10 characters" });
@@ -118,7 +125,16 @@ exports.handler = async (event) => {
       disabled: !!body.disabled,
       hash: body.password ? hashPassword(String(body.password)) : existing.hash,
     });
+    await logAccess(event, user, existing ? "staff_updated" : "staff_created", { detail: `${email} (${body.role === "admin" ? "admin" : "staff"})` });
     return out(200, { ok: true });
+  }
+
+  if (action === "activity") {
+    if (user.role !== "admin") return out(403, { error: "Admins only" });
+    const ref = String(q.ref || "");
+    const prefix = ref ? (/^[\w-]+$/.test(ref) ? `by-ref/${ref}/` : null) : "all/";
+    if (!prefix) return out(400, { error: "Invalid ref" });
+    return out(200, { entries: await readLog(prefix, ref ? 100 : 400) });
   }
 
   return out(400, { error: "Unknown action" });

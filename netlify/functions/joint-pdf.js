@@ -7,6 +7,7 @@
 const { getStore } = require("@netlify/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE } = require("./lib/guard");
+const { logAccess } = require("./lib/audit");
 
 const { loadFields } = require("./lib/records");
 const AIRTABLE_TABLE = "Joint Applications";
@@ -23,9 +24,11 @@ const DOC_DEFS = [
 ];
 
 exports.handler = async (event) => {
-  if (!(await getUser(event))) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
+  const user = await getUser(event);
+  if (!user) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
   const { ref } = event.queryStringParameters || {};
   if (!REF_RE.test(String(ref || ""))) return { statusCode: 400, body: "Invalid ref parameter" };
+  await logAccess(event, user, "view_printable", { kind: "joint", ref });
 
   const SITE_URL         = "https://onboard.anchoriaonline.com";
   const SITE_ID          = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";

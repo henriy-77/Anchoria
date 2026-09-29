@@ -7,9 +7,11 @@
 const { getStore } = require("@netlify/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE, KEY_RE } = require("./lib/guard");
+const { logAccess } = require("./lib/audit");
 
 exports.handler = async (event) => {
-  if (!(await getUser(event))) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
+  const user = await getUser(event);
+  if (!user) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
   const { ref, doc } = event.queryStringParameters || {};
 
   if (!REF_RE.test(String(ref || "")) || !KEY_RE.test(String(doc || ""))) {
@@ -26,6 +28,10 @@ exports.handler = async (event) => {
     if (!result) {
       return { statusCode: 404, body: "Document not found" };
     }
+
+    // Images/iframes inside the printable page are covered by its own log entry.
+    const dest = String(event.headers["sec-fetch-dest"] || "");
+    if (dest !== "image" && dest !== "iframe") await logAccess(event, user, "view_document", { ref, doc });
 
     const { data, metadata } = result;
     const mimeType = metadata.mimeType || "application/octet-stream";
