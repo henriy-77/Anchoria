@@ -5,7 +5,7 @@
 
 const { getStore } = require("@netlify/blobs");
 
-const { saveApplication } = require("../lib/records");
+const { saveApplication } = require("./lib/records");
 const AIRTABLE_TABLE = "Corporate Applications";
 
 exports.handler = async (event) => {

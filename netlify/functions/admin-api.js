@@ -3,8 +3,8 @@
  *   login (POST), logout (POST), me, list, get, update (POST), export (CSV),
  *   users, user-save (POST), user-delete (POST)   ← last three: admin role only
  */
-const { store } = require("../lib/records");
-const { staffStore, hashPassword, verifyLogin, sessionCookie, clearCookie, getUser } = require("../lib/auth");
+const { store } = require("./lib/records");
+const { staffStore, hashPassword, verifyLogin, sessionCookie, clearCookie, getUser } = require("./lib/auth");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
 const KINDS    = ["corporate", "joint", "minor"];

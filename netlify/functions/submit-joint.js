@@ -5,7 +5,7 @@
  * (routed to "Joint Applications" by the JOINT- reference prefix).
  */
 
-const { saveApplication } = require("../lib/records");
+const { saveApplication } = require("./lib/records");
 const AIRTABLE_TABLE = "Joint Applications";
 
 exports.handler = async (event) => {

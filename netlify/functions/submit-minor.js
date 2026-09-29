@@ -6,7 +6,7 @@
  * MINOR- reference prefix).
  */
 
-const { saveApplication } = require("../lib/records");
+const { saveApplication } = require("./lib/records");
 const AIRTABLE_TABLE = "Minor Applications";
 
 exports.handler = async (event) => {
