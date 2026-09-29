@@ -5,7 +5,7 @@
  */
 
 const { getStore } = require("@netlify/blobs");
-const { getUser } = require("../lib/auth");
+const { getUser } = require("./lib/auth");
 
 exports.handler = async (event) => {
   if (!getUser(event)) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };

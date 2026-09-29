@@ -5,7 +5,7 @@
  *   GET/POST /.netlify/functions/sync-airtable?limit=20   (header X-Shared-Secret required)
  *   GET      /.netlify/functions/sync-airtable?list=1     → lists pending records only
  */
-const { store, pushToAirtable } = require("../lib/records");
+const { store, pushToAirtable } = require("./lib/records");
 
 exports.handler = async (event) => {
   const secret = process.env.SHARED_SECRET;

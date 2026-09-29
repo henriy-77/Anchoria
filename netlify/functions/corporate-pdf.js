@@ -6,9 +6,9 @@
  */
 
 const { getStore } = require("@netlify/blobs");
-const { getUser } = require("../lib/auth");
+const { getUser } = require("./lib/auth");
 
-const { loadFields } = require("../lib/records");
+const { loadFields } = require("./lib/records");
 const AIRTABLE_TABLE = "Corporate Applications";
 
 const DOC_DEFS = [
