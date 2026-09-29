@@ -6,6 +6,7 @@
  * MINOR- reference prefix).
  */
 
+const { saveApplication } = require("../lib/records");
 const AIRTABLE_TABLE = "Minor Applications";
 
 exports.handler = async (event) => {
@@ -16,14 +17,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers: cors(), body: "Method Not Allowed" };
   }
 
-  const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SHARED_SECRET    = process.env.SHARED_SECRET;
-
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
-    console.error("Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars");
-    return json(500, { error: "Server misconfiguration — contact admin" });
-  }
 
   const incomingSecret = event.headers["x-shared-secret"] || "";
   if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
@@ -118,21 +112,11 @@ exports.handler = async (event) => {
     if (fields[k] === "" || fields[k] === null || fields[k] === undefined) delete fields[k];
   });
 
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`;
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ fields }),
-    });
-    if (!res.ok) {
-      const detail = await res.text();
-      console.error("Airtable API error:", res.status, detail);
-      return json(502, { error: "Failed to save application", detail });
-    }
-    const result = await res.json();
-    console.log("Minor application saved:", ref, "→ Airtable", result.id);
-    return json(200, { success: true, reference: ref, airtableId: result.id });
+    const r = await saveApplication("minor", AIRTABLE_TABLE, ref, fields);
+    if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
+    console.log("minor application saved:", ref, "airtable:", r.airtable);
+    return json(200, { success: true, reference: ref, airtable: r.airtable, airtableId: r.airtableId });
   } catch (err) {
     console.error("Function error:", err);
     return json(500, { error: "Internal server error", detail: err.message });
