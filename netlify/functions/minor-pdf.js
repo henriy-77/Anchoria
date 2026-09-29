@@ -40,8 +40,15 @@ exports.handler = async (event) => {
         const meta = await store.getMetadata(`${ref}/${def.key}`);
         if (meta) {
           const mime   = meta.mimeType || "application/octet-stream";
-          const docUrl = `${SITE_URL}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(def.key)}`;
-          existingDocs.push({ key: def.key, label: def.label, mime, url: docUrl, fileName: meta.name || def.key });
+          const docUrl = `/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(def.key)}`;
+          let dataUrl = null;
+          if (def.key === "signature" && mime.startsWith("image/")) {
+            try {
+              const buf = await store.get(`${ref}/${def.key}`, { type: "arrayBuffer" });
+              if (buf) dataUrl = `data:${mime};base64,${Buffer.from(buf).toString("base64")}`;
+            } catch (_) { /* fall back to URL */ }
+          }
+          existingDocs.push({ key: def.key, label: def.label, mime, url: docUrl, dataUrl, fileName: meta.name || def.key });
         }
       } catch (_) { /* not uploaded */ }
     }
@@ -56,7 +63,7 @@ exports.handler = async (event) => {
     const dlBtn   = `<a href="${doc.url}" download="${esc(doc.fileName)}" class="dl-btn" target="_blank">⬇ Download ${esc(doc.label)}</a>`;
     if (isImage) {
       return `<div class="doc-block"><div class="doc-label">${esc(doc.label)}</div>
-        <img src="${doc.url}" alt="${esc(doc.label)}" class="doc-img" crossorigin="anonymous"/>${dlBtn}</div>`;
+        <img src="${doc.url}" alt="${esc(doc.label)}" class="doc-img"/>${dlBtn}</div>`;
     }
     if (isPdf) {
       return `<div class="doc-block"><div class="doc-label">${esc(doc.label)}</div>
@@ -70,7 +77,7 @@ exports.handler = async (event) => {
 
   const sigBlock = `<div class="sig-block">
     <div class="sig-slot">
-      ${sigDoc ? `<img src="${sigDoc.url}" alt="Signature" class="sig-draw" crossorigin="anonymous"/>`
+      ${sigDoc ? `<img src="${sigDoc.dataUrl || sigDoc.url}" alt="Signature" class="sig-draw"/>`
                : `<span class="sig-missing">No signature on file</span>`}
       <div class="sig-caption">Parent/Guardian Signature</div>
     </div>
