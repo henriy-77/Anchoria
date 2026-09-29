@@ -229,3 +229,10 @@ The form collects **Category A (general) personal data** including BVN, NIN, pho
 8. **Privacy notice** — ensure your website's privacy notice (linked from the form's consent checkbox) describes this processing, including the lawful basis, data categories, and recipients.
 
 > **This form does not store any data in the browser** (no `localStorage`, no cookies). All data exists only in the browser's memory for the duration of the session and is transmitted once to your configured endpoint on submission.
+
+## Admin dashboard (`/admin`)
+
+Applications are stored in Netlify Blobs (store `applications`); the dashboard reads them directly.
+Required Netlify env vars: `SESSION_SECRET` (long random string), `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+(bootstrap admin). Sign in as that admin, then add staff under **Staff**. Documents and the
+printable application PDFs now require a staff session.

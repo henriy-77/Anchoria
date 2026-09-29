@@ -5,7 +5,9 @@
  */
 
 const { getStore } = require("@netlify/blobs");
+const { getUser } = require("../lib/auth");
 
+const { loadFields } = require("../lib/records");
 const AIRTABLE_TABLE = "Minor Applications";
 
 const DOC_DEFS = [
@@ -18,29 +20,17 @@ const DOC_DEFS = [
 ];
 
 exports.handler = async (event) => {
+  if (!getUser(event)) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
   const { ref } = event.queryStringParameters || {};
   if (!ref) return { statusCode: 400, body: "Missing ref parameter" };
 
-  const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SITE_URL         = "https://onboard.anchoriaonline.com";
   const SITE_ID          = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
   const BLOB_TOKEN       = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
 
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) return { statusCode: 500, body: "Server misconfiguration" };
-
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}?filterByFormula=${encodeURIComponent(`{Reference}="${ref}"`)}`;
-  let record;
-  try {
-    const res  = await fetch(url, { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } });
-    const data = await res.json();
-    if (data.error) return { statusCode: 502, body: `Airtable error: ${data.error.message}` };
-    if (!data.records || data.records.length === 0)
-      return { statusCode: 404, body: `Application not found for reference: ${ref}` };
-    record = data.records[0].fields;
-  } catch (err) {
-    return { statusCode: 500, body: `Failed to fetch application: ${err.message}` };
-  }
+  const loaded = await loadFields("minor", AIRTABLE_TABLE, ref);
+  if (loaded.error) return { statusCode: loaded.error.status, body: loaded.error.body };
+  const record = loaded.fields;
 
   const existingDocs = [];
   {

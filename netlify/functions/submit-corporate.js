@@ -5,6 +5,7 @@
 
 const { getStore } = require("@netlify/blobs");
 
+const { saveApplication } = require("../lib/records");
 const AIRTABLE_TABLE = "Corporate Applications";
 
 exports.handler = async (event) => {
@@ -15,14 +16,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers: cors(), body: "Method Not Allowed" };
   }
 
-  const AIRTABLE_TOKEN   = process.env.AIRTABLE_TOKEN;
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
   const SHARED_SECRET    = process.env.SHARED_SECRET;
-
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
-    console.error("Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars");
-    return json(500, { error: "Server misconfiguration — contact admin" });
-  }
 
   const incomingSecret = event.headers["x-shared-secret"] || "";
   if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
@@ -105,27 +99,10 @@ exports.handler = async (event) => {
     }
   });
 
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`;
-
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization:  `Bearer ${AIRTABLE_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ fields }),
-    });
-
-    if (!res.ok) {
-      const detail = await res.text();
-      console.error("Airtable API error:", res.status, detail);
-      return json(502, { error: "Failed to save application", detail });
-    }
-
-    const result = await res.json();
-    console.log("Corporate application saved:", ref, "→ Airtable", result.id);
-
+    const r = await saveApplication("corporate", AIRTABLE_TABLE, ref, fields);
+    if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
+    console.log("corporate application saved:", ref, "airtable:", r.airtable);
     // Save canvas signature to Netlify Blobs
     const SITE_ID   = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
     const BLOB_TOKEN = process.env.NETLIFY_TOKEN  || process.env.NETLIFY_BLOBS_TOKEN;
@@ -142,7 +119,7 @@ exports.handler = async (event) => {
       }
     }
 
-    return json(200, { success: true, reference: ref, airtableId: result.id });
+    return json(200, { success: true, reference: ref, airtable: r.airtable, airtableId: r.airtableId });
 
   } catch (err) {
     console.error("Function error:", err);
