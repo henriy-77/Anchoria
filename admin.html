@@ -5,88 +5,292 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Anchoria Admin</title>
+<link rel="icon" href="anchoria-emblem.png">
 <style>
-:root{--gold:#C2972B;--gold-soft:#F7EFD6;--black:#141312;--paper:#FBFAF6;--surface:#fff;--line:#E7E4DB;--muted:#6B655A;--ok:#2E7D4F;--err:#B23A3A;--err-bg:#FBEDED;--serif:Georgia,"Times New Roman",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--black);font-family:var(--sans);font-size:14px}
-header{background:var(--black);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px}
-header h1{font:700 18px var(--serif);margin:0;flex:1}header h1 span{color:var(--gold)}
-header button,.btn{background:var(--gold);color:#141312;border:0;border-radius:8px;padding:8px 14px;font:600 13px var(--sans);cursor:pointer}
-header .ghost,.btn.ghost{background:transparent;color:inherit;border:1px solid var(--line)}header .ghost{color:#fff;border-color:#555}
-main{max-width:1100px;margin:24px auto;padding:0 16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
-input,select,textarea{font:inherit;padding:9px 11px;border:1px solid #cfcbbe;border-radius:8px;background:#fff;width:100%}
-textarea{min-height:90px}
-.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.bar input{flex:2;min-width:180px}.bar select{flex:1;min-width:120px}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}tbody tr.row{cursor:pointer}tbody tr.row:hover{background:var(--gold-soft)}
-.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:#eee}
-.pill.New{background:var(--gold-soft)}.pill.Approved{background:#e3f3ea;color:var(--ok)}.pill.Rejected{background:var(--err-bg);color:var(--err)}.pill.In\ review{background:#e6eef9;color:#2b5aa0}
-.login{max-width:360px;margin:12vh auto}.login label{display:block;margin:12px 0 4px;color:var(--muted)}
-.err{background:var(--err-bg);color:var(--err);border-radius:8px;padding:10px;margin-top:12px}
-.kv{display:grid;grid-template-columns:220px 1fr;gap:6px 16px}.kv div:nth-child(odd){color:var(--muted)}.kv div{padding:4px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;word-break:break-word}
-.hide{display:none}.muted{color:var(--muted)}.links a{margin-right:14px;color:#8a6a10}
-@media(max-width:640px){.kv{grid-template-columns:1fr}.kv div:nth-child(odd){border:0;padding-bottom:0}}
+:root{
+  --gold:#C2972B;--gold-2:#A47E1E;--gold-soft:#F7EFD6;--black:#141312;--ink:#1C1A17;
+  --paper:#F6F4EE;--surface:#fff;--line:#E7E4DB;--line-2:#D6D2C4;--muted:#6B655A;--muted-2:#938C7E;
+  --ok:#2E7D4F;--ok-bg:#E4F3EA;--err:#B23A3A;--err-bg:#FBEDED;--info:#2B5AA0;--info-bg:#E6EEF9;
+  --radius:12px;--shadow:0 1px 2px rgba(20,19,18,.05),0 8px 24px rgba(20,19,18,.06);
+  --serif:Georgia,"Times New Roman",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans)}
+a{color:var(--gold-2)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Header */
+header{position:sticky;top:0;z-index:20;background:var(--black);color:#fff;border-bottom:2px solid var(--gold)}
+.hd{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;text-decoration:none;color:#fff}
+.brand img{width:30px;height:30px;border-radius:6px;background:#fff;padding:2px}
+.brand b{font:700 17px var(--serif);letter-spacing:.01em}.brand span{color:var(--gold)}
+.chip{display:flex;align-items:center;gap:8px;font-size:13px;color:#d8d3c6}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);display:grid;place-items:center;font-weight:700;font-size:12px}
+.who{line-height:1.2}.who small{display:block;color:#9d9788;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+
+/* Buttons & inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--gold);color:var(--black);border:1px solid var(--gold);border-radius:8px;padding:9px 16px;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;transition:background .15s,box-shadow .15s}
+.btn:hover{background:#d0a532}.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.ghost{background:transparent;color:inherit;border-color:var(--line-2)}.btn.ghost:hover{background:rgba(0,0,0,.04)}
+header .btn.ghost{color:#e8e4d8;border-color:#4a463d}header .btn.ghost:hover{background:#25221e}
+.btn.sm{padding:6px 11px;font-size:12px}.btn.danger{color:var(--err);border-color:#e6c2c2}.btn.danger:hover{background:var(--err-bg)}
+.btn.block{width:100%;padding:12px}
+label.lbl{display:block;margin:0 0 5px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+input,select,textarea{font:inherit;color:var(--ink);padding:10px 12px;border:1px solid var(--line-2);border-radius:8px;background:#fff;width:100%;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(194,151,43,.18)}
+textarea{min-height:110px;resize:vertical}
+.pw{position:relative}.pw input{padding-right:44px}
+.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.eye:hover{background:#f0ede4;color:var(--ink)}.eye svg{width:20px;height:20px}
+.field{margin-bottom:14px}
+
+/* Layout */
+main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.card h3{margin:0 0 14px;font:700 16px var(--serif)}
+.page-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 0 16px;flex-wrap:wrap}
+.page-h h2{margin:0;font:700 24px var(--serif)}.page-h p{margin:2px 0 0;color:var(--muted)}
+.muted{color:var(--muted)}.hide{display:none!important}
+
+/* Login */
+.login-wrap{min-height:calc(100vh - 60px);display:grid;place-items:center;padding:20px}
+.login{width:100%;max-width:400px;padding:32px 30px}
+.login .logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:22px;text-align:center}
+.login .logo img{width:56px;height:56px}
+.login h2{margin:0;font:700 22px var(--serif)}.login p{margin:0;color:var(--muted)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;cursor:pointer;text-align:left;transition:border-color .15s,transform .15s,box-shadow .15s;box-shadow:var(--shadow)}
+.stat:hover{border-color:var(--gold);transform:translateY(-1px)}.stat.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(194,151,43,.25)}
+.stat small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.stat b{font:700 26px var(--serif)}
+
+/* Toolbar + table */
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.search{position:relative;flex:2;min-width:220px}.search input{padding-left:36px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted-2)}
+.bar select{flex:0 0 auto;width:auto;min-width:140px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{position:sticky;top:0;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line);background:#fbfaf6}
+.tbl td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr.row{cursor:pointer;transition:background .12s}.tbl tr.row:hover{background:var(--gold-soft)}
+.tbl tr:last-child td{border-bottom:0}
+.nm{font-weight:600}.sub{color:var(--muted);font-size:12px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;background:#eee;color:#555;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.New{background:var(--gold-soft);color:#8a6a10}.pill.Approved{background:var(--ok-bg);color:var(--ok)}
+.pill.Rejected{background:var(--err-bg);color:var(--err)}.pill.In-review{background:var(--info-bg);color:var(--info)}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;background:#efece3;color:var(--muted);font-size:12px;text-transform:capitalize}
+.empty{text-align:center;padding:48px 16px;color:var(--muted)}.empty b{display:block;font:700 17px var(--serif);color:var(--ink);margin-bottom:4px}
+.sk{height:16px;border-radius:6px;background:linear-gradient(90deg,#eee 25%,#f6f4ee 50%,#eee 75%);background-size:200% 100%;animation:sk 1.2s infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* Detail */
+.crumb{display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;color:var(--muted);text-decoration:none;font-weight:600}.crumb:hover{color:var(--ink)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.side{position:sticky;top:78px}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px 22px}
+.kv .it{min-width:0}.kv .k{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2)}
+.kv .v{white-space:pre-wrap;word-break:break-word;margin-top:2px}.kv .v.wide{grid-column:1/-1}
+.kv .it.long{grid-column:1/-1}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.doc{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);background:#fcfbf8;transition:border-color .15s,background .15s}
+.doc:hover{border-color:var(--gold);background:var(--gold-soft)}
+.doc svg{width:22px;height:22px;flex:none;color:var(--gold-2)}.doc span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:13px}
+.tl{list-style:none;margin:14px 0 0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 14px;font-size:12.5px;color:var(--muted)}
+.tl li::before{content:"";position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid #fff}
+.tl b{color:var(--ink);font-weight:600}
+.copy{cursor:copy}.copy:hover{background:var(--gold-soft);border-radius:4px}
+.hdrow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdrow h2{margin:0;font:700 24px var(--serif)}
+
+/* Staff */
+.urow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.urow:last-child{border:0}
+.urow .avatar{width:36px;height:36px;background:var(--gold-soft);color:#8a6a10;font-size:14px}.urow .grow{flex:1;min-width:0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Feedback */
+.err{background:var(--err-bg);color:var(--err);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--black);color:#fff;padding:11px 18px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;box-shadow:var(--shadow)}
+#toast.on{opacity:1;transform:translate(-50%,0)}#toast.bad{background:var(--err)}
+.spin{width:14px;height:14px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){.dgrid{grid-template-columns:1fr}.side{position:static}}
+@media(max-width:640px){
+  .hd{padding:10px 14px}.who{display:none}main{padding:16px 12px 50px}.form-row{grid-template-columns:1fr}
+  .tbl thead{display:none}.tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr.row{padding:12px 4px;border-bottom:1px solid var(--line)}.tbl td{border:0;padding:2px 8px}
+  .bar select{flex:1}
+}
+@media print{header,.side,.crumb,#toast{display:none}body{background:#fff}.dgrid{display:block}.card{box-shadow:none}}
 </style>
 </head>
 <body>
-<header><h1>Anchoria <span>Admin</span></h1><span id="who" class="muted"></span>
-<button class="ghost hide" id="usersBtn" onclick="showUsers()">Staff</button><button class="ghost hide" id="outBtn" onclick="logout()">Sign out</button></header>
+<header><div class="hd">
+  <a class="brand" id="home"><img src="anchoria-emblem.png" alt=""><b>Anchoria <span>Admin</span></b></a>
+  <div class="chip hide" id="chip"><div class="avatar" id="av"></div><div class="who"><span id="wn"></span><small id="wr"></small></div></div>
+  <button class="btn ghost sm hide" id="usersBtn">Staff</button>
+  <button class="btn ghost sm hide" id="outBtn">Sign out</button>
+</div></header>
 <main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+
 <script>
-var $=function(s){return document.querySelector(s)},app=$("#app"),me=null,rows=[];
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var app=$("#app"),me=null,rows=[],statuses=["New","In review","Approved","Rejected"],flt={q:"",kind:"",status:""};
+
+var ICON={
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.8 19.8 0 0 1-3.17 4.19M1 1l22 22M14.12 14.12A3 3 0 1 1 9.88 9.88"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'
+};
+
+function slug(v){return String(v).replace(/\s+/g,"-")}
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function toast(msg,bad){var t=$("#toast");t.textContent=msg;t.className="on"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(function(){t.className=""},2600)}
+function ago(iso){
+  if(!iso)return"";var d=new Date(iso),s=(Date.now()-d)/1000;
+  if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" h ago";
+  if(s<604800)return Math.floor(s/86400)+" d ago";return d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+}
+function when(iso){return iso?new Date(iso).toLocaleString(undefined,{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):""}
 function api(action,body,qs){
   return fetch("/.netlify/functions/admin-api?action="+action+(qs||""),{method:body?"POST":"GET",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined,credentials:"same-origin"})
   .then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error(j.error||"Request failed");e.status=r.status;throw e}return j})});
 }
-function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
-function showLogin(){
-  me=null;$("#who").textContent="";$("#outBtn").classList.add("hide");$("#usersBtn").classList.add("hide");
-  app.innerHTML='<form class="card login" id="lf"><h2 style="font-family:var(--serif);margin-top:0">Staff sign in</h2><label>Email</label><input type="email" id="em" required autofocus><label>Password</label><input type="password" id="pw" required><div id="le"></div><p><button class="btn" style="width:100%">Sign in</button></p></form>';
-  $("#lf").onsubmit=function(e){e.preventDefault();api("login",{email:$("#em").value,password:$("#pw").value}).then(function(j){me=j.user;shell();showList()}).catch(function(x){$("#le").innerHTML='<div class="err">'+esc(x.message)+'</div>'})};
+function guard(e){if(e.status===401){showLogin();toast("Please sign in again",true)}else toast(e.message,true)}
+function pwField(id,ph,req){
+  return'<div class="pw"><input type="password" id="'+id+'" placeholder="'+esc(ph||"")+'"'+(req?" required":"")+' autocomplete="off"><button type="button" class="eye" aria-label="Show password" data-eye="'+id+'">'+ICON.eye+'</button></div>';
 }
-function shell(){$("#who").textContent=me.name+" · "+me.role;$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin")}
-function logout(){api("logout",{}).then(showLogin)}
-function guard(e){if(e.status===401)showLogin();else alert(e.message)}
+function wireEyes(root){
+  $$("[data-eye]",root).forEach(function(b){b.onclick=function(){
+    var i=$("#"+b.dataset.eye),show=i.type==="password";i.type=show?"text":"password";
+    b.innerHTML=show?ICON.eyeOff:ICON.eye;b.setAttribute("aria-label",show?"Hide password":"Show password");i.focus();
+  }});
+}
+function busy(btn,on,label){if(on){btn.dataset.l=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span class="spin"></span> '+(label||"")}else{btn.disabled=false;btn.innerHTML=btn.dataset.l}}
 
+/* ── Session ── */
+function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
+function shell(){
+  $("#chip").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");
+  $("#wn").textContent=me.name;$("#wr").textContent=me.role;$("#av").textContent=(me.name||"?").trim().charAt(0).toUpperCase();
+}
+$("#home").onclick=function(){if(me)showList()};
+$("#outBtn").onclick=function(){api("logout",{}).then(function(){showLogin()})};
+$("#usersBtn").onclick=function(){showUsers()};
+
+function showLogin(){
+  me=null;["#chip","#outBtn","#usersBtn"].forEach(function(s){$(s).classList.add("hide")});
+  app.innerHTML='<div class="login-wrap"><form class="card login" id="lf" novalidate><div class="logo"><img src="anchoria-emblem.png" alt=""><h2>Staff sign in</h2><p>Anchoria Capital Group · Account applications</p></div><div id="le"></div>'+
+    '<div class="field"><label class="lbl" for="em">Email</label><input type="email" id="em" autocomplete="username" required autofocus></div>'+
+    '<div class="field"><label class="lbl" for="pw">Password</label>'+pwField("pw","",true).replace('autocomplete="off"','autocomplete="current-password"')+'</div>'+
+    '<button class="btn block" id="go">Sign in</button></form></div>';
+  wireEyes(app);
+  $("#lf").onsubmit=function(e){
+    e.preventDefault();var b=$("#go");$("#le").innerHTML="";
+    if(!$("#em").value||!$("#pw").value){$("#le").innerHTML='<div class="err">Enter your email and password.</div>';return}
+    busy(b,true,"Signing in…");
+    api("login",{email:$("#em").value,password:$("#pw").value}).then(function(j){me=j.user;shell();showList()})
+    .catch(function(x){busy(b,false);$("#le").innerHTML='<div class="err">'+esc(x.message)+'</div>';$("#pw").select()});
+  };
+}
+
+/* ── List ── */
 function showList(){
-  app.innerHTML='<div class="card"><div class="bar"><input id="s" placeholder="Search name, reference, email…"><select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option></select><select id="st"><option value="">All statuses</option></select><a class="btn ghost" style="color:#141312;text-decoration:none" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div><div id="t" class="muted">Loading…</div></div>';
-  api("list").then(function(j){
-    rows=j.rows;$("#st").innerHTML+=j.statuses.map(function(s){return'<option>'+esc(s)+'</option>'}).join("");
-    ["s","k","st"].forEach(function(id){$("#"+id).oninput=draw});draw();
-  }).catch(guard);
+  app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><a class="btn ghost" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div>'+
+    '<div class="stats" id="stats"></div>'+
+    '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="s" placeholder="Search name, reference, email or phone" value="'+esc(flt.q)+'"></div>'+
+    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option></select></div>'+
+    '<div id="t">'+[1,2,3,4].map(function(){return'<div class="sk" style="margin:18px 6px"></div>'}).join("")+'</div></div>';
+  $("#k").value=flt.kind;
+  var deb;$("#s").oninput=function(){clearTimeout(deb);deb=setTimeout(function(){flt.q=$("#s").value;draw()},120)};
+  $("#k").onchange=function(){flt.kind=$("#k").value;draw()};
+  api("list").then(function(j){rows=j.rows;statuses=j.statuses||statuses;draw()}).catch(guard);
 }
 function draw(){
-  var s=$("#s").value.toLowerCase(),k=$("#k").value,st=$("#st").value;
-  var r=rows.filter(function(x){return(!k||x.kind===k)&&(!st||x.status===st)&&(!s||(x.name+x.ref+x.email+x.phone).toLowerCase().indexOf(s)>-1)});
-  $("#t").innerHTML=r.length?'<table><thead><tr><th>Ref</th><th>Name</th><th>Type</th><th>Status</th><th>Received</th></tr></thead><tbody>'+r.map(function(x){
-    return'<tr class="row" data-k="'+esc(x.kind)+'" data-r="'+esc(x.ref)+'"><td>'+esc(x.ref)+'</td><td>'+esc(x.name)+'<div class="muted">'+esc(x.email)+'</div></td><td>'+esc(x.kind)+'</td><td><span class="pill '+esc(x.status)+'">'+esc(x.status)+'</span></td><td>'+esc((x.savedAt||"").slice(0,16).replace("T"," "))+'</td></tr>'}).join("")+'</tbody></table>':'No applications found.';
-  Array.prototype.forEach.call(document.querySelectorAll("tr.row"),function(tr){tr.onclick=function(){showDetail(tr.dataset.k,tr.dataset.r)}});
+  var s=flt.q.toLowerCase(),base=rows.filter(function(x){return(!flt.kind||x.kind===flt.kind)&&(!s||(x.name+" "+x.ref+" "+x.email+" "+x.phone).toLowerCase().indexOf(s)>-1)});
+  var counts={};statuses.forEach(function(st){counts[st]=0});base.forEach(function(x){counts[x.status]=(counts[x.status]||0)+1});
+  $("#stats").innerHTML='<button class="stat'+(!flt.status?" on":"")+'" data-st=""><small>All</small><b>'+base.length+'</b></button>'+
+    statuses.map(function(st){return'<button class="stat'+(flt.status===st?" on":"")+'" data-st="'+esc(st)+'"><small>'+esc(st)+'</small><b>'+(counts[st]||0)+'</b></button>'}).join("");
+  $$(".stat").forEach(function(b){b.onclick=function(){flt.status=b.dataset.st;draw()}});
+  var r=base.filter(function(x){return!flt.status||x.status===flt.status});
+  $("#sub").textContent=rows.length+" total"+(r.length!==rows.length?" · "+r.length+" shown":"");
+  $("#t").innerHTML=r.length?'<table class="tbl"><thead><tr><th>Applicant</th><th>Reference</th><th>Type</th><th>Status</th><th>Received</th></tr></thead><tbody>'+r.map(function(x){
+    return'<tr class="row" tabindex="0" data-k="'+esc(x.kind)+'" data-r="'+esc(x.ref)+'"><td><div class="nm">'+esc(x.name)+'</div><div class="sub">'+esc(x.email||x.phone)+'</div></td><td class="mono">'+esc(x.ref)+'</td><td><span class="tag">'+esc(x.kind)+'</span></td><td><span class="pill '+esc(slug(x.status))+'">'+esc(x.status)+'</span></td><td title="'+esc(when(x.savedAt))+'">'+esc(ago(x.savedAt))+'</td></tr>'}).join("")+'</tbody></table>':
+    '<div class="empty"><b>'+(rows.length?"No matches":"No applications yet")+'</b>'+(rows.length?"Try clearing the search or filters.":"New submissions will appear here.")+'</div>';
+  $$("tr.row").forEach(function(tr){var go=function(){showDetail(tr.dataset.k,tr.dataset.r)};tr.onclick=go;tr.onkeydown=function(e){if(e.key==="Enter")go()}});
 }
+
+/* ── Detail ── */
 function showDetail(kind,ref){
-  app.innerHTML='<p class="muted">Loading…</p>';
-  api("get",null,"&kind="+kind+"&ref="+encodeURIComponent(ref)).then(function(j){
-    var r=j.record,f=r.fields||{},docs=[],cur=f.Status||"New";
-    String(f["Documents Submitted"]||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)docs.push({key:l.slice(0,i).trim(),name:l.slice(i+1).trim()})});
-    docs.push({key:"signature",name:"Signature"});
-    var pdf="/.netlify/functions/"+kind+"-pdf?ref="+encodeURIComponent(ref);
-    var skip={"Status":1,"Notes":1,"View Application":1,"Documents Submitted":1,"Document Links":1};
-    app.innerHTML='<p><a href="#" id="back">← All applications</a></p><div class="card"><h2 style="margin:0 0 4px;font-family:var(--serif)">'+esc(ref)+'</h2><div class="muted">'+esc(kind)+' · received '+esc((r.savedAt||"").slice(0,16).replace("T"," "))+'</div>'+
-      '<p class="links"><a href="'+pdf+'" target="_blank">Printable application</a>'+docs.map(function(d){return'<a href="/.netlify/functions/get-document?ref='+encodeURIComponent(ref)+'&doc='+encodeURIComponent(d.key)+'" target="_blank">'+esc(d.name||d.key)+'</a>'}).join("")+'</p></div>'+
-      '<div class="card"><h3 style="margin-top:0">Review</h3><label class="muted">Status</label><select id="ds">'+["New","In review","Approved","Rejected"].map(function(s){return'<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("")+'</select><label class="muted" style="display:block;margin-top:10px">Notes</label><textarea id="dn">'+esc(f.Notes||"")+'</textarea><p><button class="btn" id="sv">Save</button> <span id="sm" class="muted"></span></p>'+
-      (r.audit&&r.audit.length?'<div class="muted">'+r.audit.slice().reverse().map(function(a){return esc(a.at.slice(0,16).replace("T"," "))+' · '+esc(a.by)+' · '+esc(a.change)}).join("<br>")+'</div>':'')+'</div>'+
-      '<div class="card"><h3 style="margin-top:0">Details</h3><div class="kv">'+Object.keys(f).filter(function(k){return!skip[k]}).map(function(k){return'<div>'+esc(k)+'</div><div>'+esc(f[k])+'</div>'}).join("")+'</div></div>';
-    $("#back").onclick=function(e){e.preventDefault();showList()};
-    $("#sv").onclick=function(){$("#sm").textContent="Saving…";api("update",{kind:kind,ref:ref,status:$("#ds").value,notes:$("#dn").value}).then(function(){showDetail(kind,ref)}).catch(guard)};
-  }).catch(guard);
+  app.innerHTML='<div class="sk" style="height:26px;width:260px;margin:8px 0 20px"></div><div class="card"><div class="sk" style="margin:10px 0"></div><div class="sk" style="margin:10px 0;width:70%"></div></div>';
+  api("get",null,"&kind="+encodeURIComponent(kind)+"&ref="+encodeURIComponent(ref)).then(function(j){renderDetail(j.record)}).catch(guard);
 }
+function renderDetail(r){
+  var kind=r.kind,ref=r.ref,f=r.fields||{},cur=f.Status||"New",docs=[];
+  String(f["Documents Submitted"]||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)docs.push({key:l.slice(0,i).trim(),name:l.slice(i+1).trim()})});
+  if(!docs.some(function(d){return d.key==="signature"}))docs.push({key:"signature",name:"Signature"});
+  var name=(rows.filter(function(x){return x.ref===ref})[0]||{}).name||f["Company Name"]||f["Signatory Name"]||ref;
+  var pdf="/.netlify/functions/"+kind+"-pdf?ref="+encodeURIComponent(ref);
+  var skip={"Status":1,"Notes":1,"View Application":1,"Documents Submitted":1,"Document Links":1,"Reference":1};
+  var keys=Object.keys(f).filter(function(k){return!skip[k]&&f[k]!==""});
+  app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a>'+
+   '<div class="hdrow" style="margin-bottom:14px"><div><h2>'+esc(name)+'</h2><div class="muted"><span class="mono">'+esc(ref)+'</span> · <span class="tag">'+esc(kind)+'</span> · received '+esc(when(r.savedAt))+'</div></div>'+
+   '<div><span class="pill '+esc(slug(cur))+'">'+esc(cur)+'</span></div></div>'+
+   '<div class="dgrid"><div>'+
+     '<div class="card"><h3>Documents</h3><div class="docs">'+
+       '<a class="doc" href="'+pdf+'" target="_blank">'+ICON.print.replace('width="16" height="16"','')+'<span>Printable application</span></a>'+
+       docs.map(function(d){return'<a class="doc" href="/.netlify/functions/get-document?ref='+encodeURIComponent(ref)+'&doc='+encodeURIComponent(d.key)+'" target="_blank">'+(d.key==="signature"?ICON.pen:ICON.file)+'<span title="'+esc(d.name||d.key)+'">'+esc(d.name||d.key)+'</span></a>'}).join("")+'</div></div>'+
+     '<div class="card"><h3>Application details</h3><div class="kv">'+keys.map(function(k){var v=String(f[k]);return'<div class="it'+(v.length>70||v.indexOf("\n")>-1?" long":"")+'"><div class="k">'+esc(k)+'</div><div class="v copy" title="Click to copy" data-c="'+esc(v)+'">'+esc(v)+'</div></div>'}).join("")+'</div></div>'+
+   '</div><aside class="side"><div class="card"><h3>Review</h3>'+
+     '<div class="field"><label class="lbl" for="ds">Status</label><select id="ds">'+statuses.map(function(s){return'<option'+(s===cur?" selected":"")+'>'+esc(s)+'</option>'}).join("")+'</select></div>'+
+     '<div class="field"><label class="lbl" for="dn">Internal notes</label><textarea id="dn" placeholder="Add a note for your team…">'+esc(f.Notes||"")+'</textarea></div>'+
+     '<button class="btn block" id="sv">Save changes</button>'+
+     (r.audit&&r.audit.length?'<ul class="tl">'+r.audit.slice().reverse().map(function(a){return'<li><b>'+esc(a.change)+'</b><br>'+esc(a.by)+' · '+esc(when(a.at))+'</li>'}).join("")+'</ul>':'<p class="muted" style="margin:14px 0 0;font-size:12.5px">No changes recorded yet.</p>')+
+   '</div></aside></div>';
+  $("#back").onclick=function(e){e.preventDefault();showList()};
+  $$(".copy").forEach(function(el){el.onclick=function(){if(navigator.clipboard)navigator.clipboard.writeText(el.dataset.c).then(function(){toast("Copied")})}});
+  $("#sv").onclick=function(){
+    var b=$("#sv");busy(b,true,"Saving…");
+    api("update",{kind:kind,ref:ref,status:$("#ds").value,notes:$("#dn").value}).then(function(j){
+      rows.forEach(function(x){if(x.ref===ref)x.status=j.record.fields.Status||"New"});toast("Saved");renderDetail(j.record);
+    }).catch(function(e){busy(b,false);guard(e)});
+  };
+}
+
+/* ── Staff ── */
+function initials(n){return(n||"?").trim().charAt(0).toUpperCase()}
+function genPw(){var c="abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",a=new Uint32Array(14);crypto.getRandomValues(a);return Array.prototype.map.call(a,function(n){return c[n%c.length]}).join("")}
 function showUsers(){
+  app.innerHTML='<div class="sk" style="height:26px;width:200px;margin:8px 0 20px"></div>';
   api("users").then(function(j){
-    app.innerHTML='<p><a href="#" id="back">← All applications</a></p><div class="card"><h3 style="margin-top:0">Staff accounts</h3><table><tbody>'+j.users.map(function(u){return'<tr><td>'+esc(u.name)+'<div class="muted">'+esc(u.email)+'</div></td><td>'+esc(u.role)+(u.disabled?' (disabled)':'')+'</td><td><button class="btn ghost" style="color:#141312" data-d="'+esc(u.email)+'">Remove</button></td></tr>'}).join("")+'</tbody></table></div>'+
-      '<form class="card" id="uf"><h3 style="margin-top:0">Add or update staff</h3><div class="bar"><input id="un" placeholder="Full name"><input id="ue" type="email" placeholder="Email" required><input id="up" type="password" placeholder="Password (min 10 chars; blank keeps existing)"><select id="ur"><option value="staff">Staff</option><option value="admin">Admin</option></select></div><button class="btn">Save</button> <span id="um" class="muted"></span></form>';
+    app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Staff accounts</h2><p>People who can sign in to this dashboard.</p></div></div>'+
+    '<div class="card"><h3>Team ('+j.users.length+')</h3>'+(j.users.length?j.users.map(function(u){return'<div class="urow"><div class="avatar">'+esc(initials(u.name))+'</div><div class="grow"><div class="nm">'+esc(u.name)+'</div><div class="sub">'+esc(u.email)+'</div></div><span class="tag">'+esc(u.role)+'</span><button class="btn ghost sm danger" data-d="'+esc(u.email)+'">Remove</button></div>'}).join(""):'<p class="muted">No staff accounts yet. Add your first below.</p>')+'</div>'+
+    '<form class="card" id="uf" autocomplete="off"><h3>Add or update a person</h3><div id="ue2"></div>'+
+    '<div class="form-row"><div class="field"><label class="lbl" for="un">Full name</label><input id="un" required></div><div class="field"><label class="lbl" for="ue">Email</label><input id="ue" type="email" required></div></div>'+
+    '<div class="form-row"><div class="field"><label class="lbl" for="up">Password <span class="muted" style="font-weight:400">(min 10 characters; leave blank to keep existing)</span></label>'+pwField("up","")+'<div style="margin-top:6px"><a href="#" id="gen">Generate a strong password</a></div></div>'+
+    '<div class="field"><label class="lbl" for="ur">Role</label><select id="ur"><option value="staff">Staff — view and review applications</option><option value="admin">Admin — also manage staff</option></select></div></div>'+
+    '<button class="btn" id="usv">Save person</button></form>';
+    wireEyes(app);
     $("#back").onclick=function(e){e.preventDefault();showList()};
-    Array.prototype.forEach.call(document.querySelectorAll("[data-d]"),function(b){b.onclick=function(){if(confirm("Remove "+b.dataset.d+"?"))api("user-delete",{email:b.dataset.d}).then(showUsers).catch(guard)}});
-    $("#uf").onsubmit=function(e){e.preventDefault();api("user-save",{name:$("#un").value,email:$("#ue").value,password:$("#up").value,role:$("#ur").value}).then(showUsers).catch(function(x){$("#um").textContent=x.message})};
+    $("#gen").onclick=function(e){e.preventDefault();var i=$("#up");i.value=genPw();i.type="text";$('[data-eye="up"]').innerHTML=ICON.eyeOff;toast("Password generated — copy it before saving")};
+    $$("[data-d]").forEach(function(b){b.onclick=function(){if(confirm("Remove "+b.dataset.d+"? They will no longer be able to sign in."))api("user-delete",{email:b.dataset.d}).then(function(){toast("Removed");showUsers()}).catch(guard)}});
+    $("#uf").onsubmit=function(e){
+      e.preventDefault();var b=$("#usv");$("#ue2").innerHTML="";busy(b,true,"Saving…");
+      api("user-save",{name:$("#un").value,email:$("#ue").value,password:$("#up").value,role:$("#ur").value}).then(function(){toast("Saved");showUsers()})
+      .catch(function(x){busy(b,false);$("#ue2").innerHTML='<div class="err">'+esc(x.message)+'</div>'});
+    };
   }).catch(guard);
 }
 boot();
