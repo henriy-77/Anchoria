@@ -32,6 +32,17 @@
   force = true
 
 
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 301
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
 [[headers]]
   for = "/*"
   [headers.values]

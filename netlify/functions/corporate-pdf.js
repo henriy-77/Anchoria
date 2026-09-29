@@ -6,6 +6,7 @@
  */
 
 const { getStore } = require("@netlify/blobs");
+const { getUser } = require("../lib/auth");
 
 const { loadFields } = require("../lib/records");
 const AIRTABLE_TABLE = "Corporate Applications";
@@ -21,6 +22,7 @@ const DOC_DEFS = [
 ];
 
 exports.handler = async (event) => {
+  if (!getUser(event)) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
   const { ref } = event.queryStringParameters || {};
   if (!ref) return { statusCode: 400, body: "Missing ref parameter" };
 

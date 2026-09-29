@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Anchoria Admin</title>
+<style>
+:root{--gold:#C2972B;--gold-soft:#F7EFD6;--black:#141312;--paper:#FBFAF6;--surface:#fff;--line:#E7E4DB;--muted:#6B655A;--ok:#2E7D4F;--err:#B23A3A;--err-bg:#FBEDED;--serif:Georgia,"Times New Roman",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--black);font-family:var(--sans);font-size:14px}
+header{background:var(--black);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px}
+header h1{font:700 18px var(--serif);margin:0;flex:1}header h1 span{color:var(--gold)}
+header button,.btn{background:var(--gold);color:#141312;border:0;border-radius:8px;padding:8px 14px;font:600 13px var(--sans);cursor:pointer}
+header .ghost,.btn.ghost{background:transparent;color:inherit;border:1px solid var(--line)}header .ghost{color:#fff;border-color:#555}
+main{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+input,select,textarea{font:inherit;padding:9px 11px;border:1px solid #cfcbbe;border-radius:8px;background:#fff;width:100%}
+textarea{min-height:90px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.bar input{flex:2;min-width:180px}.bar select{flex:1;min-width:120px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}tbody tr.row{cursor:pointer}tbody tr.row:hover{background:var(--gold-soft)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:#eee}
+.pill.New{background:var(--gold-soft)}.pill.Approved{background:#e3f3ea;color:var(--ok)}.pill.Rejected{background:var(--err-bg);color:var(--err)}.pill.In\ review{background:#e6eef9;color:#2b5aa0}
+.login{max-width:360px;margin:12vh auto}.login label{display:block;margin:12px 0 4px;color:var(--muted)}
+.err{background:var(--err-bg);color:var(--err);border-radius:8px;padding:10px;margin-top:12px}
+.kv{display:grid;grid-template-columns:220px 1fr;gap:6px 16px}.kv div:nth-child(odd){color:var(--muted)}.kv div{padding:4px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;word-break:break-word}
+.hide{display:none}.muted{color:var(--muted)}.links a{margin-right:14px;color:#8a6a10}
+@media(max-width:640px){.kv{grid-template-columns:1fr}.kv div:nth-child(odd){border:0;padding-bottom:0}}
+</style>
+</head>
+<body>
+<header><h1>Anchoria <span>Admin</span></h1><span id="who" class="muted"></span>
+<button class="ghost hide" id="usersBtn" onclick="showUsers()">Staff</button><button class="ghost hide" id="outBtn" onclick="logout()">Sign out</button></header>
+<main id="app"></main>
+<script>
+var $=function(s){return document.querySelector(s)},app=$("#app"),me=null,rows=[];
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function api(action,body,qs){
+  return fetch("/.netlify/functions/admin-api?action="+action+(qs||""),{method:body?"POST":"GET",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined,credentials:"same-origin"})
+  .then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error(j.error||"Request failed");e.status=r.status;throw e}return j})});
+}
+function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
+function showLogin(){
+  me=null;$("#who").textContent="";$("#outBtn").classList.add("hide");$("#usersBtn").classList.add("hide");
+  app.innerHTML='<form class="card login" id="lf"><h2 style="font-family:var(--serif);margin-top:0">Staff sign in</h2><label>Email</label><input type="email" id="em" required autofocus><label>Password</label><input type="password" id="pw" required><div id="le"></div><p><button class="btn" style="width:100%">Sign in</button></p></form>';
+  $("#lf").onsubmit=function(e){e.preventDefault();api("login",{email:$("#em").value,password:$("#pw").value}).then(function(j){me=j.user;shell();showList()}).catch(function(x){$("#le").innerHTML='<div class="err">'+esc(x.message)+'</div>'})};
+}
+function shell(){$("#who").textContent=me.name+" · "+me.role;$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin")}
+function logout(){api("logout",{}).then(showLogin)}
+function guard(e){if(e.status===401)showLogin();else alert(e.message)}
+
+function showList(){
+  app.innerHTML='<div class="card"><div class="bar"><input id="s" placeholder="Search name, reference, email…"><select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option></select><select id="st"><option value="">All statuses</option></select><a class="btn ghost" style="color:#141312;text-decoration:none" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div><div id="t" class="muted">Loading…</div></div>';
+  api("list").then(function(j){
+    rows=j.rows;$("#st").innerHTML+=j.statuses.map(function(s){return'<option>'+esc(s)+'</option>'}).join("");
+    ["s","k","st"].forEach(function(id){$("#"+id).oninput=draw});draw();
+  }).catch(guard);
+}
+function draw(){
+  var s=$("#s").value.toLowerCase(),k=$("#k").value,st=$("#st").value;
+  var r=rows.filter(function(x){return(!k||x.kind===k)&&(!st||x.status===st)&&(!s||(x.name+x.ref+x.email+x.phone).toLowerCase().indexOf(s)>-1)});
+  $("#t").innerHTML=r.length?'<table><thead><tr><th>Ref</th><th>Name</th><th>Type</th><th>Status</th><th>Received</th></tr></thead><tbody>'+r.map(function(x){
+    return'<tr class="row" data-k="'+esc(x.kind)+'" data-r="'+esc(x.ref)+'"><td>'+esc(x.ref)+'</td><td>'+esc(x.name)+'<div class="muted">'+esc(x.email)+'</div></td><td>'+esc(x.kind)+'</td><td><span class="pill '+esc(x.status)+'">'+esc(x.status)+'</span></td><td>'+esc((x.savedAt||"").slice(0,16).replace("T"," "))+'</td></tr>'}).join("")+'</tbody></table>':'No applications found.';
+  Array.prototype.forEach.call(document.querySelectorAll("tr.row"),function(tr){tr.onclick=function(){showDetail(tr.dataset.k,tr.dataset.r)}});
+}
+function showDetail(kind,ref){
+  app.innerHTML='<p class="muted">Loading…</p>';
+  api("get",null,"&kind="+kind+"&ref="+encodeURIComponent(ref)).then(function(j){
+    var r=j.record,f=r.fields||{},docs=[],cur=f.Status||"New";
+    String(f["Documents Submitted"]||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)docs.push({key:l.slice(0,i).trim(),name:l.slice(i+1).trim()})});
+    docs.push({key:"signature",name:"Signature"});
+    var pdf="/.netlify/functions/"+kind+"-pdf?ref="+encodeURIComponent(ref);
+    var skip={"Status":1,"Notes":1,"View Application":1,"Documents Submitted":1,"Document Links":1};
+    app.innerHTML='<p><a href="#" id="back">← All applications</a></p><div class="card"><h2 style="margin:0 0 4px;font-family:var(--serif)">'+esc(ref)+'</h2><div class="muted">'+esc(kind)+' · received '+esc((r.savedAt||"").slice(0,16).replace("T"," "))+'</div>'+
+      '<p class="links"><a href="'+pdf+'" target="_blank">Printable application</a>'+docs.map(function(d){return'<a href="/.netlify/functions/get-document?ref='+encodeURIComponent(ref)+'&doc='+encodeURIComponent(d.key)+'" target="_blank">'+esc(d.name||d.key)+'</a>'}).join("")+'</p></div>'+
+      '<div class="card"><h3 style="margin-top:0">Review</h3><label class="muted">Status</label><select id="ds">'+["New","In review","Approved","Rejected"].map(function(s){return'<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("")+'</select><label class="muted" style="display:block;margin-top:10px">Notes</label><textarea id="dn">'+esc(f.Notes||"")+'</textarea><p><button class="btn" id="sv">Save</button> <span id="sm" class="muted"></span></p>'+
+      (r.audit&&r.audit.length?'<div class="muted">'+r.audit.slice().reverse().map(function(a){return esc(a.at.slice(0,16).replace("T"," "))+' · '+esc(a.by)+' · '+esc(a.change)}).join("<br>")+'</div>':'')+'</div>'+
+      '<div class="card"><h3 style="margin-top:0">Details</h3><div class="kv">'+Object.keys(f).filter(function(k){return!skip[k]}).map(function(k){return'<div>'+esc(k)+'</div><div>'+esc(f[k])+'</div>'}).join("")+'</div></div>';
+    $("#back").onclick=function(e){e.preventDefault();showList()};
+    $("#sv").onclick=function(){$("#sm").textContent="Saving…";api("update",{kind:kind,ref:ref,status:$("#ds").value,notes:$("#dn").value}).then(function(){showDetail(kind,ref)}).catch(guard)};
+  }).catch(guard);
+}
+function showUsers(){
+  api("users").then(function(j){
+    app.innerHTML='<p><a href="#" id="back">← All applications</a></p><div class="card"><h3 style="margin-top:0">Staff accounts</h3><table><tbody>'+j.users.map(function(u){return'<tr><td>'+esc(u.name)+'<div class="muted">'+esc(u.email)+'</div></td><td>'+esc(u.role)+(u.disabled?' (disabled)':'')+'</td><td><button class="btn ghost" style="color:#141312" data-d="'+esc(u.email)+'">Remove</button></td></tr>'}).join("")+'</tbody></table></div>'+
+      '<form class="card" id="uf"><h3 style="margin-top:0">Add or update staff</h3><div class="bar"><input id="un" placeholder="Full name"><input id="ue" type="email" placeholder="Email" required><input id="up" type="password" placeholder="Password (min 10 chars; blank keeps existing)"><select id="ur"><option value="staff">Staff</option><option value="admin">Admin</option></select></div><button class="btn">Save</button> <span id="um" class="muted"></span></form>';
+    $("#back").onclick=function(e){e.preventDefault();showList()};
+    Array.prototype.forEach.call(document.querySelectorAll("[data-d]"),function(b){b.onclick=function(){if(confirm("Remove "+b.dataset.d+"?"))api("user-delete",{email:b.dataset.d}).then(showUsers).catch(guard)}});
+    $("#uf").onsubmit=function(e){e.preventDefault();api("user-save",{name:$("#un").value,email:$("#ue").value,password:$("#up").value,role:$("#ur").value}).then(showUsers).catch(function(x){$("#um").textContent=x.message})};
+  }).catch(guard);
+}
+boot();
+</script>
+</body>
+</html>
