@@ -136,6 +136,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 <header><div class="hd">
   <a class="brand" id="home"><img src="anchoria-emblem.png" alt=""><b>Anchoria <span>Admin</span></b></a>
   <div class="chip hide" id="chip"><div class="avatar" id="av"></div><div class="who"><span id="wn"></span><small id="wr"></small></div></div>
+  <button class="btn ghost sm hide" id="acctBtn">Password</button>
   <button class="btn ghost sm hide" id="usersBtn">Staff</button>
   <button class="btn ghost sm hide" id="outBtn">Sign out</button>
 </div></header>
@@ -183,15 +184,33 @@ function busy(btn,on,label){if(on){btn.dataset.l=btn.innerHTML;btn.disabled=true
 /* ── Session ── */
 function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
 function shell(){
-  $("#chip").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");
+  $("#chip").classList.remove("hide");$("#acctBtn").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");
   $("#wn").textContent=me.name;$("#wr").textContent=me.role;$("#av").textContent=(me.name||"?").trim().charAt(0).toUpperCase();
 }
 $("#home").onclick=function(){if(me)showList()};
 $("#outBtn").onclick=function(){api("logout",{}).then(function(){showLogin()})};
 $("#usersBtn").onclick=function(){showUsers()};
+$("#acctBtn").onclick=function(){showAccount()};
+function showAccount(){
+  app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Change password</h2><p>'+esc(me.email)+'</p></div></div>'+
+    '<form class="card" id="cf" style="max-width:460px" autocomplete="off"><div id="ce"></div>'+
+    '<div class="field"><label class="lbl" for="cp">Current password</label>'+pwField("cp","",true)+'</div>'+
+    '<div class="field"><label class="lbl" for="np">New password <span class="muted" style="font-weight:400">(min 10 characters)</span></label>'+pwField("np","",true)+'</div>'+
+    '<div class="field"><label class="lbl" for="np2">Confirm new password</label>'+pwField("np2","",true)+'</div>'+
+    '<button class="btn" id="cs">Update password</button></form>';
+  wireEyes(app);
+  $("#back").onclick=function(e){e.preventDefault();showList()};
+  $("#cf").onsubmit=function(e){
+    e.preventDefault();var b=$("#cs");$("#ce").innerHTML="";
+    if($("#np").value!==$("#np2").value){$("#ce").innerHTML='<div class="err">The new passwords don\'t match.</div>';return}
+    busy(b,true,"Saving…");
+    api("change-password",{currentPassword:$("#cp").value,newPassword:$("#np").value}).then(function(){toast("Password updated");showList()})
+    .catch(function(x){busy(b,false);$("#ce").innerHTML='<div class="err">'+esc(x.message)+'</div>'});
+  };
+}
 
 function showLogin(){
-  me=null;["#chip","#outBtn","#usersBtn"].forEach(function(s){$(s).classList.add("hide")});
+  me=null;["#chip","#outBtn","#usersBtn","#acctBtn"].forEach(function(s){$(s).classList.add("hide")});
   app.innerHTML='<div class="login-wrap"><form class="card login" id="lf" novalidate><div class="logo"><img src="anchoria-emblem.png" alt=""><h2>Staff sign in</h2><p>Anchoria Capital Group · Account applications</p></div><div id="le"></div>'+
     '<div class="field"><label class="lbl" for="em">Email</label><input type="email" id="em" autocomplete="username" required autofocus></div>'+
     '<div class="field"><label class="lbl" for="pw">Password</label>'+pwField("pw","",true).replace('autocomplete="off"','autocomplete="current-password"')+'</div>'+

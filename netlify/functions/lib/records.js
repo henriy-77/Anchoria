@@ -35,6 +35,7 @@ async function pushToAirtable(table, fields) {
  */
 async function saveApplication(kind, table, ref, fields) {
   const key = `${kind}/${ref}`;
+  try { if (await store().get(key, { type: "json" })) return { saved: false, exists: true }; } catch (err) { console.error("existence check failed:", err.message); }
   const record = { kind, table, ref, fields, savedAt: new Date().toISOString(), airtable: "pending", airtableId: null, lastError: null };
 
   let blobOk = true;

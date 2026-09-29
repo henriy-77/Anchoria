@@ -6,13 +6,14 @@
 
 const { getStore } = require("@netlify/blobs");
 const { getUser } = require("./lib/auth");
+const { REF_RE, KEY_RE } = require("./lib/guard");
 
 exports.handler = async (event) => {
-  if (!getUser(event)) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
+  if (!(await getUser(event))) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
   const { ref, doc } = event.queryStringParameters || {};
 
-  if (!ref || !doc) {
-    return { statusCode: 400, body: "Missing ref or doc parameter" };
+  if (!REF_RE.test(String(ref || "")) || !KEY_RE.test(String(doc || ""))) {
+    return { statusCode: 400, body: "Invalid ref or doc parameter" };
   }
 
   try {

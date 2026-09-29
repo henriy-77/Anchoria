@@ -2,15 +2,15 @@
  * Replays applications that are stored in Netlify Blobs but not yet in Airtable
  * (e.g. saved while Airtable was over its API limit).
  *
- *   GET/POST /.netlify/functions/sync-airtable?limit=20   (header X-Shared-Secret required)
+ *   GET/POST /.netlify/functions/sync-airtable?limit=20   (admin session required — sign in at /admin first)
  *   GET      /.netlify/functions/sync-airtable?list=1     → lists pending records only
  */
 const { store, pushToAirtable } = require("./lib/records");
+const { getUser } = require("./lib/auth");
 
 exports.handler = async (event) => {
-  const secret = process.env.SHARED_SECRET;
-  const given  = event.headers["x-shared-secret"] || (event.queryStringParameters || {}).secret || "";
-  if (!secret || given !== secret) return resp(401, { error: "Unauthorized" });
+  const user = await getUser(event);
+  if (!user || user.role !== "admin") return resp(401, { error: "Admin sign-in required" });
 
   const q     = event.queryStringParameters || {};
   const limit = Math.min(parseInt(q.limit, 10) || 20, 50);
