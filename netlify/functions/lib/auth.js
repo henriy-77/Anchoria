@@ -50,9 +50,9 @@ async function verifyLogin(email, password) {
 
 function sessionCookie(user) {
   const body = b64(JSON.stringify({ ...user, exp: Date.now() + TTL_MS }));
-  return `${COOKIE}=${body}.${hmac(body)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${TTL_MS / 1000}`;
+  return `${COOKIE}=${body}.${hmac(body)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${TTL_MS / 1000}`;
 }
-const clearCookie = () => `${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+const clearCookie = () => `${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
 
 /**
  * Reads the session cookie and re-checks the account is still active, so removing

@@ -136,6 +136,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 <header><div class="hd">
   <a class="brand" id="home"><img src="anchoria-emblem.png" alt=""><b>Anchoria <span>Admin</span></b></a>
   <div class="chip hide" id="chip"><div class="avatar" id="av"></div><div class="who"><span id="wn"></span><small id="wr"></small></div></div>
+  <button class="btn ghost sm hide" id="impBtn">Import</button>
   <button class="btn ghost sm hide" id="actBtn">Activity</button>
   <button class="btn ghost sm hide" id="acctBtn">Password</button>
   <button class="btn ghost sm hide" id="usersBtn">Staff</button>
@@ -183,9 +184,14 @@ function wireEyes(root){
 function busy(btn,on,label){if(on){btn.dataset.l=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span class="spin"></span> '+(label||"")}else{btn.disabled=false;btn.innerHTML=btn.dataset.l}}
 
 /* ── Session ── */
-function boot(){api("me").then(function(j){me=j.user;shell();showList()}).catch(showLogin)}
+function nextUrl(){
+  var n=new URLSearchParams(location.search).get("next");
+  return n&&/^\/\.netlify\/functions\/[\w-]+(\?[\w=&%.\-]*)?$/.test(n)?n:null;
+}
+function afterLogin(){var n=nextUrl();if(n){location.replace(n);return}shell();showList()}
+function boot(){api("me").then(function(j){me=j.user;afterLogin()}).catch(showLogin)}
 function shell(){
-  $("#chip").classList.remove("hide");$("#acctBtn").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");$("#actBtn").classList.toggle("hide",me.role!=="admin");
+  $("#chip").classList.remove("hide");$("#acctBtn").classList.remove("hide");$("#outBtn").classList.remove("hide");$("#usersBtn").classList.toggle("hide",me.role!=="admin");$("#actBtn").classList.toggle("hide",me.role!=="admin");$("#impBtn").classList.toggle("hide",me.role!=="admin");
   $("#wn").textContent=me.name;$("#wr").textContent=me.role;$("#av").textContent=(me.name||"?").trim().charAt(0).toUpperCase();
 }
 $("#home").onclick=function(){if(me)showList()};
@@ -193,14 +199,60 @@ $("#outBtn").onclick=function(){api("logout",{}).then(function(){showLogin()})};
 $("#usersBtn").onclick=function(){showUsers()};
 $("#acctBtn").onclick=function(){showAccount()};
 $("#actBtn").onclick=function(){showActivity()};
+$("#impBtn").onclick=function(){showImport()};
+
+/* CSV parser (RFC 4180: quotes, embedded commas/newlines, BOM) */
+function parseCSV(t){
+  t=t.replace(/^\uFEFF/,"");var rows=[],row=[],f="",q=false,i=0,c;
+  for(;i<t.length;i++){c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;
+    else if(c===","){row.push(f);f=""}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);f="";if(row.length>1||row[0]!=="")rows.push(row);row=[]}
+    else f+=c}
+  if(f!==""||row.length){row.push(f);rows.push(row)}
+  if(!rows.length)return[];var h=rows.shift().map(function(x){return x.trim()});
+  return rows.map(function(r){var o={};h.forEach(function(k,j){if(k&&r[j]!==undefined&&r[j]!=="")o[k]=r[j]});return{fields:o}});
+}
+function showImport(){
+  app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Import old applications</h2><p>Bring applications that are still only in Airtable into this dashboard. Ones already here are never overwritten.</p></div></div>'+
+    '<div class="card" style="max-width:640px"><div id="ie"></div>'+
+    '<div class="field"><label class="lbl" for="ik">Application type</label><select id="ik"><option value="corporate">Corporate (Corporate Applications table)</option><option value="joint">Joint (Joint Applications table)</option><option value="minor">Minor (Minor Applications table)</option><option value="individual">Individual (Applications table)</option></select></div>'+
+    '<h3 style="margin-top:20px">Option 1 — Upload a CSV from Airtable</h3><p class="muted" style="margin-top:-8px">In Airtable open the table, use the view menu → <b>Download CSV</b>, then choose the file here. Received dates use the CSV\'s date column if there is one, otherwise today\'s date.</p>'+
+    '<div class="field"><input type="file" id="if" accept=".csv,text/csv"></div><button class="btn" id="ic">Import CSV</button>'+
+    '<h3 style="margin-top:26px">Option 2 — Pull straight from Airtable</h3><p class="muted" style="margin-top:-8px">Keeps the exact received dates. Only works while Airtable\'s monthly API limit is not exhausted.</p>'+
+    '<button class="btn ghost" id="ia" style="color:#141312">Pull from Airtable</button><div id="ir" style="margin-top:18px"></div></div>';
+  $("#back").onclick=function(e){e.preventDefault();showList()};
+  function report(r,src){$("#ir").innerHTML='<div class="err" style="background:var(--ok-bg);color:var(--ok)"><b>Done ('+src+').</b> '+r.imported+' imported · '+r.skipped+' already here · '+r.invalid+' skipped (no valid reference)</div>';rows=[];toast("Import finished")}
+  $("#ic").onclick=function(){
+    var file=$("#if").files[0],b=$("#ic");$("#ie").innerHTML="";
+    if(!file){$("#ie").innerHTML='<div class="err">Choose a CSV file first.</div>';return}
+    var rd=new FileReader();rd.onload=function(){
+      var data=parseCSV(String(rd.result));
+      if(!data.length||!data.some(function(r){return r.fields.Reference})){$("#ie").innerHTML='<div class="err">This doesn\'t look like an Airtable export: no "Reference" column found.</div>';return}
+      var tot={imported:0,skipped:0,invalid:0},i=0;busy(b,true,"Importing…");
+      (function next(){
+        if(i>=data.length){busy(b,false);report(tot,"CSV");return}
+        var chunk=data.slice(i,i+100);
+        api("import",{kind:$("#ik").value,rows:chunk}).then(function(r){tot.imported+=r.imported;tot.skipped+=r.skipped;tot.invalid+=r.invalid;i+=100;b.lastChild.textContent=" Importing… "+Math.min(i,data.length)+"/"+data.length;next()})
+        .catch(function(x){busy(b,false);$("#ie").innerHTML='<div class="err">'+esc(x.message)+' (imported so far: '+tot.imported+')</div>'});
+      })();
+    };rd.readAsText(file);
+  };
+  $("#ia").onclick=function(){
+    var b=$("#ia");$("#ie").innerHTML="";busy(b,true,"Pulling…");
+    api("import-airtable",{kind:$("#ik").value}).then(function(r){busy(b,false);report(r,"Airtable")})
+    .catch(function(x){busy(b,false);$("#ie").innerHTML='<div class="err">'+esc(x.message)+'</div>'});
+  };
+}
 
 var ACT={login:"Signed in",login_failed:"Failed sign-in",logout:"Signed out",view_application:"Opened application",view_document:"Opened document",view_printable:"Opened printable application",
-  update_application:"Updated application",export_csv:"Exported CSV",password_change:"Changed own password",staff_created:"Added staff",staff_updated:"Updated staff",staff_removed:"Removed staff"};
+  update_application:"Updated application",export_csv:"Exported CSV",password_change:"Changed own password",staff_created:"Added staff",staff_updated:"Updated staff",staff_removed:"Removed staff",import_records:"Imported applications"};
 function actLabel(a){return ACT[a]||a}
 function actTarget(e){return[e.ref,e.doc,e.detail].filter(Boolean).join(" · ")}
 function actRows(list){
   return list.map(function(e){return'<tr><td title="'+esc(e.at)+'">'+esc(when(e.at))+'</td><td><div class="nm">'+esc(e.name||e.by)+'</div><div class="sub">'+esc(e.by)+'</div></td><td>'+
-    '<span class="pill '+(/failed/.test(e.action)?"Rejected":/update|staff|password|export/.test(e.action)?"In-review":"New")+'">'+esc(actLabel(e.action))+'</span></td><td>'+esc(actTarget(e))+'</td><td class="mono">'+esc(e.ip)+'</td></tr>'}).join("");
+    '<span class="pill '+(/failed/.test(e.action)?"Rejected":/update|staff|password|export|import/.test(e.action)?"In-review":"New")+'">'+esc(actLabel(e.action))+'</span></td><td>'+esc(actTarget(e))+'</td><td class="mono">'+esc(e.ip)+'</td></tr>'}).join("");
 }
 function showActivity(){
   app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a><div class="page-h"><div><h2>Activity</h2><p>Who signed in, opened, changed or exported what. Most recent 400 events.</p></div></div>'+
@@ -213,7 +265,7 @@ function showActivity(){
       var q=$("#as").value.toLowerCase(),f=$("#af").value;
       var r=all.filter(function(e){
         if(f==="view"&&e.action.indexOf("view")!==0)return false;
-        if(f==="update"&&!/update|staff|password|export/.test(e.action))return false;
+        if(f==="update"&&!/update|staff|password|export|import/.test(e.action))return false;
         if(f==="login"&&e.action.indexOf("log")!==0)return false;
         return!q||(e.by+" "+e.name+" "+actLabel(e.action)+" "+actTarget(e)+" "+e.ip).toLowerCase().indexOf(q)>-1});
       $("#at").innerHTML=r.length?'<table class="tbl"><thead><tr><th>When</th><th>Person</th><th>Action</th><th>Target</th><th>IP</th></tr></thead><tbody>'+actRows(r)+'</tbody></table>':'<div class="empty"><b>No activity found</b>Try clearing the search or filter.</div>';
@@ -240,7 +292,7 @@ function showAccount(){
 }
 
 function showLogin(){
-  me=null;["#chip","#outBtn","#usersBtn","#acctBtn","#actBtn"].forEach(function(s){$(s).classList.add("hide")});
+  me=null;["#chip","#outBtn","#usersBtn","#acctBtn","#actBtn","#impBtn"].forEach(function(s){$(s).classList.add("hide")});
   app.innerHTML='<div class="login-wrap"><form class="card login" id="lf" novalidate><div class="logo"><img src="anchoria-emblem.png" alt=""><h2>Staff sign in</h2><p>Anchoria Capital Group · Account applications</p></div><div id="le"></div>'+
     '<div class="field"><label class="lbl" for="em">Email</label><input type="email" id="em" autocomplete="username" required autofocus></div>'+
     '<div class="field"><label class="lbl" for="pw">Password</label>'+pwField("pw","",true).replace('autocomplete="off"','autocomplete="current-password"')+'</div>'+
@@ -250,7 +302,7 @@ function showLogin(){
     e.preventDefault();var b=$("#go");$("#le").innerHTML="";
     if(!$("#em").value||!$("#pw").value){$("#le").innerHTML='<div class="err">Enter your email and password.</div>';return}
     busy(b,true,"Signing in…");
-    api("login",{email:$("#em").value,password:$("#pw").value}).then(function(j){me=j.user;shell();showList()})
+    api("login",{email:$("#em").value,password:$("#pw").value}).then(function(j){me=j.user;afterLogin()})
     .catch(function(x){busy(b,false);$("#le").innerHTML='<div class="err">'+esc(x.message)+'</div>';$("#pw").select()});
   };
 }
@@ -260,7 +312,7 @@ function showList(){
   app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><a class="btn ghost" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div>'+
     '<div class="stats" id="stats"></div>'+
     '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="s" placeholder="Search name, reference, email or phone" value="'+esc(flt.q)+'"></div>'+
-    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option></select></div>'+
+    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option></select></div>'+
     '<div id="t">'+[1,2,3,4].map(function(){return'<div class="sk" style="margin:18px 6px"></div>'}).join("")+'</div></div>';
   $("#k").value=flt.kind;
   var deb;$("#s").oninput=function(){clearTimeout(deb);deb=setTimeout(function(){flt.q=$("#s").value;draw()},120)};
@@ -291,7 +343,7 @@ function renderDetail(r){
   String(f["Documents Submitted"]||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)docs.push({key:l.slice(0,i).trim(),name:l.slice(i+1).trim()})});
   if(!docs.some(function(d){return d.key==="signature"}))docs.push({key:"signature",name:"Signature"});
   var name=(rows.filter(function(x){return x.ref===ref})[0]||{}).name||f["Company Name"]||f["Signatory Name"]||ref;
-  var pdf="/.netlify/functions/"+kind+"-pdf?ref="+encodeURIComponent(ref);
+  var pdf="/.netlify/functions/"+(kind==="individual"?"application":kind)+"-pdf?ref="+encodeURIComponent(ref);
   var skip={"Status":1,"Notes":1,"View Application":1,"Documents Submitted":1,"Document Links":1,"Reference":1};
   var keys=Object.keys(f).filter(function(k){return!skip[k]&&f[k]!==""});
   app.innerHTML='<a href="#" class="crumb" id="back">← All applications</a>'+
