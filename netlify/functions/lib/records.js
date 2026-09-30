@@ -82,4 +82,67 @@ async function loadFields(kind, table, ref) {
   }
 }
 
-module.exports = { store, saveApplication, loadFields, pushToAirtable };
+const TABLES = { corporate: "Corporate Applications", joint: "Joint Applications", minor: "Minor Applications", individual: "Applications" };
+
+/** Airtable values → plain field values the admin can show (arrays joined, objects dropped, blanks removed). */
+function cleanFields(raw) {
+  const out = {};
+  for (const [k, v] of Object.entries(raw || {})) {
+    let val = v;
+    if (Array.isArray(val)) val = val.every((x) => typeof x === "string") ? val.join(", ") : "";
+    else if (val && typeof val === "object") val = val.name || "";
+    if (val === "" || val == null) continue;
+    out[String(k).slice(0, 80)] = typeof val === "string" ? val.slice(0, 20000) : val;
+  }
+  return out;
+}
+
+/**
+ * Bring existing applications (from Airtable) into Blobs.
+ * rows: [{ id?, createdTime?, fields }]. Existing references are never overwritten.
+ */
+async function importRecords(kind, rows, { REF_RE }) {
+  const table = TABLES[kind];
+  const res = { imported: 0, skipped: 0, invalid: 0 };
+  const st = store();
+  for (const row of rows) {
+    const fields = cleanFields(row.fields);
+    const ref = String(fields.Reference || "").trim();
+    if (!REF_RE.test(ref)) { res.invalid++; continue; }
+    try {
+      if (await st.get(`${kind}/${ref}`, { type: "json" })) { res.skipped++; continue; }
+      const when = Date.parse(row.createdTime || fields["Submitted At"] || "");
+      await st.setJSON(`${kind}/${ref}`, {
+        kind, table, ref, fields,
+        savedAt: new Date(isNaN(when) ? Date.now() : when).toISOString(),
+        airtable: "synced", airtableId: row.id || null, imported: true, lastError: null,
+      });
+      res.imported++;
+    } catch (err) {
+      console.error("import failed for", ref, err.message);
+      res.invalid++;
+    }
+  }
+  return res;
+}
+
+/** Pull every record of a table from Airtable (paginated). Throws with Airtable's message on failure. */
+async function fetchAllFromAirtable(table) {
+  const { AIRTABLE_TOKEN, AIRTABLE_BASE_ID } = process.env;
+  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) throw new Error("Airtable is not configured on the server");
+  const all = []; let offset = "";
+  do {
+    const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(table)}?pageSize=100${offset ? "&offset=" + encodeURIComponent(offset) : ""}`,
+      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const e = new Error(res.status === 429 ? "Airtable's monthly API limit is still exhausted. Use the CSV import, or try again after it resets." : (data.error && data.error.message) || `Airtable error ${res.status}`);
+      e.status = res.status; throw e;
+    }
+    (data.records || []).forEach((r) => all.push({ id: r.id, createdTime: r.createdTime, fields: r.fields }));
+    offset = data.offset || "";
+  } while (offset);
+  return all;
+}
+
+module.exports = { store, saveApplication, loadFields, pushToAirtable, importRecords, fetchAllFromAirtable, TABLES };

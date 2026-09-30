@@ -11,7 +11,7 @@ const { logAccess } = require("./lib/audit");
 
 exports.handler = async (event) => {
   const user = await getUser(event);
-  if (!user) return { statusCode: 302, headers: { Location: "/admin.html" }, body: "" };
+  if (!user) return { statusCode: 302, headers: { Location: "/admin.html?next=" + encodeURIComponent(event.path + (event.rawQuery ? "?" + event.rawQuery : "")) }, body: "" };
   const { ref, doc } = event.queryStringParameters || {};
 
   if (!REF_RE.test(String(ref || "")) || !KEY_RE.test(String(doc || ""))) {

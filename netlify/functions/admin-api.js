@@ -3,13 +3,13 @@
  *   login (POST), logout (POST), me, list, get, update (POST), export (CSV),
  *   users, user-save (POST), user-delete (POST)   ← last three: admin role only
  */
-const { store } = require("./lib/records");
+const { store, importRecords, fetchAllFromAirtable, TABLES } = require("./lib/records");
 const { staffStore, hashPassword, checkPassword, verifyLogin, sessionCookie, clearCookie, getUser, lockedFor, recordFailure, clearFailures, tkey } = require("./lib/auth");
-const { clientIp } = require("./lib/guard");
+const { clientIp, REF_RE } = require("./lib/guard");
 const { logAccess, readLog } = require("./lib/audit");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
-const KINDS    = ["corporate", "joint", "minor"];
+const KINDS    = ["corporate", "joint", "minor", "individual"];
 
 exports.handler = async (event) => {
   const action = (event.queryStringParameters || {}).action || "";
@@ -127,6 +127,20 @@ exports.handler = async (event) => {
     });
     await logAccess(event, user, existing ? "staff_updated" : "staff_created", { detail: `${email} (${body.role === "admin" ? "admin" : "staff"})` });
     return out(200, { ok: true });
+  }
+
+  if (action === "import" || action === "import-airtable") {
+    if (user.role !== "admin") return out(403, { error: "Admins only" });
+    if (!KINDS.includes(body.kind)) return out(400, { error: "Choose an application type" });
+    let rows = body.rows;
+    try {
+      if (action === "import-airtable") rows = await fetchAllFromAirtable(TABLES[body.kind]);
+    } catch (err) { return out(err.status === 429 ? 429 : 502, { error: err.message }); }
+    if (!Array.isArray(rows) || !rows.length) return out(400, { error: "No rows to import" });
+    if (rows.length > 300 && action === "import") return out(400, { error: "Send at most 300 rows per request" });
+    const res = await importRecords(body.kind, rows, { REF_RE });
+    await logAccess(event, user, "import_records", { kind: body.kind, detail: `${res.imported} imported, ${res.skipped} already present, ${res.invalid} invalid (${action === "import" ? "CSV" : "Airtable"})` });
+    return out(200, { ...res, total: rows.length });
   }
 
   if (action === "activity") {
