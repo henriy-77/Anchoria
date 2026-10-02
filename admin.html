@@ -312,7 +312,7 @@ function showList(){
   app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><a class="btn ghost" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div>'+
     '<div class="stats" id="stats"></div>'+
     '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="s" placeholder="Search name, reference, email or phone" value="'+esc(flt.q)+'"></div>'+
-    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option></select></div>'+
+    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Diaspora IPO</option></select></div>'+
     '<div id="t">'+[1,2,3,4].map(function(){return'<div class="sk" style="margin:18px 6px"></div>'}).join("")+'</div></div>';
   $("#k").value=flt.kind;
   var deb;$("#s").oninput=function(){clearTimeout(deb);deb=setTimeout(function(){flt.q=$("#s").value;draw()},120)};
@@ -351,7 +351,7 @@ function renderDetail(r){
    '<div><span class="pill '+esc(slug(cur))+'">'+esc(cur)+'</span></div></div>'+
    '<div class="dgrid"><div>'+
      '<div class="card"><h3>Documents</h3><div class="docs">'+
-       '<a class="doc" href="'+pdf+'" target="_blank">'+ICON.print.replace('width="16" height="16"','')+'<span>Printable application</span></a>'+
+       (kind==="diaspora"?"":'<a class="doc" href="'+pdf+'" target="_blank">'+ICON.print.replace('width="16" height="16"','')+'<span>Printable application</span></a>')+
        docs.map(function(d){return'<a class="doc" href="/.netlify/functions/get-document?ref='+encodeURIComponent(ref)+'&doc='+encodeURIComponent(d.key)+'" target="_blank">'+(d.key==="signature"?ICON.pen:ICON.file)+'<span title="'+esc(d.name||d.key)+'">'+esc(d.name||d.key)+'</span></a>'}).join("")+'</div></div>'+
      '<div class="card"><h3>Application details</h3><div class="kv">'+keys.map(function(k){var v=String(f[k]);return'<div class="it'+(v.length>70||v.indexOf("\n")>-1?" long":"")+'"><div class="k">'+esc(k)+'</div><div class="v copy" title="Click to copy" data-c="'+esc(v)+'">'+esc(v)+'</div></div>'}).join("")+'</div></div>'+
    '</div><aside class="side"><div class="card"><h3>Review</h3>'+

@@ -9,7 +9,7 @@ const { clientIp, REF_RE } = require("./lib/guard");
 const { logAccess, readLog } = require("./lib/audit");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
-const KINDS    = ["corporate", "joint", "minor", "individual"];
+const KINDS    = ["corporate", "joint", "minor", "individual", "diaspora"];
 
 exports.handler = async (event) => {
   const action = (event.queryStringParameters || {}).action || "";

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  Anchoria — Dangote IPO · Diaspora Investor Application Form
+  ================================================================
+  BACKEND: Netlify Function → Netlify Blobs (no Airtable)
+  The form POSTs to /.netlify/functions/submit-diaspora (same origin),
+  then uploads each attached file to /.netlify/functions/upload-document.
+  Responses are stored in Blobs and read through the /admin dashboard.
+  ================================================================
+-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anchoria | Dangote IPO — Diaspora Investor Application</title>
+<meta name="description" content="Apply for the Dangote Petroleum Refinery IPO as a diaspora investor through Anchoria Securities Limited." />
+<link rel="icon" type="image/png" href="anchoria-emblem.png" />
+<style>
+/* ===== DESIGN TOKENS (Anchoria brand) ===== */
+:root{
+  --gold:#C2972B;
+  --gold-2:#A47E1E;
+  --gold-soft:#F7EFD6;
+  --black:#141312;
+  --ink:#1C1A17;
+  --paper:#FBFAF6;
+  --surface:#FFFFFF;
+  --line:#E7E4DB;
+  --line-strong:#CFCBBE;
+  --muted:#6B655A;
+  --muted-2:#938C7E;
+  --ok:#2E7D4F;
+  --err:#B23A3A;
+  --err-bg:#FBEDED;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(20,19,18,.04),0 14px 36px rgba(20,19,18,.07);
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);line-height:1.5;-webkit-font-smoothing:antialiased;}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important;}}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.hidden{display:none!important;}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+/* ===== TOP BAR ===== */
+.topbar{background:var(--black);border-bottom:3px solid var(--gold);}
+.topbar-in{max-width:880px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.topbar img{width:42px;height:42px;border-radius:50%;flex-shrink:0;}
+.topbar .name{color:#fff;font-size:17px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1.15;}
+.topbar .sub{color:var(--gold);font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;}
+.topbar .reg{margin-left:auto;color:rgba(255,255,255,.65);font-family:var(--sans);font-size:12px;text-align:right;}
+
+/* ===== PAGE ===== */
+.wrap{max-width:880px;margin:0 auto;padding:30px 20px 70px;}
+.title-block{margin-bottom:22px;}
+.eyebrow{color:var(--gold-2);font-family:var(--sans);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;}
+h1{font-size:clamp(25px,4vw,34px);font-weight:800;line-height:1.12;margin:8px 0 10px;letter-spacing:-.01em;text-wrap:balance;}
+.lede{font-family:var(--sans);color:var(--muted);font-size:14px;line-height:1.6;margin:0;}
+.offer{background:var(--black);color:#fff;border-radius:var(--radius);padding:20px 24px;margin:22px 0 28px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between;border:1px solid rgba(194,151,43,.5);}
+.offer .issuer{font-size:15.5px;font-weight:700;line-height:1.35;max-width:430px;}
+.offer .issuer small{display:block;font-family:var(--sans);font-weight:600;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.offer .price{text-align:right;}
+.offer .price b{display:block;color:var(--gold);font-size:28px;line-height:1.1;}
+.offer .price span{font-family:var(--sans);font-size:12px;color:rgba(255,255,255,.7);}
+.cutoff{display:inline-block;margin-top:10px;font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--gold-2);background:var(--gold-soft);border:1px solid #E6D49C;border-radius:999px;padding:5px 13px;}
+
+/* ===== SECTIONS ===== */
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden;}
+.sec>h2{margin:0;background:var(--black);color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:14px 22px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--gold);}
+.sec>h2 .n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--black);font-size:12px;font-weight:800;letter-spacing:0;}
+.sec-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;}
+.full{grid-column:1/-1;}
+@media(max-width:640px){.sec-body{grid-template-columns:1fr;padding:18px;}}
+.subhead{grid-column:1/-1;font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-weight:700;margin:2px 0 -4px;}
+.note{grid-column:1/-1;background:var(--gold-soft);border:1px solid #E6D49C;border-radius:9px;padding:11px 13px;font-family:var(--sans);font-size:12.5px;color:#6A531A;line-height:1.55;}
+
+/* ===== FIELDS ===== */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+label.lab,.lab{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);}
+.lab .req{color:var(--gold);margin-left:2px;}
+.hint{font-family:var(--sans);font-size:12px;color:var(--muted);}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+  width:100%;padding:12px 13px;border:1.5px solid var(--line-strong);border-radius:9px;background:#fff;
+  font-family:var(--sans);font-size:15px;color:var(--ink);transition:border-color .15s,box-shadow .15s;
+}
+textarea{min-height:96px;resize:vertical;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(194,151,43,.16);}
+input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
+.field.err input,.field.err select,.field.err textarea,.field.err .drop,.field.err .sigbox{border-color:var(--err);background:var(--err-bg);}
+.msg{display:none;font-family:var(--sans);font-size:12px;color:var(--err);font-weight:600;}
+.field.err>.msg,.check.err>.msg{display:block;}
+.words{font-family:var(--sans);font-size:12px;color:var(--gold-2);font-style:italic;min-height:16px;}
+
+/* choice / checkbox rows */
+.choice{grid-column:1/-1;display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line-strong);border-radius:10px;padding:13px 14px;cursor:pointer;background:#fff;font-family:var(--sans);font-size:14px;line-height:1.5;transition:border-color .15s,background .15s;}
+.choice:hover{border-color:var(--gold);}
+.choice.sel{border-color:var(--gold);background:var(--gold-soft);}
+.choice input{width:19px;height:19px;margin-top:1px;flex-shrink:0;accent-color:var(--gold-2);cursor:pointer;}
+.check{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;}
+.check label{display:flex;gap:12px;align-items:flex-start;font-family:var(--sans);font-size:14px;line-height:1.5;cursor:pointer;flex:1 1 100%;}
+.check input{width:19px;height:19px;margin-top:2px;flex-shrink:0;accent-color:var(--gold-2);cursor:pointer;}
+.check.err label{color:var(--err);}
+.check>.msg{flex:1 1 100%;margin-left:31px;}
+.check a{color:var(--gold-2);}
+
+/* upload */
+.drop{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--line-strong);border-radius:10px;padding:13px 14px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s;}
+.drop:hover,.drop:focus-within{border-color:var(--gold);background:var(--gold-soft);}
+.drop.has{border-style:solid;border-color:var(--ok);background:#EAF6EE;}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+.drop .ic{flex:none;width:34px;height:34px;border-radius:50%;background:var(--gold-soft);color:var(--gold-2);display:flex;align-items:center;justify-content:center;}
+.drop.has .ic{background:var(--ok);color:#fff;}
+.drop .tx{font-family:var(--sans);font-size:13px;line-height:1.35;min-width:0;}
+.drop .tx b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.drop .tx span{color:var(--muted);font-size:12px;}
+.drop .rm{margin-left:auto;background:none;border:none;color:var(--gold-2);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px;}
+.drop .rm:hover{background:var(--gold-soft);}
+
+/* signature */
+.sigbox{border:1.5px solid var(--line-strong);border-radius:10px;background:#fff;position:relative;overflow:hidden;}
+.sigbox canvas{display:block;width:100%;height:150px;touch-action:none;cursor:crosshair;}
+.sigbox .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:13px;color:var(--muted-2);pointer-events:none;}
+.sigbox .base{position:absolute;left:5%;right:5%;bottom:34px;border-bottom:1px solid var(--line);pointer-events:none;}
+.sigtools{display:flex;justify-content:flex-end;}
+.sigtools button{background:none;border:none;color:var(--gold-2);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px;}
+.sigtools button:hover{background:var(--gold-soft);}
+
+/* terms */
+.terms{padding:22px;font-family:var(--sans);font-size:13.5px;line-height:1.65;color:var(--ink);}
+.terms .for{color:var(--muted);font-size:12.5px;margin:0 0 14px;}
+.terms ol{margin:0;padding-left:22px;}
+.terms li{margin-bottom:9px;}
+.terms li::marker{color:var(--gold-2);font-weight:700;}
+.terms .closing{margin:16px 0 0;padding:13px 15px;background:var(--gold-soft);border:1px solid #E6D49C;border-radius:9px;font-size:13px;color:#4F3D12;}
+.fineprint{font-family:var(--sans);font-size:12px;color:var(--muted);text-align:center;margin:6px 0 22px;line-height:1.6;}
+
+/* actions */
+.errbanner{display:none;background:var(--err-bg);border:1px solid #E6B8B8;color:var(--err);border-radius:10px;padding:13px 16px;font-family:var(--sans);font-size:13.5px;font-weight:600;margin-bottom:16px;}
+.errbanner.show{display:block;}
+.actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;}
+.btn{font-family:var(--serif);font-size:16px;font-weight:700;border-radius:10px;padding:16px 26px;cursor:pointer;border:1.5px solid transparent;background:var(--gold);color:var(--black);transition:background .15s,opacity .15s;display:inline-flex;align-items:center;justify-content:center;gap:10px;}
+.btn:hover{background:var(--gold-2);color:#fff;}
+.btn:disabled{opacity:.6;cursor:not-allowed;}
+.spin{display:none;width:16px;height:16px;border:2.5px solid rgba(20,19,18,.25);border-top-color:var(--black);border-radius:50%;animation:sp .7s linear infinite;}
+.btn.loading .spin{display:inline-block;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* done */
+.done{text-align:center;padding:54px 24px;}
+.done .tick{width:64px;height:64px;border-radius:50%;background:var(--gold);color:var(--black);font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.done h2{font-size:28px;margin:0 0 10px;}
+.done p{font-family:var(--sans);color:var(--muted);font-size:14.5px;line-height:1.65;max-width:480px;margin:0 auto 10px;}
+.done .ref{display:inline-block;margin:16px 0 8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:18px;font-weight:700;letter-spacing:.08em;background:var(--black);color:var(--gold);padding:10px 20px;border-radius:9px;}
+
+@media(max-width:560px){.topbar .reg{display:none;}}
+.foot{max-width:880px;margin:0 auto;padding:0 20px 40px;text-align:center;font-family:var(--sans);font-size:12px;color:var(--muted-2);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <img src="anchoria-emblem.png" alt="" width="42" height="42" />
+    <div>
+      <div class="name">Anchoria</div>
+      <div class="sub">Securities Limited</div>
+    </div>
+    <div class="reg">Licensed by the NGX<br />Regulated by the SEC, Nigeria</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div id="formView">
+    <div class="title-block">
+      <div class="eyebrow">Anchoria Securities Limited</div>
+      <h1>Dangote IPO — Diaspora Investor Application Form</h1>
+      <p class="lede">For diaspora investors only, facilitated through Anchoria Securities Limited (ASL).</p>
+      <span class="cutoff">Cut-off: 12 October</span>
+    </div>
+
+    <div class="offer">
+      <div class="issuer"><small>Initial Public Offer</small>Dangote Petroleum Refinery and Petrochemicals FZE</div>
+      <div class="price"><b>₦525.00</b><span>per Offer Share</span></div>
+    </div>
+
+    <div id="errBanner" class="errbanner" role="alert"></div>
+
+    <form id="appForm" novalidate autocomplete="on">
+
+      <!-- PARTICIPATION -->
+      <section class="sec" aria-labelledby="h-part">
+        <h2 id="h-part">Participation Details</h2>
+        <div class="sec-body">
+          <div class="field" data-f="units">
+            <label class="lab" for="units">Number of Units to be Purchased <span class="req">*</span></label>
+            <input type="number" id="units" inputmode="numeric" min="10" step="10" placeholder="e.g. 100" />
+            <span class="hint">In multiples of 10 (minimum 10 units).</span>
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="amount">
+            <label class="lab" for="amount">Amount to be Paid (₦)</label>
+            <input type="text" id="amount" readonly placeholder="Calculated automatically" aria-describedby="amtHint" />
+            <span class="hint" id="amtHint">Units × ₦525.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. INVESTOR TYPE -->
+      <section class="sec" aria-labelledby="h-type">
+        <h2 id="h-type"><span class="n">1</span>Investor Type</h2>
+        <div class="sec-body">
+          <div class="field full" data-f="isDiaspora">
+            <label class="choice" id="chDiaspora">
+              <input type="checkbox" id="isDiaspora" />
+              <span>I am a diaspora investor (living outside Nigeria)</span>
+            </label>
+            <span class="msg"></span>
+          </div>
+          <label class="choice" id="chKyc">
+            <input type="checkbox" id="hasNigerianKyc" />
+            <span>I hold Nigerian KYC documents (BVN and a Nigerian government-issued ID)</span>
+          </label>
+          <div class="field full" data-f="residenceCountry">
+            <label class="lab" for="residenceCountry">Country of Residence <span class="req">*</span></label>
+            <input type="text" id="residenceCountry" autocomplete="country-name" />
+            <span class="msg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. BIO-DATA -->
+      <section class="sec" aria-labelledby="h-bio">
+        <h2 id="h-bio"><span class="n">2</span>Bio-Data</h2>
+        <div class="sec-body">
+          <div class="field" data-f="title">
+            <label class="lab" for="title">Title <span class="req">*</span></label>
+            <select id="title" autocomplete="honorific-prefix">
+              <option value="">Select…</option><option>Mr</option><option>Mrs</option><option>Miss</option><option>Other</option>
+            </select>
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="surname">
+            <label class="lab" for="surname">Surname <span class="req">*</span></label>
+            <input type="text" id="surname" autocomplete="family-name" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="firstName">
+            <label class="lab" for="firstName">First Name <span class="req">*</span></label>
+            <input type="text" id="firstName" autocomplete="given-name" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="otherNames">
+            <label class="lab" for="otherNames">Other Names</label>
+            <input type="text" id="otherNames" autocomplete="additional-name" />
+          </div>
+          <div class="field" data-f="dob">
+            <label class="lab" for="dob">Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dob" autocomplete="bday" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="phone">
+            <label class="lab" for="phone">Phone Number <span class="req">*</span></label>
+            <input type="tel" id="phone" autocomplete="tel" placeholder="+44 7700 900000" />
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-f="address">
+            <label class="lab" for="address">Full Postal Address <span class="req">*</span></label>
+            <textarea id="address" autocomplete="street-address" style="min-height:76px"></textarea>
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="city">
+            <label class="lab" for="city">City / Town <span class="req">*</span></label>
+            <input type="text" id="city" autocomplete="address-level2" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="country">
+            <label class="lab" for="country">Country <span class="req">*</span></label>
+            <input type="text" id="country" autocomplete="country-name" />
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-f="email">
+            <label class="lab" for="email">E-mail Address <span class="req">*</span></label>
+            <input type="email" id="email" autocomplete="email" />
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-f="passportPhoto">
+            <span class="lab">Passport Photograph <span class="req">*</span></span>
+            <label class="drop" data-doc="passportPhoto">
+              <input type="file" accept="image/jpeg,image/png,image/webp" />
+              <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span>
+              <span class="tx"><b>Attach one recent passport photograph</b><span>JPG, PNG or WebP · max 4 MB</span></span>
+            </label>
+            <span class="msg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. KYC -->
+      <section class="sec" aria-labelledby="h-kyc">
+        <h2 id="h-kyc"><span class="n">3</span>KYC Documents</h2>
+        <div class="sec-body">
+          <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, complete the international passport details below.</div>
+
+          <div id="kycNg" class="hidden" style="display:contents">
+            <div class="subhead">You hold Nigerian KYC documents</div>
+            <div class="field" data-f="bvn">
+              <label class="lab" for="bvn">BVN <span class="req">*</span></label>
+              <input type="text" id="bvn" inputmode="numeric" maxlength="11" autocomplete="off" />
+              <span class="msg"></span>
+            </div>
+            <div class="field" data-f="govId">
+              <label class="lab" for="govId">Government-Issued ID Number <span class="req">*</span></label>
+              <input type="text" id="govId" autocomplete="off" />
+              <span class="hint">Nigerian passport or National ID</span>
+              <span class="msg"></span>
+            </div>
+            <div class="field full" data-f="poaNg">
+              <span class="lab">Proof of Address <span class="req">*</span></span>
+              <label class="drop" data-doc="proofOfAddress">
+                <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+                <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span>
+                <span class="tx"><b>Upload proof of address</b><span>e.g. utility bill or bank statement · JPG, PNG, WebP or PDF · max 4 MB</span></span>
+              </label>
+              <span class="msg"></span>
+            </div>
+          </div>
+
+          <div id="kycIntl" style="display:contents">
+            <div class="subhead">You do NOT hold Nigerian KYC documents</div>
+            <div class="field" data-f="intlPassport">
+              <label class="lab" for="intlPassport">International Passport Number <span class="req">*</span></label>
+              <input type="text" id="intlPassport" autocomplete="off" />
+              <span class="msg"></span>
+            </div>
+            <div class="field" data-f="poaIntl">
+              <span class="lab">Proof of Address <span class="req">*</span></span>
+              <label class="drop" data-doc="proofOfAddress">
+                <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+                <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span>
+                <span class="tx"><b>Upload proof of address</b><span>JPG, PNG, WebP or PDF · max 4 MB</span></span>
+              </label>
+              <span class="msg"></span>
+            </div>
+            <div class="field full" data-f="sourceOfFunds">
+              <label class="lab" for="sourceOfFunds">Source of Funds Declaration <span class="req">*</span></label>
+              <textarea id="sourceOfFunds" placeholder="Briefly state where the money you are investing comes from (e.g. salary, business income, savings)."></textarea>
+              <span class="msg"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. INVESTMENT DETAILS -->
+      <section class="sec" aria-labelledby="h-inv">
+        <h2 id="h-inv"><span class="n">4</span>Investment Details</h2>
+        <div class="sec-body">
+          <div class="field full">
+            <label class="lab" for="amountWords">Amount Payable — In Words</label>
+            <input type="text" id="amountWords" readonly placeholder="Filled in automatically from the units above" />
+          </div>
+          <div class="field full" data-f="paymentSent">
+            <label class="choice" id="chPaid">
+              <input type="checkbox" id="paymentSent" />
+              <span>Payment sent directly to ASL's account — evidence of payment attached</span>
+            </label>
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-f="paymentEvidence">
+            <span class="lab">Evidence of Payment <span class="req">*</span></span>
+            <label class="drop" data-doc="paymentEvidence">
+              <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+              <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span>
+              <span class="tx"><b>Attach evidence of payment</b><span>Transfer receipt or confirmation · JPG, PNG, WebP or PDF · max 4 MB</span></span>
+            </label>
+            <span class="msg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. REFUND / PAYOUT -->
+      <section class="sec" aria-labelledby="h-ref">
+        <h2 id="h-ref"><span class="n">5</span>Refund / Payout Account</h2>
+        <div class="sec-body">
+          <div class="field full" data-f="bankName">
+            <label class="lab" for="bankName">Bank Name <span class="req">*</span></label>
+            <input type="text" id="bankName" autocomplete="off" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="bankAccountNumber">
+            <label class="lab" for="bankAccountNumber">Account Number <span class="req">*</span></label>
+            <input type="text" id="bankAccountNumber" inputmode="numeric" autocomplete="off" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="bankAccountName">
+            <label class="lab" for="bankAccountName">Account Name <span class="req">*</span></label>
+            <input type="text" id="bankAccountName" autocomplete="off" />
+            <span class="msg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. DECLARATIONS -->
+      <section class="sec" aria-labelledby="h-decl">
+        <h2 id="h-decl"><span class="n">6</span>Declarations</h2>
+        <div class="sec-body">
+          <div class="check" data-f="d_risk"><label><input type="checkbox" id="d_risk" /><span>I confirm I have read and understood the Risk Disclosure &amp; Terms and Conditions set out <a href="#terms">below</a>.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_bound"><label><input type="checkbox" id="d_bound" /><span>I agree to be bound by the terms of this Offer.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_held"><label><input type="checkbox" id="d_held" /><span>I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_scale"><label><input type="checkbox" id="d_scale" /><span>I understand that allotment is subject to the Issuer's discretion, and Offer Shares may be scaled back in the event of oversubscription.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_true"><label><input type="checkbox" id="d_true" /><span>I confirm that all information provided in this form is true and accurate.</span></label><span class="msg">Please tick to confirm.</span></div>
+        </div>
+      </section>
+
+      <!-- 7. SIGNATURE -->
+      <section class="sec" aria-labelledby="h-sig">
+        <h2 id="h-sig"><span class="n">7</span>Signature &amp; Date</h2>
+        <div class="sec-body">
+          <div class="field" data-f="signature">
+            <span class="lab" id="sigLab">Signature <span class="req">*</span></span>
+            <div class="sigbox" id="sigbox">
+              <canvas id="sig" width="640" height="300" role="img" aria-labelledby="sigLab" aria-describedby="sigHint"></canvas>
+              <div class="base"></div>
+              <div class="ph" id="sigPh">Sign here with your finger or mouse</div>
+            </div>
+            <div class="sigtools"><button type="button" id="sigClear">Clear signature</button></div>
+            <span class="hint sr" id="sigHint">Draw your signature in the box.</span>
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-f="sigDate">
+            <label class="lab" for="sigDate">Date <span class="req">*</span></label>
+            <input type="date" id="sigDate" />
+            <span class="msg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TERMS -->
+      <section class="sec" id="terms" aria-labelledby="h-terms">
+        <h2 id="h-terms">Risk Disclosure &amp; Terms and Conditions</h2>
+        <div class="terms">
+          <p class="for">For Diaspora Investors Without a CSCS Account (Non-NGN KYC / Omnibus Structure)</p>
+          <p style="margin:0 0 12px">By subscribing under this structure, you acknowledge and agree to the following:</p>
+          <ol>
+            <li><b>Structure &amp; eligibility.</b> This offer is not marketed directly to international investors. Anchoria has structured a facilitation route — via Anchoria Securities Limited's (ASL) stockbroking infrastructure and Anchoria Asset Management's (AAM) fund management — for investors who lack direct access to the Nigerian market or do not qualify for the offering directly.</li>
+            <li><b>Ownership of shares.</b> Because you do not hold the Nigerian credentials required to open a CSCS account, your shares cannot be registered in your name at subscription. They are held on your behalf within ASL's nominee/omnibus structure, with a defined allocation recorded against your investment.</li>
+            <li><b>Future transfer.</b> If you later obtain the required Nigerian credentials (e.g. a BVN) and an individual CSCS account is opened for you, your shares will be transferred to you via a share transfer, not a secondary-market trade. Any cost associated with this transfer shall be borne by the investor.</li>
+            <li><b>Nominee &amp; custody.</b> ASL acts as nominee and maintains the definitive record of your allocation and transaction history. AAM manages the underlying fund and sees ASL as its sole subscriber, with no direct visibility into individual investors.</li>
+            <li><b>Fees.</b> A management fee of 1.5% applies, billed periodically on the valuation of the fund.</li>
+            <li><b>No secondary market rights.</b> Your shares cannot be traded on the open market while held within this structure. Legal transfer to you individually occurs only through the process described above, subject to your eligibility and ASL's verification requirements.</li>
+            <li><b>Investment risk.</b> Your investment carries the standard risks of investing in Nigerian equities, including price volatility, currency/foreign exchange risk on funds remitted into Naira, and regulatory or political risk. There is no guarantee of allocation, pricing, or return.</li>
+            <li><b>Regulatory status.</b> ASL is licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC. This structure is not a public offer or solicitation in any jurisdiction where such an offer would be unlawful. You are responsible for confirming your eligibility to participate under the laws of your jurisdiction.</li>
+          </ol>
+          <p class="closing">By signing or submitting this form, you confirm that you have read, understood, and accepted this disclosure, and that you are participating voluntarily and with full understanding of the nominee/omnibus arrangement described above.</p>
+        </div>
+      </section>
+
+      <p class="fineprint">This form is issued by Anchoria Securities Limited (ASL), licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC.</p>
+
+      <div class="actions">
+        <button type="submit" class="btn" id="submitBtn"><span class="spin" aria-hidden="true"></span><span class="lbl">Submit application</span></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- SUCCESS -->
+  <section id="doneView" class="sec done hidden" aria-live="polite" tabindex="-1">
+    <div class="tick" aria-hidden="true">&#10003;</div>
+    <h2>Application received</h2>
+    <p>Thank you. Anchoria Securities Limited has received your Dangote IPO diaspora application and will review your documents and payment evidence.</p>
+    <div class="ref" id="refNo"></div>
+    <p>Please keep this reference for any follow-up with our team.</p>
+  </section>
+
+</main>
+
+<div class="foot">&copy; Anchoria Securities Limited · Licensed by the Nigerian Exchange (NGX) · Regulated by the Nigerian SEC</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================================================================
+   * BACKEND WIRING — same-origin Netlify functions
+   * ================================================================ */
+  var ENDPOINT_URL  = "/.netlify/functions/submit-diaspora";
+  var UPLOAD_URL    = "/.netlify/functions/upload-document";
+  var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";   // matches SHARED_SECRET env var
+
+  var OFFER_PRICE = 525;           // ₦ per Offer Share
+  var UNIT_STEP   = 10;            // units in multiples of 10
+  var MAX_BYTES   = 4 * 1024 * 1024;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $("appForm");
+  var uploads = {};                // key -> { file, name }
+  var pendingRef = null, pendingKeys = null;
+
+  /* ---------- helpers ---------- */
+  function val(id) { return ($(id).value || "").trim(); }
+  function fieldOf(id) { return $(id).closest("[data-f]"); }
+  function fmt(n) { return n.toLocaleString("en-NG"); }
+
+  function setErr(wrap, text) {
+    if (!wrap) return;
+    wrap.classList.add("err");
+    var m = wrap.querySelector(".msg");
+    if (m && text) m.textContent = text;
+    var inp = wrap.querySelector("input,select,textarea");
+    if (inp) inp.setAttribute("aria-invalid", "true");
+  }
+  function clearErr(wrap) {
+    if (!wrap) return;
+    wrap.classList.remove("err");
+    var inp = wrap.querySelector("input,select,textarea");
+    if (inp) inp.removeAttribute("aria-invalid");
+  }
+
+  /* ---------- amount & words ---------- */
+  var ONES = ["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+  var TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+  function below1000(n) {
+    var s = "";
+    if (n >= 100) { s += ONES[Math.floor(n / 100)] + " hundred"; n %= 100; if (n) s += " and "; }
+    if (n >= 20) { s += TENS[Math.floor(n / 10)]; if (n % 10) s += "-" + ONES[n % 10]; }
+    else if (n > 0) s += ONES[n];
+    return s;
+  }
+  function words(n) {
+    if (n === 0) return "zero";
+    var units = [[1e9, "billion"], [1e6, "million"], [1e3, "thousand"]], parts = [];
+    units.forEach(function (u) {
+      if (n >= u[0]) { parts.push(below1000(Math.floor(n / u[0])) + " " + u[1]); n %= u[0]; }
+    });
+    if (n > 0) parts.push((parts.length && n < 100 ? "and " : "") + below1000(n));
+    return parts.join(", ").replace(/, and /g, " and ");
+  }
+  function titleCase(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function unitsValue() {
+    var raw = $("units").value;
+    var n = Number(raw);
+    return raw !== "" && isFinite(n) && n > 0 && n % 1 === 0 ? n : 0;
+  }
+  function recalc() {
+    var u = unitsValue();
+    if (u) {
+      var total = u * OFFER_PRICE;
+      $("amount").value = "₦" + fmt(total) + ".00";
+      $("amountWords").value = titleCase(words(total)) + " Naira Only";
+    } else {
+      $("amount").value = "";
+      $("amountWords").value = "";
+    }
+  }
+  $("units").addEventListener("input", function () { recalc(); clearErr(fieldOf("units")); });
+
+  /* ---------- conditional KYC ---------- */
+  function syncKyc() {
+    var ng = $("hasNigerianKyc").checked;
+    $("kycNg").classList.toggle("hidden", !ng);
+    $("kycIntl").classList.toggle("hidden", ng);
+    $("chKyc").classList.toggle("sel", ng);
+    // both proof-of-address uploads share one stored file — keep them in sync
+    var shared = uploads.proofOfAddress ? uploads.proofOfAddress.file : null;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-doc="proofOfAddress"]'), function (d) { setDrop(d, shared); });
+    $("kycNote").textContent = ng
+      ? "Provide your Nigerian KYC details below."
+      : "You have not ticked the Nigerian KYC box in section 1, so please complete the international passport details below.";
+  }
+  $("hasNigerianKyc").addEventListener("change", syncKyc);
+  $("isDiaspora").addEventListener("change", function () {
+    $("chDiaspora").classList.toggle("sel", this.checked); clearErr(fieldOf("isDiaspora"));
+  });
+  $("paymentSent").addEventListener("change", function () {
+    $("chPaid").classList.toggle("sel", this.checked); clearErr(fieldOf("paymentSent"));
+  });
+
+  /* ---------- file uploads ---------- */
+  var ICON_UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>';
+  var ICON_OK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+
+  function setDrop(drop, file) {
+    var key = drop.getAttribute("data-doc");
+    var tx = drop.querySelector(".tx");
+    if (!drop.__orig) drop.__orig = tx.innerHTML;
+    var old = drop.querySelector(".rm"); if (old) old.remove();
+    if (file) {
+      uploads[key] = { file: file, name: file.name };
+      drop.classList.add("has");
+      tx.innerHTML = "<b></b><span>" + (file.size / 1024 < 1024 ? Math.round(file.size / 1024) + " KB" : (file.size / 1048576).toFixed(1) + " MB") + " · attached</span>";
+      tx.querySelector("b").textContent = file.name;
+      drop.querySelector(".ic").innerHTML = ICON_OK;
+      var rm = document.createElement("button");
+      rm.type = "button"; rm.className = "rm"; rm.textContent = "Remove";
+      rm.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); setDrop(drop, null); });
+      drop.appendChild(rm);
+    } else {
+      delete uploads[key];
+      drop.classList.remove("has");
+      tx.innerHTML = drop.__orig;
+      drop.querySelector(".ic").innerHTML = ICON_UP;
+      drop.querySelector("input").value = "";
+    }
+    clearErr(drop.closest("[data-f]"));
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".drop"), function (drop) {
+    var input = drop.querySelector("input");
+    input.addEventListener("change", function () {
+      var f = input.files && input.files[0];
+      if (!f) return;
+      var wrap = drop.closest("[data-f]");
+      if (f.size > MAX_BYTES) { input.value = ""; setErr(wrap, "That file is over 4 MB. Please choose a smaller one."); return; }
+      if (!/^(image\/(jpeg|png|webp)|application\/pdf)$/.test(f.type)) { input.value = ""; setErr(wrap, "Only JPG, PNG, WebP or PDF files are accepted."); return; }
+      setDrop(drop, f);
+    });
+  });
+
+  /* ---------- signature pad ---------- */
+  var canvas = $("sig"), ctx = canvas.getContext("2d"), drawing = false, signed = false;
+  function resetPad() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 3.2; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#141312";
+    signed = false; $("sigPh").style.display = "";
+  }
+  function pt(e) {
+    var r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * canvas.width / r.width, y: (e.clientY - r.top) * canvas.height / r.height };
+  }
+  canvas.addEventListener("pointerdown", function (e) {
+    drawing = true; canvas.setPointerCapture(e.pointerId);
+    var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + .1, p.y + .1); ctx.stroke();
+    signed = true; $("sigPh").style.display = "none"; clearErr(fieldOf("sig"));
+    e.preventDefault();
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (!drawing) return; var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault();
+  });
+  ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { drawing = false; }); });
+  $("sigClear").addEventListener("click", resetPad);
+  resetPad();
+
+  /* ---------- default date ---------- */
+  function todayISO() {
+    var d = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+  }
+  $("sigDate").value = todayISO();
+  $("dob").max = todayISO();
+
+  /* clear field errors as the user fixes them */
+  form.addEventListener("input", function (e) { clearErr(e.target.closest("[data-f]")); });
+  form.addEventListener("change", function (e) { clearErr(e.target.closest("[data-f]")); });
+
+  /* ================================================================
+   * VALIDATION
+   * ================================================================ */
+  function validate() {
+    var bad = [];
+    function need(id, msg) { if (!val(id)) { setErr(fieldOf(id), msg || "This field is required."); bad.push(fieldOf(id)); return false; } return true; }
+    function fail(wrap, msg) { setErr(wrap, msg); bad.push(wrap); }
+    Array.prototype.forEach.call(form.querySelectorAll(".err"), clearErr);
+
+    var u = unitsValue();
+    if (!u) fail(fieldOf("units"), "Enter the number of units you want to buy.");
+    else if (u < UNIT_STEP || u % UNIT_STEP !== 0) fail(fieldOf("units"), "Units must be in multiples of 10 (10, 20, 30…).");
+
+    if (!$("isDiaspora").checked) fail(fieldOf("isDiaspora"), "This form is for diaspora investors only. Please confirm.");
+    need("residenceCountry");
+
+    need("title"); need("surname"); need("firstName");
+    if (need("dob") && new Date(val("dob")) > new Date()) fail(fieldOf("dob"), "Date of birth cannot be in the future.");
+    need("address"); need("city"); need("country");
+    if (need("phone") && val("phone").replace(/\D/g, "").length < 7) fail(fieldOf("phone"), "Enter a valid phone number, including country code.");
+    if (need("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val("email"))) fail(fieldOf("email"), "Enter a valid e-mail address.");
+    if (!uploads.passportPhoto) fail(document.querySelector('[data-f="passportPhoto"]'), "Please attach a passport photograph.");
+
+    if ($("hasNigerianKyc").checked) {
+      if (need("bvn") && !/^\d{11}$/.test(val("bvn"))) fail(fieldOf("bvn"), "BVN must be exactly 11 digits.");
+      need("govId");
+      if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaNg"]'), "Please upload proof of address.");
+    } else {
+      need("intlPassport");
+      if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaIntl"]'), "Please upload proof of address.");
+      need("sourceOfFunds");
+    }
+
+    if (!$("paymentSent").checked) fail(fieldOf("paymentSent"), "Please confirm that payment has been sent to ASL's account.");
+    if (!uploads.paymentEvidence) fail(document.querySelector('[data-f="paymentEvidence"]'), "Please attach evidence of payment.");
+
+    need("bankName");
+    if (need("bankAccountNumber") && !/^[A-Za-z0-9\- ]{6,34}$/.test(val("bankAccountNumber"))) fail(fieldOf("bankAccountNumber"), "Enter a valid account number.");
+    need("bankAccountName");
+
+    ["d_risk", "d_bound", "d_held", "d_scale", "d_true"].forEach(function (id) {
+      if (!$(id).checked) { var w = fieldOf(id); w.classList.add("err"); bad.push(w); }
+    });
+
+    if (!signed) fail(fieldOf("sig"), "Please sign in the box.");
+    need("sigDate");
+
+    if (bad.length) {
+      var first = bad[0];
+      first.scrollIntoView({ behavior: "smooth", block: "center" });
+      var f = first.querySelector("input,select,textarea,canvas");
+      if (f && f.focus) setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }, 350);
+      return false;
+    }
+    return true;
+  }
+
+  /* ================================================================
+   * SUBMISSION
+   * ================================================================ */
+  function banner(msg) {
+    var b = $("errBanner");
+    if (msg) { b.textContent = msg; b.classList.add("show"); window.scrollTo({ top: 0, behavior: "smooth" }); }
+    else b.classList.remove("show");
+  }
+  function busy(on, label) {
+    var btn = $("submitBtn");
+    btn.disabled = on; btn.classList.toggle("loading", on);
+    btn.querySelector(".lbl").textContent = label || "Submit application";
+  }
+
+  function buildPayload(ref, sigBlobKeys) {
+    var units = unitsValue();
+    var docs = [];
+    ["passportPhoto", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+      if (uploads[k]) docs.push({ key: k, name: uploads[k].name, type: uploads[k].file.type });
+    });
+    docs.push({ key: "signature", name: "signature.png", type: "image/png" });
+    var ng = $("hasNigerianKyc").checked;
+    return {
+      reference: ref,
+      submittedAt: new Date().toISOString(),
+      source: "Diaspora IPO",
+      units: units,
+      offerPrice: OFFER_PRICE,
+      amount: units * OFFER_PRICE,
+      amountInWords: val("amountWords"),
+      isDiaspora: $("isDiaspora").checked,
+      hasNigerianKyc: ng,
+      residenceCountry: val("residenceCountry"),
+      title: val("title"), surname: val("surname"), firstName: val("firstName"), otherNames: val("otherNames"),
+      dob: val("dob"), address: val("address"), city: val("city"), country: val("country"),
+      phone: val("phone"), email: val("email"),
+      bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : "",
+      intlPassport: ng ? "" : val("intlPassport"), sourceOfFunds: ng ? "" : val("sourceOfFunds"),
+      paymentSent: $("paymentSent").checked,
+      bankName: val("bankName"), bankAccountNumber: val("bankAccountNumber"), bankAccountName: val("bankAccountName"),
+      declarations: {
+        riskAndTerms: $("d_risk").checked, boundByOffer: $("d_bound").checked, heldOnBehalf: $("d_held").checked,
+        allotmentDiscretion: $("d_scale").checked, trueAndAccurate: $("d_true").checked
+      },
+      signature: { name: (val("firstName") + " " + val("surname")).trim(), date: val("sigDate") },
+      documents: docs
+    };
+  }
+
+  function readAsDataURL(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function (e) { resolve(e.target.result); };
+      r.onerror = function () { reject(new Error("read failed")); };
+      r.readAsDataURL(file);
+    });
+  }
+  function uploadOne(ref, key, name, dataUrl, attempt) {
+    return fetch(UPLOAD_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+      body: JSON.stringify({ ref: ref, key: key, name: name, data: dataUrl })
+    }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); })
+      .catch(function (err) {
+        if (attempt < 2) return uploadOne(ref, key, name, dataUrl, attempt + 1);
+        throw err;
+      });
+  }
+  /* Upload every file one by one; resolves to the keys that still failed. */
+  function uploadAll(ref, onlyKeys) {
+    var items = [];
+    ["passportPhoto", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+      if (uploads[k]) items.push({ key: k, name: uploads[k].name, get: function () { return readAsDataURL(uploads[k].file); } });
+    });
+    items.push({ key: "signature", name: "signature.png", get: function () { return Promise.resolve(canvas.toDataURL("image/png")); } });
+    var failed = [];
+    return items.filter(function (i) { return !onlyKeys || onlyKeys.indexOf(i.key) > -1; })
+      .reduce(function (chain, item) {
+        return chain.then(function () {
+          return item.get().then(function (d) { return uploadOne(ref, item.key, item.name, d, 1); })
+            .catch(function (err) { console.error("Upload failed:", item.key, err); failed.push(item.key); });
+        });
+      }, Promise.resolve()).then(function () { return failed; });
+  }
+
+  function finish(ref, onlyKeys) {
+    busy(true, "Uploading documents…");
+    uploadAll(ref, onlyKeys).then(function (failed) {
+      if (failed.length) {
+        pendingRef = ref; pendingKeys = failed;
+        busy(false, "Retry document upload");
+        banner("Your application was saved (REF " + ref + "), but " + failed.length + " file(s) didn't upload. Check your connection and tap “Retry document upload”.");
+        return;
+      }
+      pendingRef = null; pendingKeys = null;
+      $("refNo").textContent = ref;
+      $("formView").classList.add("hidden");
+      var d = $("doneView"); d.classList.remove("hidden"); d.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    banner(null);
+    if (pendingRef) { finish(pendingRef, pendingKeys); return; }   // record saved already; retry uploads only
+    if (!validate()) { banner("Please complete the highlighted fields."); return; }
+
+    var ref = "DIA-" + Date.now().toString(36).toUpperCase().slice(-7);
+    busy(true, "Submitting…");
+    fetch(ENDPOINT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+      body: JSON.stringify(buildPayload(ref))
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (body) {
+        if (!r.ok) throw new Error(body && body.error ? body.error : "Server responded " + r.status);
+        return body;
+      });
+    }).then(function () {
+      pendingRef = ref; pendingKeys = null;     // saved: from here on, only uploads are retried
+      finish(ref);
+    }).catch(function (err) {
+      console.error("Submit error:", err);
+      busy(false);
+      banner("Submission failed — " + (err.message || "please check your connection and try again") + ". Your details have been kept.");
+    });
+  });
+
+  syncKyc();
+})();
+</script>
+</body>
+</html>

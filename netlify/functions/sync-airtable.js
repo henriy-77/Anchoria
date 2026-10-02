@@ -20,7 +20,7 @@ exports.handler = async (event) => {
   const pending = [];
   for (const b of blobs) {
     const rec = await s.get(b.key, { type: "json" });
-    if (rec && rec.airtable !== "synced") pending.push(rec);
+    if (rec && rec.airtable !== "synced" && rec.airtable !== "disabled") pending.push(rec);
   }
   if (q.list) {
     return resp(200, { pending: pending.map((r) => ({ key: `${r.kind}/${r.ref}`, savedAt: r.savedAt, lastError: r.lastError })) });

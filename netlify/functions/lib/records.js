@@ -30,13 +30,13 @@ async function pushToAirtable(table, fields) {
 }
 
 /**
- * Save to Blobs first, then attempt Airtable. Returns { saved, airtable }.
+ * Save to Blobs first, then attempt Airtable (skipped when opts.airtable === false). Returns { saved, airtable }.
  * `saved` is false only when the record could not be stored anywhere.
  */
-async function saveApplication(kind, table, ref, fields) {
+async function saveApplication(kind, table, ref, fields, opts = {}) {
   const key = `${kind}/${ref}`;
   try { if (await store().get(key, { type: "json" })) return { saved: false, exists: true }; } catch (err) { console.error("existence check failed:", err.message); }
-  const record = { kind, table, ref, fields, savedAt: new Date().toISOString(), airtable: "pending", airtableId: null, lastError: null };
+  const record = { kind, table, ref, fields, savedAt: new Date().toISOString(), airtable: opts.airtable === false ? "disabled" : "pending", airtableId: null, lastError: null };
 
   let blobOk = true;
   try {
@@ -46,11 +46,12 @@ async function saveApplication(kind, table, ref, fields) {
     console.error("Blob save failed:", err.message);
   }
 
-  const at = await pushToAirtable(table, fields);
+  // Blobs-only kinds (airtable: false) never touch Airtable and are not replayed later.
+  const at = opts.airtable === false ? { ok: false, skipped: true } : await pushToAirtable(table, fields);
   if (at.ok) {
     record.airtable = "synced";
     record.airtableId = at.id;
-  } else {
+  } else if (!at.skipped) {
     record.lastError = `${at.status}: ${String(at.detail).slice(0, 500)}`;
     console.error(`Airtable write failed for ${ref} (${at.status}) — ${blobOk ? "kept in Blobs for later sync" : "NOT STORED"}:`, at.detail);
   }
