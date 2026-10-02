@@ -42,7 +42,7 @@ exports.handler = async (event) => {
   // The application must exist and be recent.
   let rec = null;
   try {
-    for (const kind of ["corporate", "joint", "minor"]) {
+    for (const kind of ["corporate", "joint", "minor", "diaspora"]) {
       rec = await appStore().get(`${kind}/${ref}`, { type: "json" });
       if (rec) break;
     }

@@ -82,7 +82,7 @@ async function loadFields(kind, table, ref) {
   }
 }
 
-const TABLES = { corporate: "Corporate Applications", joint: "Joint Applications", minor: "Minor Applications", individual: "Applications" };
+const TABLES = { corporate: "Corporate Applications", joint: "Joint Applications", minor: "Minor Applications", diaspora: "Diaspora IPO Applications", individual: "Applications" };
 
 /** Airtable values → plain field values the admin can show (arrays joined, objects dropped, blanks removed). */
 function cleanFields(raw) {
