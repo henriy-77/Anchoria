@@ -3,10 +3,10 @@
 <!--
   Anchoria — Dangote IPO · Diaspora Investor Application Form
   ================================================================
-  BACKEND: Netlify Function → Netlify Blobs (+ Airtable mirror)
+  BACKEND: Netlify Function → Netlify Blobs (no Airtable)
   The form POSTs to /.netlify/functions/submit-diaspora (same origin),
   then uploads each attached file to /.netlify/functions/upload-document.
-  Airtable table: "Diaspora IPO Applications"
+  Responses are stored in Blobs and read through the /admin dashboard.
   ================================================================
 -->
 <head>

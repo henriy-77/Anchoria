@@ -1,13 +1,13 @@
 /**
  * Anchoria Securities — Dangote IPO Diaspora Application Submission Handler
- * Netlify Serverless Function → Netlify Blobs (+ Airtable "Diaspora IPO Applications")
+ * Netlify Serverless Function → Netlify Blobs only (responses are NOT sent to Airtable)
  * Documents & signature are uploaded separately via upload-document
  * (routed here by the DIA- reference prefix / "diaspora" record kind).
  */
 
 const { saveApplication } = require("./lib/records");
 const { REF_RE, overLimit } = require("./lib/guard");
-const AIRTABLE_TABLE = "Diaspora IPO Applications";
+const TABLE = "Diaspora IPO Applications"; // label only — Airtable is not used for this form
 const OFFER_PRICE = 525;
 
 exports.handler = async (event) => {
@@ -95,11 +95,11 @@ exports.handler = async (event) => {
 
   try {
     if (!REF_RE.test(ref)) return json(400, { error: "Invalid reference" });
-    const r = await saveApplication("diaspora", AIRTABLE_TABLE, ref, fields);
+    const r = await saveApplication("diaspora", TABLE, ref, fields, { airtable: false });
     if (r.exists) return json(409, { error: "This reference has already been submitted" });
     if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
-    console.log("diaspora application saved:", ref, "airtable:", r.airtable);
-    return json(200, { success: true, reference: ref, airtable: r.airtable, airtableId: r.airtableId });
+    console.log("diaspora application saved:", ref);
+    return json(200, { success: true, reference: ref });
   } catch (err) {
     console.error("Function error:", err);
     return json(500, { error: "Internal server error", detail: err.message });
