@@ -128,6 +128,14 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 .sigtools button{background:none;border:none;color:var(--gold-2);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px;}
 .sigtools button:hover{background:var(--gold-soft);}
 
+/* payment account */
+.payacct{grid-column:1/-1;border:1.5px solid var(--gold);background:var(--gold-soft);border-radius:10px;padding:16px 18px;}
+.payacct .ttl{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-weight:700;margin:0 0 10px;}
+.payacct dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-family:var(--sans);font-size:14px;}
+.payacct dt{color:var(--muted);}
+.payacct dd{margin:0;font-weight:700;color:var(--ink);word-break:break-word;}
+.payacct .acctno{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px;letter-spacing:.06em;}
+
 /* terms */
 .terms{padding:22px;font-family:var(--sans);font-size:13.5px;line-height:1.65;color:var(--ink);}
 .terms .for{color:var(--muted);font-size:12.5px;margin:0 0 14px;}
@@ -358,6 +366,14 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       <section class="sec" aria-labelledby="h-inv">
         <h2 id="h-inv"><span class="n">4</span>Investment Details</h2>
         <div class="sec-body">
+          <div class="payacct">
+            <p class="ttl">Pay to this account</p>
+            <dl>
+              <dt>Account Name</dt><dd>Anchoria Securities Limited</dd>
+              <dt>Account Number</dt><dd class="acctno">0006243632</dd>
+              <dt>Bank</dt><dd>Abbey Mortgage Bank PLC</dd>
+            </dl>
+          </div>
           <div class="field full">
             <label class="lab" for="amountWords">Amount Payable — In Words</label>
             <input type="text" id="amountWords" readonly placeholder="Filled in automatically from the units above" />
