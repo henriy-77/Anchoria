@@ -128,6 +128,14 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 .sigtools button{background:none;border:none;color:var(--gold-2);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px;}
 .sigtools button:hover{background:var(--gold-soft);}
 
+/* payment account */
+.payacct{grid-column:1/-1;border:1.5px solid var(--gold);background:var(--gold-soft);border-radius:10px;padding:16px 18px;}
+.payacct .ttl{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-weight:700;margin:0 0 10px;}
+.payacct dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-family:var(--sans);font-size:14px;}
+.payacct dt{color:var(--muted);}
+.payacct dd{margin:0;font-weight:700;color:var(--ink);word-break:break-word;}
+.payacct .acctno{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px;letter-spacing:.06em;}
+
 /* terms */
 .terms{padding:22px;font-family:var(--sans);font-size:13.5px;line-height:1.65;color:var(--ink);}
 .terms .for{color:var(--muted);font-size:12.5px;margin:0 0 14px;}
@@ -303,7 +311,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       <section class="sec" aria-labelledby="h-kyc">
         <h2 id="h-kyc"><span class="n">3</span>KYC Documents</h2>
         <div class="sec-body">
-          <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, complete the international passport details below.</div>
+          <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, upload your government-issued ID below.</div>
 
           <div id="kycNg" class="hidden" style="display:contents">
             <div class="subhead">You hold Nigerian KYC documents</div>
@@ -331,9 +339,13 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 
           <div id="kycIntl" style="display:contents">
             <div class="subhead">You do NOT hold Nigerian KYC documents</div>
-            <div class="field" data-f="intlPassport">
-              <label class="lab" for="intlPassport">International Passport Number <span class="req">*</span></label>
-              <input type="text" id="intlPassport" autocomplete="off" />
+            <div class="field" data-f="governmentId">
+              <span class="lab">Government-Issued ID <span class="req">*</span></span>
+              <label class="drop" data-doc="governmentId">
+                <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+                <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+                <span class="tx"><b>Snap or upload your government-issued ID</b><span>International passport, national ID or driver's licence · take a photo or choose a file · max 4 MB</span></span>
+              </label>
               <span class="msg"></span>
             </div>
             <div class="field" data-f="poaIntl">
@@ -358,6 +370,14 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       <section class="sec" aria-labelledby="h-inv">
         <h2 id="h-inv"><span class="n">4</span>Investment Details</h2>
         <div class="sec-body">
+          <div class="payacct">
+            <p class="ttl">Pay to this account</p>
+            <dl>
+              <dt>Account Name</dt><dd>Anchoria Securities Limited</dd>
+              <dt>Account Number</dt><dd class="acctno">0006243632</dd>
+              <dt>Bank</dt><dd>Abbey Mortgage Bank PLC</dd>
+            </dl>
+          </div>
           <div class="field full">
             <label class="lab" for="amountWords">Amount Payable — In Words</label>
             <input type="text" id="amountWords" readonly placeholder="Filled in automatically from the units above" />
@@ -569,7 +589,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
     Array.prototype.forEach.call(document.querySelectorAll('[data-doc="proofOfAddress"]'), function (d) { setDrop(d, shared); });
     $("kycNote").textContent = ng
       ? "Provide your Nigerian KYC details below."
-      : "You have not ticked the Nigerian KYC box in section 1, so please complete the international passport details below.";
+      : "You have not ticked the Nigerian KYC box in section 1, so please upload your government-issued ID below.";
   }
   $("hasNigerianKyc").addEventListener("change", syncKyc);
   $("isDiaspora").addEventListener("change", function () {
@@ -586,7 +606,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   function setDrop(drop, file) {
     var key = drop.getAttribute("data-doc");
     var tx = drop.querySelector(".tx");
-    if (!drop.__orig) drop.__orig = tx.innerHTML;
+    if (!drop.__orig) drop.__orig = tx.innerHTML; if (!drop.__ic) drop.__ic = drop.querySelector(".ic").innerHTML;
     var old = drop.querySelector(".rm"); if (old) old.remove();
     if (file) {
       uploads[key] = { file: file, name: file.name };
@@ -602,7 +622,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       delete uploads[key];
       drop.classList.remove("has");
       tx.innerHTML = drop.__orig;
-      drop.querySelector(".ic").innerHTML = ICON_UP;
+      drop.querySelector(".ic").innerHTML = drop.__ic;
       drop.querySelector("input").value = "";
     }
     clearErr(drop.closest("[data-f]"));
@@ -684,7 +704,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       need("govId");
       if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaNg"]'), "Please upload proof of address.");
     } else {
-      need("intlPassport");
+      if (!uploads.governmentId) fail(document.querySelector('[data-f="governmentId"]'), "Please snap or upload your government-issued ID.");
       if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaIntl"]'), "Please upload proof of address.");
       need("sourceOfFunds");
     }
@@ -730,7 +750,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   function buildPayload(ref, sigBlobKeys) {
     var units = unitsValue();
     var docs = [];
-    ["passportPhoto", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+    ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
       if (uploads[k]) docs.push({ key: k, name: uploads[k].name, type: uploads[k].file.type });
     });
     docs.push({ key: "signature", name: "signature.png", type: "image/png" });
@@ -750,7 +770,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       dob: val("dob"), address: val("address"), city: val("city"), country: val("country"),
       phone: val("phone"), email: val("email"),
       bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : "",
-      intlPassport: ng ? "" : val("intlPassport"), sourceOfFunds: ng ? "" : val("sourceOfFunds"),
+      sourceOfFunds: ng ? "" : val("sourceOfFunds"),
       paymentSent: $("paymentSent").checked,
       bankName: val("bankName"), bankAccountNumber: val("bankAccountNumber"), bankAccountName: val("bankAccountName"),
       declarations: {
@@ -784,7 +804,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   /* Upload every file one by one; resolves to the keys that still failed. */
   function uploadAll(ref, onlyKeys) {
     var items = [];
-    ["passportPhoto", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+    ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
       if (uploads[k]) items.push({ key: k, name: uploads[k].name, get: function () { return readAsDataURL(uploads[k].file); } });
     });
     items.push({ key: "signature", name: "signature.png", get: function () { return Promise.resolve(canvas.toDataURL("image/png")); } });
