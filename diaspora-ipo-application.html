@@ -311,7 +311,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       <section class="sec" aria-labelledby="h-kyc">
         <h2 id="h-kyc"><span class="n">3</span>KYC Documents</h2>
         <div class="sec-body">
-          <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, complete the international passport details below.</div>
+          <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, complete the government-issued ID details below.</div>
 
           <div id="kycNg" class="hidden" style="display:contents">
             <div class="subhead">You hold Nigerian KYC documents</div>
@@ -339,9 +339,10 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 
           <div id="kycIntl" style="display:contents">
             <div class="subhead">You do NOT hold Nigerian KYC documents</div>
-            <div class="field" data-f="intlPassport">
-              <label class="lab" for="intlPassport">International Passport Number <span class="req">*</span></label>
-              <input type="text" id="intlPassport" autocomplete="off" />
+            <div class="field" data-f="intlGovId">
+              <label class="lab" for="intlGovId">Government-Issued ID Number <span class="req">*</span></label>
+              <input type="text" id="intlGovId" autocomplete="off" />
+              <span class="hint">e.g. international passport, national ID or driver's licence</span>
               <span class="msg"></span>
             </div>
             <div class="field" data-f="poaIntl">
@@ -585,7 +586,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
     Array.prototype.forEach.call(document.querySelectorAll('[data-doc="proofOfAddress"]'), function (d) { setDrop(d, shared); });
     $("kycNote").textContent = ng
       ? "Provide your Nigerian KYC details below."
-      : "You have not ticked the Nigerian KYC box in section 1, so please complete the international passport details below.";
+      : "You have not ticked the Nigerian KYC box in section 1, so please complete the government-issued ID details below.";
   }
   $("hasNigerianKyc").addEventListener("change", syncKyc);
   $("isDiaspora").addEventListener("change", function () {
@@ -700,7 +701,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       need("govId");
       if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaNg"]'), "Please upload proof of address.");
     } else {
-      need("intlPassport");
+      need("intlGovId");
       if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaIntl"]'), "Please upload proof of address.");
       need("sourceOfFunds");
     }
@@ -765,8 +766,8 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       title: val("title"), surname: val("surname"), firstName: val("firstName"), otherNames: val("otherNames"),
       dob: val("dob"), address: val("address"), city: val("city"), country: val("country"),
       phone: val("phone"), email: val("email"),
-      bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : "",
-      intlPassport: ng ? "" : val("intlPassport"), sourceOfFunds: ng ? "" : val("sourceOfFunds"),
+      bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : val("intlGovId"),
+      sourceOfFunds: ng ? "" : val("sourceOfFunds"),
       paymentSent: $("paymentSent").checked,
       bankName: val("bankName"), bankAccountNumber: val("bankAccountNumber"), bankAccountName: val("bankAccountName"),
       declarations: {
