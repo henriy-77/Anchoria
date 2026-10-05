@@ -68,7 +68,7 @@ exports.handler = async (event) => {
     "Phone":                        str(payload.phone),
     "Email":                        str(payload.email),
     "BVN":                          ng ? str(payload.bvn) : "",
-    "Government ID Number":         str(payload.govId),
+    "Government ID Number":         ng ? str(payload.govId) : "",
     "Source of Funds":              ng ? "" : str(payload.sourceOfFunds),
     "Payment Sent to ASL":          !!payload.paymentSent,
     "Refund Bank Name":             str(payload.bankName),
