@@ -6,7 +6,7 @@
  * outage or plan-limit (HTTP 429) never loses an application. Records that
  * didn't reach Airtable stay flagged "pending" until sync-airtable replays them.
  */
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./blobs");
 
 const SITE_ID    = () => process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
 const BLOB_TOKEN = () => process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
@@ -35,6 +35,8 @@ async function pushToAirtable(table, fields) {
  */
 async function saveApplication(kind, table, ref, fields, opts = {}) {
   const key = `${kind}/${ref}`;
+  // No Airtable credentials (e.g. self-hosted without Airtable) behaves like a Blobs-only kind.
+  if (!process.env.AIRTABLE_TOKEN || !process.env.AIRTABLE_BASE_ID) opts = { ...opts, airtable: false };
   try { if (await store().get(key, { type: "json" })) return { saved: false, exists: true }; } catch (err) { console.error("existence check failed:", err.message); }
   const record = { kind, table, ref, fields, savedAt: new Date().toISOString(), airtable: opts.airtable === false ? "disabled" : "pending", airtableId: null, lastError: null };
 

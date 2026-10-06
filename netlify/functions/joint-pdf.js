@@ -4,7 +4,7 @@
  * Usage: /.netlify/functions/joint-pdf?ref=JOINT-XXXXX
  */
 
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE } = require("./lib/guard");
 const { logAccess } = require("./lib/audit");

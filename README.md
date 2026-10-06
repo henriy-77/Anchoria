@@ -236,3 +236,9 @@ Applications are stored in Netlify Blobs (store `applications`); the dashboard r
 Required Netlify env vars: `SESSION_SECRET` (long random string), `ADMIN_EMAIL`, `ADMIN_PASSWORD`
 (bootstrap admin). Sign in as that admin, then add staff under **Staff**. Documents and the
 printable application PDFs now require a staff session.
+
+## Self-hosting (Oracle Cloud / any VM)
+
+The same code also runs without Netlify: `server.js` serves the pages and the `/.netlify/functions/*` handlers, and
+data is stored on disk (`STORAGE_DIR`) instead of Netlify Blobs. See **[deploy/README.md](deploy/README.md)** for the
+step-by-step Oracle Cloud guide, `docker-compose.yml` / `Caddyfile` for the stack, and `.env.example` for settings.

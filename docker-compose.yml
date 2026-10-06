@@ -1,0 +1,33 @@
+# Anchoria on a single VM: the app + Caddy (automatic HTTPS certificates).
+#   cp .env.example .env   (edit it)   →   docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      STORAGE_DIR: /data
+      TRUST_PROXY: "1"
+    volumes:
+      - ./data:/data            # ALL application data lives here — back this folder up
+    expose:
+      - "3000"                  # reachable only by Caddy, never published to the internet
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data        # certificates
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

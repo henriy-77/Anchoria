@@ -5,7 +5,7 @@
  *   by-ref/<ref>/<iso-ts>-<rand>
  * Logging never throws: an audit failure must not break the request.
  */
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./blobs");
 const crypto = require("crypto");
 const { clientIp } = require("./guard");
 
