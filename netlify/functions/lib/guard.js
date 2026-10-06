@@ -1,5 +1,5 @@
 /** Shared input guards + per-IP rate limiting for the public endpoints. */
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./blobs");
 const crypto = require("crypto");
 
 const SITE_ID    = () => process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";

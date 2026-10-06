@@ -3,7 +3,7 @@
  * Netlify Serverless Function → Airtable (Corporate Applications table)
  */
 
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 
 const { saveApplication } = require("./lib/records");
 const { REF_RE, overLimit } = require("./lib/guard");
@@ -55,7 +55,7 @@ exports.handler = async (event) => {
     `Signatory ${i + 1}: ${s.fullName || s.name || ""}${s.title ? " (" + s.title + ")" : ""}${s.mandate ? " | Mandate: " + s.mandate : ""}${s.phone ? " | Phone: " + s.phone : ""}${s.email ? " | Email: " + s.email : ""}`
   ).join("\n");
 
-  const siteUrl = "https://onboard.anchoriaonline.com";
+  const siteUrl = (process.env.SITE_URL || "https://onboard.anchoriaonline.com").replace(/\/+$/, "");
 
   const fields = {
     "Reference":              ref,

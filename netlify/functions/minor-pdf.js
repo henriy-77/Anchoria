@@ -4,7 +4,7 @@
  * Usage: /.netlify/functions/minor-pdf?ref=MINOR-XXXXX
  */
 
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE } = require("./lib/guard");
 const { logAccess } = require("./lib/audit");

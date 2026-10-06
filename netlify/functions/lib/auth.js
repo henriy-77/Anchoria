@@ -7,7 +7,7 @@
  * Env: SESSION_SECRET (required), ADMIN_EMAIL, ADMIN_PASSWORD
  */
 const crypto = require("crypto");
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./blobs");
 
 const COOKIE = "anchoria_admin";
 const TTL_MS = 8 * 60 * 60 * 1000;

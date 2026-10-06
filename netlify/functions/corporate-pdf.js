@@ -5,7 +5,7 @@
  * Usage: /.netlify/functions/corporate-pdf?ref=CASL-XXXXX
  */
 
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE } = require("./lib/guard");
 const { logAccess } = require("./lib/audit");

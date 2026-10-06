@@ -4,7 +4,7 @@
  * Usage: /.netlify/functions/get-document?ref=ASL-XXXXX&doc=passportPhoto
  */
 
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 const { getUser } = require("./lib/auth");
 const { REF_RE, KEY_RE } = require("./lib/guard");
 const { logAccess } = require("./lib/audit");

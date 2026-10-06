@@ -7,7 +7,7 @@
  * verified from the file's own bytes, size is capped, and requests are rate limited.
  * No Airtable calls — staff read documents through the admin dashboard.
  */
-const { getStore } = require("@netlify/blobs");
+const { getStore } = require("./lib/blobs");
 const { store: appStore } = require("./lib/records");
 const { REF_RE, KEY_RE, overLimit } = require("./lib/guard");
 
@@ -30,7 +30,7 @@ exports.handler = async (event) => {
 
   const SITE_ID    = process.env.NETLIFY_SITE_ID || "eba96b4a-432f-4acb-932b-4fe80c961281";
   const BLOB_TOKEN = process.env.NETLIFY_TOKEN   || process.env.NETLIFY_BLOBS_TOKEN;
-  if (!SITE_ID || !BLOB_TOKEN) return json(500, { error: "Storage not configured" });
+  if (!process.env.STORAGE_DIR && (!SITE_ID || !BLOB_TOKEN)) return json(500, { error: "Storage not configured" });
 
   let payload;
   try { payload = JSON.parse(event.body || "{}"); } catch { return json(400, { error: "Invalid JSON" }); }
