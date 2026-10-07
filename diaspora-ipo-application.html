@@ -135,9 +135,11 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 /* payment account */
 .payacct{grid-column:1/-1;border:1.5px solid var(--gold);background:var(--gold-soft);border-radius:10px;padding:16px 18px;}
 .payacct .ttl{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-weight:700;margin:0 0 10px;}
-.payacct dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-family:var(--sans);font-size:14px;}
+.payacct dl{margin:0;display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:6px 18px;font-family:var(--sans);font-size:14px;}
 .payacct dt{color:var(--muted);}
 .payacct dd{margin:0;font-weight:700;color:var(--ink);word-break:break-word;}
+.payacct+.payacct{margin-top:0;}
+@media(max-width:560px){.payacct dl{grid-template-columns:1fr;gap:2px;}.payacct dt{font-size:12px;margin-top:8px;}.payacct dt:first-child{margin-top:0;}}
 .payacct .acctno{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px;letter-spacing:.06em;}
 
 /* terms */
@@ -416,11 +418,24 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
         <h2 id="h-inv"><span class="n"></span>Investment Details</h2>
         <div class="sec-body">
           <div class="payacct">
-            <p class="ttl">Pay to this account</p>
+            <p class="ttl">Pay to this account (Naira transfer)</p>
             <dl>
               <dt>Account Name</dt><dd>Anchoria Securities Limited</dd>
               <dt>Account Number</dt><dd class="acctno">0006243632</dd>
-              <dt>Bank</dt><dd>Abbey Mortgage Bank PLC</dd>
+              <dt>Bank</dt><dd>Abbey Bank PLC</dd>
+              <dt>Company Address</dt><dd>21, Raymond Njoku, off Awolowo Way, Ikoyi, Lagos</dd>
+            </dl>
+          </div>
+          <div class="payacct" data-cat="individual">
+            <p class="ttl">International wire transfer (SWIFT)</p>
+            <dl>
+              <dt>Correspondent Bank</dt><dd>Standard Chartered Bank, New York</dd>
+              <dt>Correspondent Bank BIC / SWIFT</dt><dd class="acctno">SCBLUS33</dd>
+              <dt>Beneficiary Bank</dt><dd>First Bank of Nigeria Ltd</dd>
+              <dt>Beneficiary Bank BIC / SWIFT</dt><dd class="acctno">FBNINGLA</dd>
+              <dt>Beneficiary Bank Account with Correspondent Bank</dt><dd class="acctno">3582059974001</dd>
+              <dt>Beneficiary Name</dt><dd>Abbey Bank PLC</dd>
+              <dt>Beneficiary Account Number</dt><dd class="acctno">2036475687</dd>
             </dl>
           </div>
           <div class="field full">
