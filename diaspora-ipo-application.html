@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-  Anchoria — Dangote IPO · Diaspora Investor Application Form
+  Anchoria — Dangote IPO · Nominee Structure Application Form
   ================================================================
   BACKEND: Netlify Function → Netlify Blobs (no Airtable)
   The form POSTs to /.netlify/functions/submit-diaspora (same origin),
@@ -12,8 +12,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Anchoria | Dangote IPO — Diaspora Investor Application</title>
-<meta name="description" content="Apply for the Dangote Petroleum Refinery IPO as a diaspora investor through Anchoria Securities Limited." />
+<title>Anchoria | Dangote IPO — Nominee Structure Application</title>
+<meta name="description" content="Apply for the Dangote Petroleum Refinery IPO through Anchoria Securities Limited's nominee structure — for diaspora investors and corporates investing below the 50,000-unit minimum." />
 <link rel="icon" type="image/png" href="anchoria-emblem.png" />
 <style>
 /* ===== DESIGN TOKENS (Anchoria brand) ===== */
@@ -128,6 +128,10 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 .sigtools button{background:none;border:none;color:var(--gold-2);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:6px;}
 .sigtools button:hover{background:var(--gold-soft);}
 
+/* sections that don't apply collapse away; the ones that do ease in */
+.sec.reveal,.field.reveal{animation:reveal .28s ease both;}
+@keyframes reveal{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+
 /* payment account */
 .payacct{grid-column:1/-1;border:1.5px solid var(--gold);background:var(--gold-soft);border-radius:10px;padding:16px 18px;}
 .payacct .ttl{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);font-weight:700;margin:0 0 10px;}
@@ -185,8 +189,8 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   <div id="formView">
     <div class="title-block">
       <div class="eyebrow">Anchoria Securities Limited</div>
-      <h1>Dangote IPO — Diaspora Investor Application Form</h1>
-      <p class="lede">For diaspora investors only, facilitated through Anchoria Securities Limited (ASL).</p>
+      <h1>Dangote IPO — Nominee Structure Application Form</h1>
+      <p class="lede">For diaspora investors and corporates investing below the 50,000-unit minimum, facilitated through Anchoria Securities Limited (ASL).</p>
       <span class="cutoff">Cut-off: 12 October</span>
     </div>
 
@@ -218,21 +222,30 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 1. INVESTOR TYPE -->
-      <section class="sec" aria-labelledby="h-type">
-        <h2 id="h-type"><span class="n">1</span>Investor Type</h2>
+      <section class="sec" data-sec aria-labelledby="h-type">
+        <h2 id="h-type"><span class="n"></span>Investor Type</h2>
         <div class="sec-body">
-          <div class="field full" data-f="isDiaspora">
+          <div class="field full" data-f="investorCategory">
+            <label class="lab" for="investorCategory">Investor Category <span class="req">*</span></label>
+            <select id="investorCategory">
+              <option value="">Select…</option>
+              <option value="individual">Individual (Diaspora)</option>
+              <option value="corporate">Corporate (NGN)</option>
+            </select>
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-cat="individual" data-f="isDiaspora">
             <label class="choice" id="chDiaspora">
               <input type="checkbox" id="isDiaspora" />
               <span>I am a diaspora investor (living outside Nigeria)</span>
             </label>
             <span class="msg"></span>
           </div>
-          <label class="choice" id="chKyc">
+          <label class="choice" data-cat="individual" id="chKyc">
             <input type="checkbox" id="hasNigerianKyc" />
             <span>I hold Nigerian KYC documents (BVN and a Nigerian government-issued ID)</span>
           </label>
-          <div class="field full" data-f="residenceCountry">
+          <div class="field full" data-cat="individual" data-f="residenceCountry">
             <label class="lab" for="residenceCountry">Country of Residence <span class="req">*</span></label>
             <input type="text" id="residenceCountry" autocomplete="country-name" />
             <span class="msg"></span>
@@ -241,42 +254,58 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 2. BIO-DATA -->
-      <section class="sec" aria-labelledby="h-bio">
-        <h2 id="h-bio"><span class="n">2</span>Bio-Data</h2>
+      <section class="sec needs-cat" data-sec aria-labelledby="h-bio">
+        <h2 id="h-bio"><span class="n"></span><span id="bioTitle">Bio-Data</span></h2>
         <div class="sec-body">
-          <div class="field" data-f="title">
+          <div class="field" data-cat="individual" data-f="title">
             <label class="lab" for="title">Title <span class="req">*</span></label>
             <select id="title" autocomplete="honorific-prefix">
               <option value="">Select…</option><option>Mr</option><option>Mrs</option><option>Miss</option><option>Other</option>
             </select>
             <span class="msg"></span>
           </div>
-          <div class="field" data-f="surname">
+          <div class="field" data-cat="individual" data-f="surname">
             <label class="lab" for="surname">Surname <span class="req">*</span></label>
             <input type="text" id="surname" autocomplete="family-name" />
             <span class="msg"></span>
           </div>
-          <div class="field" data-f="firstName">
+          <div class="field" data-cat="individual" data-f="firstName">
             <label class="lab" for="firstName">First Name <span class="req">*</span></label>
             <input type="text" id="firstName" autocomplete="given-name" />
             <span class="msg"></span>
           </div>
-          <div class="field" data-f="otherNames">
+          <div class="field" data-cat="individual" data-f="otherNames">
             <label class="lab" for="otherNames">Other Names</label>
             <input type="text" id="otherNames" autocomplete="additional-name" />
           </div>
-          <div class="field" data-f="dob">
+          <div class="field" data-cat="individual" data-f="dob">
             <label class="lab" for="dob">Date of Birth <span class="req">*</span></label>
             <input type="date" id="dob" autocomplete="bday" />
             <span class="msg"></span>
           </div>
+          <div class="field full" data-cat="corporate" data-f="companyName">
+            <label class="lab" for="companyName">Company Name <span class="req">*</span></label>
+            <input type="text" id="companyName" autocomplete="organization" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-cat="corporate" data-f="rcNumber">
+            <label class="lab" for="rcNumber">RC Number <span class="req">*</span></label>
+            <input type="text" id="rcNumber" autocomplete="off" placeholder="e.g. RC 1234567" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-cat="corporate" data-f="tin">
+            <label class="lab" for="tin">TIN <span class="req">*</span></label>
+            <input type="text" id="tin" autocomplete="off" />
+            <span class="hint">Tax Identification Number</span>
+            <span class="msg"></span>
+          </div>
           <div class="field" data-f="phone">
-            <label class="lab" for="phone">Phone Number <span class="req">*</span></label>
+            <label class="lab" for="phone"><span data-ind="Phone Number" data-corp="Company Phone Number">Phone Number</span> <span class="req">*</span></label>
             <input type="tel" id="phone" autocomplete="tel" placeholder="+44 7700 900000" />
             <span class="msg"></span>
           </div>
           <div class="field full" data-f="address">
-            <label class="lab" for="address">Full Postal Address <span class="req">*</span></label>
+            <label class="lab" for="address"><span data-ind="Full Postal Address" data-corp="Company Address">Full Postal Address</span> <span class="req">*</span></label>
             <textarea id="address" autocomplete="street-address" style="min-height:76px"></textarea>
             <span class="msg"></span>
           </div>
@@ -291,11 +320,27 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
             <span class="msg"></span>
           </div>
           <div class="field full" data-f="email">
-            <label class="lab" for="email">E-mail Address <span class="req">*</span></label>
+            <label class="lab" for="email"><span data-ind="E-mail Address" data-corp="Company E-mail Address">E-mail Address</span> <span class="req">*</span></label>
             <input type="email" id="email" autocomplete="email" />
             <span class="msg"></span>
           </div>
-          <div class="field full" data-f="passportPhoto">
+          <div class="subhead" data-cat="corporate">Contact person</div>
+          <div class="field" data-cat="corporate" data-f="contactName">
+            <label class="lab" for="contactName">Contact Person's Name <span class="req">*</span></label>
+            <input type="text" id="contactName" autocomplete="name" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-cat="corporate" data-f="contactDesignation">
+            <label class="lab" for="contactDesignation">Designation <span class="req">*</span></label>
+            <input type="text" id="contactDesignation" autocomplete="organization-title" />
+            <span class="msg"></span>
+          </div>
+          <div class="field" data-cat="corporate" data-f="contactPhone">
+            <label class="lab" for="contactPhone">Contact Person's Phone <span class="req">*</span></label>
+            <input type="tel" id="contactPhone" autocomplete="off" />
+            <span class="msg"></span>
+          </div>
+          <div class="field full" data-cat="individual" data-f="passportPhoto">
             <span class="lab">Passport Photograph <span class="req">*</span></span>
             <label class="drop" data-doc="passportPhoto">
               <input type="file" accept="image/jpeg,image/png,image/webp" />
@@ -308,8 +353,8 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 3. KYC -->
-      <section class="sec" aria-labelledby="h-kyc">
-        <h2 id="h-kyc"><span class="n">3</span>KYC Documents</h2>
+      <section class="sec needs-cat" data-cat="individual" data-sec aria-labelledby="h-kyc">
+        <h2 id="h-kyc"><span class="n"></span>KYC Documents</h2>
         <div class="sec-body">
           <div class="note" id="kycNote">Tick the Nigerian KYC box in section 1 if you hold a BVN and a Nigerian government-issued ID. Otherwise, upload your government-issued ID below.</div>
 
@@ -367,8 +412,8 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 4. INVESTMENT DETAILS -->
-      <section class="sec" aria-labelledby="h-inv">
-        <h2 id="h-inv"><span class="n">4</span>Investment Details</h2>
+      <section class="sec needs-cat" data-sec aria-labelledby="h-inv">
+        <h2 id="h-inv"><span class="n"></span>Investment Details</h2>
         <div class="sec-body">
           <div class="payacct">
             <p class="ttl">Pay to this account</p>
@@ -402,8 +447,8 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 5. REFUND / PAYOUT -->
-      <section class="sec" aria-labelledby="h-ref">
-        <h2 id="h-ref"><span class="n">5</span>Refund / Payout Account</h2>
+      <section class="sec needs-cat" data-sec aria-labelledby="h-ref">
+        <h2 id="h-ref"><span class="n"></span>Refund / Payout Account</h2>
         <div class="sec-body">
           <div class="field full" data-f="bankName">
             <label class="lab" for="bankName">Bank Name <span class="req">*</span></label>
@@ -424,23 +469,23 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- 6. DECLARATIONS -->
-      <section class="sec" aria-labelledby="h-decl">
-        <h2 id="h-decl"><span class="n">6</span>Declarations</h2>
+      <section class="sec needs-cat" data-sec aria-labelledby="h-decl">
+        <h2 id="h-decl"><span class="n"></span>Declarations</h2>
         <div class="sec-body">
           <div class="check" data-f="d_risk"><label><input type="checkbox" id="d_risk" /><span>I confirm I have read and understood the Risk Disclosure &amp; Terms and Conditions set out <a href="#terms">below</a>.</span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_bound"><label><input type="checkbox" id="d_bound" /><span>I agree to be bound by the terms of this Offer.</span></label><span class="msg">Please tick to confirm.</span></div>
-          <div class="check" data-f="d_held"><label><input type="checkbox" id="d_held" /><span>I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_held"><label><input type="checkbox" id="d_held" /><span><span data-ind="I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name." data-corp="I understand the company's shares will be held on its behalf until it is eligible for them to be transferred into its own name.">I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name.</span></span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_scale"><label><input type="checkbox" id="d_scale" /><span>I understand that allotment is subject to the Issuer's discretion, and Offer Shares may be scaled back in the event of oversubscription.</span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_true"><label><input type="checkbox" id="d_true" /><span>I confirm that all information provided in this form is true and accurate.</span></label><span class="msg">Please tick to confirm.</span></div>
         </div>
       </section>
 
       <!-- 7. SIGNATURE -->
-      <section class="sec" aria-labelledby="h-sig">
-        <h2 id="h-sig"><span class="n">7</span>Signature &amp; Date</h2>
+      <section class="sec needs-cat" data-sec aria-labelledby="h-sig">
+        <h2 id="h-sig"><span class="n"></span><span id="sigTitle">Signature &amp; Date</span></h2>
         <div class="sec-body">
           <div class="field" data-f="signature">
-            <span class="lab" id="sigLab">Signature <span class="req">*</span></span>
+            <span class="lab" id="sigLab"><span data-ind="Signature" data-corp="Authorised Signatory's Signature">Signature</span> <span class="req">*</span></span>
             <div class="sigbox" id="sigbox">
               <canvas id="sig" width="640" height="300" role="img" aria-labelledby="sigLab" aria-describedby="sigHint"></canvas>
               <div class="base"></div>
@@ -459,9 +504,10 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       </section>
 
       <!-- TERMS -->
-      <section class="sec" id="terms" aria-labelledby="h-terms">
+      <section class="sec needs-cat" id="terms" aria-labelledby="h-terms">
         <h2 id="h-terms">Risk Disclosure &amp; Terms and Conditions</h2>
         <div class="terms">
+          <div data-cat="individual">
           <p class="for">For Diaspora Investors Without a CSCS Account (Non-NGN KYC / Omnibus Structure)</p>
           <p style="margin:0 0 12px">By subscribing under this structure, you acknowledge and agree to the following:</p>
           <ol>
@@ -475,12 +521,28 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
             <li><b>Regulatory status.</b> ASL is licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC. This structure is not a public offer or solicitation in any jurisdiction where such an offer would be unlawful. You are responsible for confirming your eligibility to participate under the laws of your jurisdiction.</li>
           </ol>
           <p class="closing">By signing or submitting this form, you confirm that you have read, understood, and accepted this disclosure, and that you are participating voluntarily and with full understanding of the nominee/omnibus arrangement described above.</p>
+          </div>
+          <div data-cat="corporate">
+          <p class="for">For Corporate Investors Investing Below the Minimum Subscription (NGN KYC / Nominee Structure)</p>
+          <p style="margin:0 0 12px">By subscribing under this structure, the company acknowledges and agrees to the following:</p>
+          <ol>
+            <li><b>Structure &amp; eligibility.</b> Because the company's subscription is below the 50,000-unit minimum, it cannot subscribe to the offering directly. Anchoria has structured a facilitation route — via Anchoria Securities Limited's (ASL) stockbroking infrastructure and Anchoria Asset Management's (AAM) fund management — for investors investing below that minimum.</li>
+            <li><b>Ownership of shares.</b> Because the subscription is below the minimum required for a direct allotment, the company's shares cannot be registered in its name at subscription. They are held on its behalf within ASL's nominee/omnibus structure, with a defined allocation recorded against its investment.</li>
+            <li><b>Future transfer.</b> If the company later becomes eligible to hold the shares directly (for example, by opening its own CSCS account), its shares will be transferred to it via a share transfer, not a secondary-market trade. Any cost associated with this transfer shall be borne by the investor.</li>
+            <li><b>Nominee &amp; custody.</b> ASL acts as nominee and maintains the definitive record of the company's allocation and transaction history. AAM manages the underlying fund and sees ASL as its sole subscriber, with no direct visibility into individual investors.</li>
+            <li><b>Fees.</b> A management fee of 0.5% applies, billed periodically on the valuation of the fund.</li>
+            <li><b>No secondary market rights.</b> The company's shares cannot be traded on the open market while held within this structure. Legal transfer to the company individually occurs only through the process described above, subject to its eligibility and ASL's verification requirements.</li>
+            <li><b>Investment risk.</b> The company's investment carries the standard risks of investing in Nigerian equities, including price volatility and regulatory or political risk. There is no guarantee of allocation, pricing, or return.</li>
+            <li><b>Regulatory status.</b> ASL is licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC. This structure is not a public offer or solicitation in any jurisdiction where such an offer would be unlawful. The company is responsible for confirming its eligibility to participate.</li>
+          </ol>
+          <p class="closing">By signing or submitting this form, the authorised signatory confirms, on behalf of the company, that the company has read, understood, and accepted this disclosure, and that it is participating voluntarily and with full understanding of the nominee/omnibus arrangement described above.</p>
+          </div>
         </div>
       </section>
 
-      <p class="fineprint">This form is issued by Anchoria Securities Limited (ASL), licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC.</p>
+      <p class="fineprint needs-cat">This form is issued by Anchoria Securities Limited (ASL), licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC.</p>
 
-      <div class="actions">
+      <div class="actions needs-cat">
         <button type="submit" class="btn" id="submitBtn"><span class="spin" aria-hidden="true"></span><span class="lbl">Submit application</span></button>
       </div>
     </form>
@@ -577,6 +639,32 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
     }
   }
   $("units").addEventListener("input", function () { recalc(); clearErr(fieldOf("units")); });
+
+  /* ---------- investor category: show / collapse sections ---------- */
+  var category = "";
+  function applyCategory() {
+    category = $("investorCategory").value;
+    Array.prototype.forEach.call(form.querySelectorAll(".needs-cat,[data-cat]"), function (el) {
+      var want = el.getAttribute("data-cat");
+      var hide = (el.classList.contains("needs-cat") && !category) || (want && want !== category);
+      var wasHidden = el.classList.contains("hidden");
+      el.classList.toggle("hidden", !!hide);
+      if (!hide && wasHidden && (el.classList.contains("sec") || el.classList.contains("field"))) {
+        el.classList.remove("reveal"); void el.offsetWidth; el.classList.add("reveal");
+      }
+    });
+    Array.prototype.forEach.call(form.querySelectorAll("[data-ind]"), function (el) {
+      el.textContent = category === "corporate" ? el.getAttribute("data-corp") : el.getAttribute("data-ind");
+    });
+    $("bioTitle").textContent = category === "corporate" ? "Corporate Bio-Data" : "Bio-Data";
+    $("sigTitle").textContent = category === "corporate" ? "Authorised Signatory & Date" : "Signature & Date";
+    $("phone").placeholder = category === "corporate" ? "+234 800 000 0000" : "+44 7700 900000";
+    var n = 0;
+    Array.prototype.forEach.call(form.querySelectorAll("[data-sec]"), function (sec) {
+      if (!sec.classList.contains("hidden")) sec.querySelector(".n").textContent = ++n;
+    });
+  }
+  $("investorCategory").addEventListener("change", function () { applyCategory(); clearErr(fieldOf("investorCategory")); });
 
   /* ---------- conditional KYC ---------- */
   function syncKyc() {
@@ -689,25 +777,37 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
     if (!u) fail(fieldOf("units"), "Enter the number of units you want to buy.");
     else if (u < UNIT_STEP || u % UNIT_STEP !== 0) fail(fieldOf("units"), "Units must be in multiples of 10 (10, 20, 30…).");
 
-    if (!$("isDiaspora").checked) fail(fieldOf("isDiaspora"), "This form is for diaspora investors only. Please confirm.");
-    need("residenceCountry");
-
-    need("title"); need("surname"); need("firstName");
-    if (need("dob") && new Date(val("dob")) > new Date()) fail(fieldOf("dob"), "Date of birth cannot be in the future.");
-    need("address"); need("city"); need("country");
-    if (need("phone") && val("phone").replace(/\D/g, "").length < 7) fail(fieldOf("phone"), "Enter a valid phone number, including country code.");
-    if (need("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val("email"))) fail(fieldOf("email"), "Enter a valid e-mail address.");
-    if (!uploads.passportPhoto) fail(document.querySelector('[data-f="passportPhoto"]'), "Please attach a passport photograph.");
-
-    if ($("hasNigerianKyc").checked) {
-      if (need("bvn") && !/^\d{11}$/.test(val("bvn"))) fail(fieldOf("bvn"), "BVN must be exactly 11 digits.");
-      need("govId");
-      if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaNg"]'), "Please upload proof of address.");
+    if (!category) { fail(fieldOf("investorCategory"), "Please choose your investor category."); }
+    else if (category === "individual") {
+      if (!$("isDiaspora").checked) fail(fieldOf("isDiaspora"), "This route is for diaspora investors. Please confirm.");
+      need("residenceCountry");
+      need("title"); need("surname"); need("firstName");
+      if (need("dob") && new Date(val("dob")) > new Date()) fail(fieldOf("dob"), "Date of birth cannot be in the future.");
     } else {
-      if (!uploads.governmentId) fail(document.querySelector('[data-f="governmentId"]'), "Please snap or upload your government-issued ID.");
-      if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaIntl"]'), "Please upload proof of address.");
-      need("sourceOfFunds");
+      need("companyName"); need("rcNumber"); need("tin");
     }
+    if (category) {
+      need("address"); need("city"); need("country");
+      if (need("phone") && val("phone").replace(/\D/g, "").length < 7) fail(fieldOf("phone"), "Enter a valid phone number, including country code.");
+      if (need("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val("email"))) fail(fieldOf("email"), "Enter a valid e-mail address.");
+    }
+    if (category === "corporate") {
+      need("contactName"); need("contactDesignation");
+      if (need("contactPhone") && val("contactPhone").replace(/\D/g, "").length < 7) fail(fieldOf("contactPhone"), "Enter a valid phone number, including country code.");
+    }
+    if (category === "individual") {
+      if (!uploads.passportPhoto) fail(document.querySelector('[data-f="passportPhoto"]'), "Please attach a passport photograph.");
+      if ($("hasNigerianKyc").checked) {
+        if (need("bvn") && !/^\d{11}$/.test(val("bvn"))) fail(fieldOf("bvn"), "BVN must be exactly 11 digits.");
+        need("govId");
+        if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaNg"]'), "Please upload proof of address.");
+      } else {
+        if (!uploads.governmentId) fail(document.querySelector('[data-f="governmentId"]'), "Please snap or upload your government-issued ID.");
+        if (!uploads.proofOfAddress) fail(document.querySelector('[data-f="poaIntl"]'), "Please upload proof of address.");
+        need("sourceOfFunds");
+      }
+    }
+    if (!category) { bad[0].scrollIntoView({ behavior: "smooth", block: "center" }); return false; }
 
     if (!$("paymentSent").checked) fail(fieldOf("paymentSent"), "Please confirm that payment has been sent to ASL's account.");
     if (!uploads.paymentEvidence) fail(document.querySelector('[data-f="paymentEvidence"]'), "Please attach evidence of payment.");
@@ -749,37 +849,47 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
 
   function buildPayload(ref, sigBlobKeys) {
     var units = unitsValue();
+    var corp = category === "corporate";
+    var docKeys = corp ? ["paymentEvidence"] : ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"];
     var docs = [];
-    ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+    docKeys.forEach(function (k) {
       if (uploads[k]) docs.push({ key: k, name: uploads[k].name, type: uploads[k].file.type });
     });
     docs.push({ key: "signature", name: "signature.png", type: "image/png" });
-    var ng = $("hasNigerianKyc").checked;
-    return {
+    var ng = !corp && $("hasNigerianKyc").checked;
+    var common = {
       reference: ref,
       submittedAt: new Date().toISOString(),
-      source: "Diaspora IPO",
+      source: "Nominee Structure IPO",
+      investorCategory: corp ? "Corporate (NGN)" : "Individual (Diaspora)",
       units: units,
       offerPrice: OFFER_PRICE,
       amount: units * OFFER_PRICE,
       amountInWords: val("amountWords"),
-      isDiaspora: $("isDiaspora").checked,
-      hasNigerianKyc: ng,
-      residenceCountry: val("residenceCountry"),
-      title: val("title"), surname: val("surname"), firstName: val("firstName"), otherNames: val("otherNames"),
-      dob: val("dob"), address: val("address"), city: val("city"), country: val("country"),
+      address: val("address"), city: val("city"), country: val("country"),
       phone: val("phone"), email: val("email"),
-      bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : "",
-      sourceOfFunds: ng ? "" : val("sourceOfFunds"),
       paymentSent: $("paymentSent").checked,
       bankName: val("bankName"), bankAccountNumber: val("bankAccountNumber"), bankAccountName: val("bankAccountName"),
       declarations: {
         riskAndTerms: $("d_risk").checked, boundByOffer: $("d_bound").checked, heldOnBehalf: $("d_held").checked,
         allotmentDiscretion: $("d_scale").checked, trueAndAccurate: $("d_true").checked
       },
-      signature: { name: (val("firstName") + " " + val("surname")).trim(), date: val("sigDate") },
+      signature: { name: corp ? val("contactName") : (val("firstName") + " " + val("surname")).trim(), date: val("sigDate") },
       documents: docs
     };
+    var specific = corp ? {
+      companyName: val("companyName"), rcNumber: val("rcNumber"), tin: val("tin"),
+      contactName: val("contactName"), contactDesignation: val("contactDesignation"), contactPhone: val("contactPhone")
+    } : {
+      isDiaspora: $("isDiaspora").checked,
+      hasNigerianKyc: ng,
+      residenceCountry: val("residenceCountry"),
+      title: val("title"), surname: val("surname"), firstName: val("firstName"), otherNames: val("otherNames"),
+      dob: val("dob"),
+      bvn: ng ? val("bvn") : "", govId: ng ? val("govId") : "",
+      sourceOfFunds: ng ? "" : val("sourceOfFunds")
+    };
+    return Object.assign(common, specific);
   }
 
   function readAsDataURL(file) {
@@ -804,7 +914,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   /* Upload every file one by one; resolves to the keys that still failed. */
   function uploadAll(ref, onlyKeys) {
     var items = [];
-    ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"].forEach(function (k) {
+    (category === "corporate" ? ["paymentEvidence"] : ["passportPhoto", "governmentId", "proofOfAddress", "paymentEvidence"]).forEach(function (k) {
       if (uploads[k]) items.push({ key: k, name: uploads[k].name, get: function () { return readAsDataURL(uploads[k].file); } });
     });
     items.push({ key: "signature", name: "signature.png", get: function () { return Promise.resolve(canvas.toDataURL("image/png")); } });
@@ -863,6 +973,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   });
 
   syncKyc();
+  applyCategory();
 })();
 </script>
 </body>
