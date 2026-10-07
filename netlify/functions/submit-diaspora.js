@@ -1,5 +1,6 @@
 /**
- * Anchoria Securities — Dangote IPO Diaspora Application Submission Handler
+ * Anchoria Securities — Dangote IPO Nominee Structure Application Submission Handler
+ * (individual diaspora investors and NGN corporates; one form, one record kind)
  * Netlify Serverless Function → Netlify Blobs only (responses are NOT sent to Airtable)
  * Documents & signature are uploaded separately via upload-document
  * (routed here by the DIA- reference prefix / "diaspora" record kind).
@@ -44,9 +45,17 @@ exports.handler = async (event) => {
   if (!Number.isInteger(units) || units < 10 || units % 10 !== 0) {
     return json(400, { error: "Units must be a whole number in multiples of 10" });
   }
-  if (!payload.isDiaspora) return json(400, { error: "This offer is for diaspora investors only" });
+  const category = str(payload.investorCategory);
+  if (category !== "Individual (Diaspora)" && category !== "Corporate (NGN)") {
+    return json(400, { error: "Choose an investor category" });
+  }
+  const corp = category === "Corporate (NGN)";
+  if (!corp && !payload.isDiaspora) return json(400, { error: "The individual route is for diaspora investors only" });
+  if (corp && (!str(payload.companyName).trim() || !str(payload.rcNumber).trim())) {
+    return json(400, { error: "Company name and RC number are required" });
+  }
   const amount = units * OFFER_PRICE;
-  const ng = !!payload.hasNigerianKyc;
+  const ng = !corp && !!payload.hasNigerianKyc;
 
   const fields = {
     "Reference":                    ref,
@@ -54,9 +63,18 @@ exports.handler = async (event) => {
     "Offer Price (NGN)":            OFFER_PRICE,
     "Amount Payable (NGN)":         amount,
     "Amount In Words":              str(payload.amountInWords),
-    "Diaspora Investor":            true,
+    "Investor Category":            category,
+    "Diaspora Investor":            !corp,
     "Holds Nigerian KYC":           ng,
     "Country of Residence":         str(payload.residenceCountry),
+    // Corporate
+    "Company Name":                 str(payload.companyName),
+    "RC Number":                    str(payload.rcNumber),
+    "TIN":                          str(payload.tin),
+    "Contact Person Name":          str(payload.contactName),
+    "Contact Person Designation":   str(payload.contactDesignation),
+    "Contact Person Phone":         str(payload.contactPhone),
+    // Individual
     "Title":                        str(payload.title),
     "Surname":                      str(payload.surname),
     "First Name":                   str(payload.firstName),
@@ -84,7 +102,7 @@ exports.handler = async (event) => {
     "Documents Submitted":          Array.isArray(payload.documents)
                                       ? payload.documents.map((d) => `${str(d.key)}: ${str(d.name)}`).join("\n")
                                       : "",
-    "Source":                       str(payload.source) || "Diaspora IPO",
+    "Source":                       str(payload.source) || "Nominee Structure IPO",
     "Status":                       "New",
   };
 
@@ -97,7 +115,7 @@ exports.handler = async (event) => {
     const r = await saveApplication("diaspora", TABLE, ref, fields, { airtable: false });
     if (r.exists) return json(409, { error: "This reference has already been submitted" });
     if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
-    console.log("diaspora application saved:", ref);
+    console.log("nominee-structure application saved:", ref, category);
     return json(200, { success: true, reference: ref });
   } catch (err) {
     console.error("Function error:", err);

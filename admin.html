@@ -312,7 +312,7 @@ function showList(){
   app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><a class="btn ghost" href="/.netlify/functions/admin-api?action=export">Export CSV</a></div>'+
     '<div class="stats" id="stats"></div>'+
     '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="s" placeholder="Search name, reference, email or phone" value="'+esc(flt.q)+'"></div>'+
-    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Diaspora IPO</option></select></div>'+
+    '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Nominee Structure IPO</option></select></div>'+
     '<div id="t">'+[1,2,3,4].map(function(){return'<div class="sk" style="margin:18px 6px"></div>'}).join("")+'</div></div>';
   $("#k").value=flt.kind;
   var deb;$("#s").oninput=function(){clearTimeout(deb);deb=setTimeout(function(){flt.q=$("#s").value;draw()},120)};
