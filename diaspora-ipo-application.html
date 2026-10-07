@@ -474,7 +474,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
         <div class="sec-body">
           <div class="check" data-f="d_risk"><label><input type="checkbox" id="d_risk" /><span>I confirm I have read and understood the Risk Disclosure &amp; Terms and Conditions set out <a href="#terms">below</a>.</span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_bound"><label><input type="checkbox" id="d_bound" /><span>I agree to be bound by the terms of this Offer.</span></label><span class="msg">Please tick to confirm.</span></div>
-          <div class="check" data-f="d_held"><label><input type="checkbox" id="d_held" /><span>I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name.</span></label><span class="msg">Please tick to confirm.</span></div>
+          <div class="check" data-f="d_held"><label><input type="checkbox" id="d_held" /><span><span data-ind="I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name." data-corp="I understand the company's shares will be held on its behalf until it is eligible for them to be transferred into its own name.">I understand my shares will be held on my behalf until I am eligible for them to be transferred into my own name.</span></span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_scale"><label><input type="checkbox" id="d_scale" /><span>I understand that allotment is subject to the Issuer's discretion, and Offer Shares may be scaled back in the event of oversubscription.</span></label><span class="msg">Please tick to confirm.</span></div>
           <div class="check" data-f="d_true"><label><input type="checkbox" id="d_true" /><span>I confirm that all information provided in this form is true and accurate.</span></label><span class="msg">Please tick to confirm.</span></div>
         </div>
@@ -507,6 +507,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
       <section class="sec needs-cat" id="terms" aria-labelledby="h-terms">
         <h2 id="h-terms">Risk Disclosure &amp; Terms and Conditions</h2>
         <div class="terms">
+          <div data-cat="individual">
           <p class="for">For Diaspora Investors Without a CSCS Account (Non-NGN KYC / Omnibus Structure)</p>
           <p style="margin:0 0 12px">By subscribing under this structure, you acknowledge and agree to the following:</p>
           <ol>
@@ -520,6 +521,22 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
             <li><b>Regulatory status.</b> ASL is licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC. This structure is not a public offer or solicitation in any jurisdiction where such an offer would be unlawful. You are responsible for confirming your eligibility to participate under the laws of your jurisdiction.</li>
           </ol>
           <p class="closing">By signing or submitting this form, you confirm that you have read, understood, and accepted this disclosure, and that you are participating voluntarily and with full understanding of the nominee/omnibus arrangement described above.</p>
+          </div>
+          <div data-cat="corporate">
+          <p class="for">For Corporate Investors Investing Below the Minimum Subscription (NGN KYC / Nominee Structure)</p>
+          <p style="margin:0 0 12px">By subscribing under this structure, the company acknowledges and agrees to the following:</p>
+          <ol>
+            <li><b>Structure &amp; eligibility.</b> Because the company's subscription is below the 50,000-unit minimum, it cannot subscribe to the offering directly. Anchoria has structured a facilitation route — via Anchoria Securities Limited's (ASL) stockbroking infrastructure and Anchoria Asset Management's (AAM) fund management — for investors investing below that minimum.</li>
+            <li><b>Ownership of shares.</b> Because the subscription is below the minimum required for a direct allotment, the company's shares cannot be registered in its name at subscription. They are held on its behalf within ASL's nominee/omnibus structure, with a defined allocation recorded against its investment.</li>
+            <li><b>Future transfer.</b> If the company later becomes eligible to hold the shares directly (for example, by opening its own CSCS account), its shares will be transferred to it via a share transfer, not a secondary-market trade. Any cost associated with this transfer shall be borne by the investor.</li>
+            <li><b>Nominee &amp; custody.</b> ASL acts as nominee and maintains the definitive record of the company's allocation and transaction history. AAM manages the underlying fund and sees ASL as its sole subscriber, with no direct visibility into individual investors.</li>
+            <li><b>Fees.</b> A management fee of 0.5% applies, billed periodically on the valuation of the fund.</li>
+            <li><b>No secondary market rights.</b> The company's shares cannot be traded on the open market while held within this structure. Legal transfer to the company individually occurs only through the process described above, subject to its eligibility and ASL's verification requirements.</li>
+            <li><b>Investment risk.</b> The company's investment carries the standard risks of investing in Nigerian equities, including price volatility and regulatory or political risk. There is no guarantee of allocation, pricing, or return.</li>
+            <li><b>Regulatory status.</b> ASL is licensed by the Nigerian Exchange (NGX) and regulated by the Nigerian SEC. This structure is not a public offer or solicitation in any jurisdiction where such an offer would be unlawful. The company is responsible for confirming its eligibility to participate.</li>
+          </ol>
+          <p class="closing">By signing or submitting this form, the authorised signatory confirms, on behalf of the company, that the company has read, understood, and accepted this disclosure, and that it is participating voluntarily and with full understanding of the nominee/omnibus arrangement described above.</p>
+          </div>
         </div>
       </section>
 
