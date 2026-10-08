@@ -87,7 +87,11 @@ function diskStore(root, name) {
 function getStore(opts) {
   const root = process.env.STORAGE_DIR;
   if (root) return diskStore(path.resolve(root), typeof opts === "string" ? opts : opts.name);
-  return require("@netlify/blobs").getStore(opts);
+  // Netlify Blobs is eventually consistent by default: a read just after a write (e.g. the upload
+  // step looking up the application that was saved a second earlier) can miss it for up to a minute.
+  // Always read fresh data.
+  const o = typeof opts === "string" ? { name: opts } : opts;
+  return require("@netlify/blobs").getStore({ consistency: "strong", ...o });
 }
 
 module.exports = { getStore, diskStore };

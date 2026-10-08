@@ -39,15 +39,20 @@ exports.handler = async (event) => {
     return json(400, { error: "Missing or invalid ref, key, or data" });
   }
 
-  // The application must exist and be recent.
+  // The application must exist and be recent. The upload follows the submission by a second or
+  // two, so retry briefly in case the just-written record is not visible yet.
   let rec = null;
-  try {
-    for (const kind of ["corporate", "joint", "minor", "diaspora"]) {
-      rec = await appStore().get(`${kind}/${ref}`, { type: "json" });
-      if (rec) break;
-    }
-  } catch (err) { console.error("record lookup failed:", err.message); }
-  if (!rec || Date.now() - Date.parse(rec.savedAt) > WINDOW_MS) return json(403, { error: "Uploads are not accepted for this reference" });
+  for (let attempt = 0; attempt < 4 && !rec; attempt++) {
+    if (attempt) await new Promise((r) => setTimeout(r, 400 * attempt));
+    try {
+      for (const kind of ["corporate", "joint", "minor", "diaspora"]) {
+        rec = await appStore().get(`${kind}/${ref}`, { type: "json" });
+        if (rec) break;
+      }
+    } catch (err) { console.error("record lookup failed:", err.message); }
+  }
+  if (!rec) { console.error("upload refused: no application found for", ref); return json(403, { error: "Uploads are not accepted for this reference" }); }
+  if (Date.now() - Date.parse(rec.savedAt) > WINDOW_MS) return json(403, { error: "Uploads are not accepted for this reference" });
 
   const buffer = Buffer.from(data.includes(",") ? data.split(",")[1] : data, "base64");
   if (!buffer.length || buffer.length > MAX_BYTES) return json(413, { error: "File must be under 5 MB" });
