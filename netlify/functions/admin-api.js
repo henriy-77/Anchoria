@@ -7,6 +7,7 @@ const { store, importRecords, fetchAllFromAirtable, TABLES } = require("./lib/re
 const { staffStore, hashPassword, checkPassword, verifyLogin, sessionCookie, clearCookie, getUser, lockedFor, recordFailure, clearFailures, tkey } = require("./lib/auth");
 const { clientIp, REF_RE } = require("./lib/guard");
 const { logAccess, readLog } = require("./lib/audit");
+const { xlsx } = require("./lib/xlsx");
 
 const STATUSES = ["New", "In review", "Approved", "Rejected"];
 const KINDS    = ["corporate", "joint", "minor", "individual", "diaspora"];
@@ -78,7 +79,8 @@ exports.handler = async (event) => {
   }
 
   if (action === "export") {
-    await logAccess(event, user, "export_csv", { detail: KINDS.includes(q.kind) ? q.kind : "all" });
+    const asXlsx = q.format === "xlsx";
+    await logAccess(event, user, "export_csv", { detail: (KINDS.includes(q.kind) ? q.kind : "all") + (asXlsx ? " (xlsx)" : "") });
     const { blobs } = await s.list();
     const recs = [];
     for (const b of blobs) { const r = await s.get(b.key, { type: "json" }); if (r) recs.push(r); }
@@ -98,10 +100,18 @@ exports.handler = async (event) => {
       "All Documents (zip)": (r) => `${base}/.netlify/functions/get-document?ref=${encodeURIComponent(r.ref)}&all=1`,
     };
     const cols = ["Type", "Saved At", ...Array.from(new Set(list.flatMap((r) => Object.keys(r.fields || {})))).filter((c) => !(c in extra)), ...Object.keys(extra)];
-    const esc = (v) => { let t = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
     const cell = (r, c) => c === "Type" ? r.kind : c === "Saved At" ? r.savedAt : extra[c] ? extra[c](r) : r.fields[c];
+
+    // Excel / Google Sheets: a real .xlsx (Google Sheets opens it via File → Import, or straight from Drive).
+    if (asXlsx) {
+      const rows = list.map((r) => cols.map((c) => c === "All Documents (zip)" ? { link: extra[c](r), text: "Download all (zip)" } : cell(r, c)));
+      const buf = xlsx({ sheet: kind ? `${kind[0].toUpperCase()}${kind.slice(1)} applications` : "Applications", columns: cols, rows, numeric: new Map([["Units", 4], ["Offer Price (NGN)", 3], ["Amount Payable (NGN)", 3]]) });
+      return { statusCode: 200, headers: { "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Content-Disposition": `attachment; filename="applications${kind ? "-" + kind : ""}.xlsx"`, "Cache-Control": "no-store" }, body: buf.toString("base64"), isBase64Encoded: true };
+    }
+
+    const esc = (v) => { let t = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
     const lines = [cols.map(esc).join(",")].concat(list.map((r) => cols.map((c) => esc(cell(r, c))).join(",")));
-    return { statusCode: 200, headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="applications${kind ? "-" + kind : ""}.csv"`, "Cache-Control": "no-store" }, body: "﻿" + lines.join("\n") };
+    return { statusCode: 200, headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="applications${kind ? "-" + kind : ""}.csv"`, "Cache-Control": "no-store" }, body: "\ufeff" + lines.join("\n") };
   }
 
   if (action === "change-password") {

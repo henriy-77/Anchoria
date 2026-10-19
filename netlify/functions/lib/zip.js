@@ -1,4 +1,5 @@
-/** Minimal store-only ZIP writer (no dependencies). files: [{ name, data: Buffer }] → Buffer. */
+/** Minimal store-only ZIP writer (no dependencies). files: [{ name, data: Buffer }] → Buffer.
+ *  Names are flattened (no "/") unless opts.paths is set, which keeps folders (used for .xlsx). */
 const TABLE = (() => {
   const t = new Uint32Array(256);
   for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
@@ -10,7 +11,7 @@ function crc32(buf) {
   return (c ^ 0xffffffff) >>> 0;
 }
 
-function zip(files) {
+function zip(files, opts = {}) {
   const d = new Date();
   const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
   const dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
@@ -18,7 +19,7 @@ function zip(files) {
   let offset = 0;
   const used = new Set();
   for (const f of files) {
-    let name = String(f.name || "file").replace(/[\\/:*?"<>|\x00-\x1f]/g, "_");
+    let name = String(f.name || "file").replace(opts.paths ? /[\\:*?"<>|\x00-\x1f]/g : /[\\/:*?"<>|\x00-\x1f]/g, "_");
     if (used.has(name)) { const dot = name.lastIndexOf("."); const base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : ""; let i = 2; while (used.has(`${base}-${i}${ext}`)) i++; name = `${base}-${i}${ext}`; }
     used.add(name);
     const nameBuf = Buffer.from(name, "utf8"), data = Buffer.from(f.data), crc = crc32(data);

@@ -123,6 +123,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 @keyframes rot{to{transform:rotate(360deg)}}
 
 .xbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.xbar select{width:auto;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;font-size:13px}.xbar .btn{text-decoration:none;white-space:nowrap}
+.xhint{flex-basis:100%;text-align:right;margin:2px 0 0;font-size:11.5px;color:var(--muted);max-width:420px;margin-left:auto}
 .docwrap{display:flex;gap:6px;min-width:0}.docwrap .doc{flex:1;min-width:0}
 .dlbtn{flex:none;display:flex;align-items:center;justify-content:center;width:42px;border:1px solid var(--line);border-radius:10px;background:#fcfbf8;color:var(--gold-2);text-decoration:none}
 .dlbtn:hover{border-color:var(--gold);background:var(--gold-soft)}.dlbtn svg{width:18px;height:18px}
@@ -324,15 +325,15 @@ function showLogin(){
 
 /* ── List ── */
 function showList(){
-  app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><div class="xbar"><select id="xk" aria-label="Which applications to export"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Nominee Structure IPO</option></select><a class="btn ghost" id="xl" href="#">Export CSV</a></div></div>'+
+  app.innerHTML='<div class="page-h"><div><h2>Applications</h2><p id="sub">Loading…</p></div><div class="xbar"><select id="xk" aria-label="Which applications to export"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Nominee Structure IPO</option></select><select id="xf" aria-label="File format"><option value="csv">CSV</option><option value="xlsx">Excel / Sheets (.xlsx)</option></select><a class="btn ghost" id="xl" href="#">Export CSV</a><p class="xhint" id="xh" hidden>Opens in Excel. For Google Sheets: download this file, then in Google Sheets choose <b>File → Import → Upload</b> (or drop it into Google Drive and open it with Sheets).</p></div></div>'+
     '<div class="stats" id="stats"></div>'+
     '<div class="card" style="padding:14px"><div class="bar"><div class="search">'+ICON.search+'<input id="s" placeholder="Search name, reference, email or phone" value="'+esc(flt.q)+'"></div>'+
     '<select id="k"><option value="">All types</option><option value="corporate">Corporate</option><option value="joint">Joint</option><option value="minor">Minor</option><option value="individual">Individual</option><option value="diaspora">Nominee Structure IPO</option></select></div>'+
     '<div id="t">'+[1,2,3,4].map(function(){return'<div class="sk" style="margin:18px 6px"></div>'}).join("")+'</div></div>';
   $("#k").value=flt.kind;
   // Export follows the type filter by default, and can be changed on its own.
-  var setExport=function(){var k=$("#xk").value;$("#xl").href="/.netlify/functions/admin-api?action=export"+(k?"&kind="+encodeURIComponent(k):"");$("#xl").textContent=k?"Export "+$("#xk").selectedOptions[0].textContent+" CSV":"Export all CSV"};
-  $("#xk").value=flt.kind;setExport();$("#xk").onchange=setExport;
+  var setExport=function(){var k=$("#xk").value,x=$("#xf").value==="xlsx";$("#xl").href="/.netlify/functions/admin-api?action=export"+(k?"&kind="+encodeURIComponent(k):"")+(x?"&format=xlsx":"");$("#xl").textContent=(k?"Export "+$("#xk").selectedOptions[0].textContent:"Export all")+(x?" Excel":" CSV");$("#xh").hidden=!x};
+  $("#xk").value=flt.kind;setExport();$("#xk").onchange=setExport;$("#xf").onchange=setExport;
   var deb;$("#s").oninput=function(){clearTimeout(deb);deb=setTimeout(function(){flt.q=$("#s").value;draw()},120)};
   $("#k").onchange=function(){flt.kind=$("#k").value;$("#xk").value=flt.kind;setExport();draw()};
   api("list").then(function(j){rows=j.rows;statuses=j.statuses||statuses;draw()}).catch(guard);
