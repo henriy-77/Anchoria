@@ -84,9 +84,23 @@ exports.handler = async (event) => {
     for (const b of blobs) { const r = await s.get(b.key, { type: "json" }); if (r) recs.push(r); }
     const kind = KINDS.includes(q.kind) ? q.kind : null;
     const list = recs.filter((r) => !kind || r.kind === kind).sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""));
-    const cols = ["Type", "Saved At", ...Array.from(new Set(list.flatMap((r) => Object.keys(r.fields || {}))))];
+    // Document links (sign-in required to open them). Built from each application's "Documents Submitted" list.
+    const h = event.headers || {};
+    const base = (process.env.SITE_URL || `${String(h["x-forwarded-proto"] || "https").split(",")[0].trim()}://${h["x-forwarded-host"] || h.host || ""}`).replace(/\/$/, "");
+    const link = (ref, key, extra) => `${base}/.netlify/functions/get-document?ref=${encodeURIComponent(ref)}&doc=${encodeURIComponent(key)}${extra || ""}`;
+    const docLinks = (r) => {
+      const keys = String((r.fields || {})["Documents Submitted"] || "").split("\n").map((l) => l.split(":")[0].trim()).filter(Boolean);
+      if (!keys.includes("signature")) keys.push("signature");
+      return keys.map((k) => `${k}: ${link(r.ref, k)}`).join("\n");
+    };
+    const extra = {
+      "Document Links": (r) => docLinks(r),
+      "All Documents (zip)": (r) => `${base}/.netlify/functions/get-document?ref=${encodeURIComponent(r.ref)}&all=1`,
+    };
+    const cols = ["Type", "Saved At", ...Array.from(new Set(list.flatMap((r) => Object.keys(r.fields || {})))).filter((c) => !(c in extra)), ...Object.keys(extra)];
     const esc = (v) => { let t = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
-    const lines = [cols.map(esc).join(",")].concat(list.map((r) => cols.map((c) => esc(c === "Type" ? r.kind : c === "Saved At" ? r.savedAt : r.fields[c])).join(",")));
+    const cell = (r, c) => c === "Type" ? r.kind : c === "Saved At" ? r.savedAt : extra[c] ? extra[c](r) : r.fields[c];
+    const lines = [cols.map(esc).join(",")].concat(list.map((r) => cols.map((c) => esc(cell(r, c))).join(",")));
     return { statusCode: 200, headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="applications${kind ? "-" + kind : ""}.csv"`, "Cache-Control": "no-store" }, body: "﻿" + lines.join("\n") };
   }
 

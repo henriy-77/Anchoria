@@ -122,6 +122,19 @@ main{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 .spin{width:14px;height:14px;border:2px solid rgba(0,0,0,.25);border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite}
 @keyframes rot{to{transform:rotate(360deg)}}
 
+.docwrap{display:flex;gap:6px;min-width:0}.docwrap .doc{flex:1;min-width:0}
+.dlbtn{flex:none;display:flex;align-items:center;justify-content:center;width:42px;border:1px solid var(--line);border-radius:10px;background:#fcfbf8;color:var(--gold-2);text-decoration:none}
+.dlbtn:hover{border-color:var(--gold);background:var(--gold-soft)}.dlbtn svg{width:18px;height:18px}
+.chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.chead h3{margin:0}
+.chead .btn{padding:7px 12px;font-size:12.5px;text-decoration:none}
+.vw{position:fixed;inset:0;z-index:50;background:rgba(20,19,18,.78);display:flex;flex-direction:column;padding:14px}
+.vw-bar{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:10px;flex-wrap:wrap}
+.vw-bar b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vw-bar a,.vw-bar button{color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+.vw-bar a:hover,.vw-bar button:hover{background:rgba(255,255,255,.26)}
+.vw-body{flex:1;min-height:0;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:auto}
+.vw-body img{max-width:100%;max-height:100%;object-fit:contain}.vw-body iframe{width:100%;height:100%;border:0}
+.vw-body .nope{padding:30px;text-align:center;color:var(--muted)}
 @media(max-width:900px){.dgrid{grid-template-columns:1fr}.side{position:static}}
 @media(max-width:640px){
   .hd{padding:10px 14px}.who{display:none}main{padding:16px 12px 50px}.form-row{grid-template-columns:1fr}
@@ -154,6 +167,7 @@ var ICON={
   eyeOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.8 19.8 0 0 1-3.17 4.19M1 1l22 22M14.12 14.12A3 3 0 1 1 9.88 9.88"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
   file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  dl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
   pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
   print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'
 };
@@ -246,7 +260,7 @@ function showImport(){
   };
 }
 
-var ACT={login:"Signed in",login_failed:"Failed sign-in",logout:"Signed out",view_application:"Opened application",view_document:"Opened document",view_printable:"Opened printable application",
+var ACT={login:"Signed in",login_failed:"Failed sign-in",logout:"Signed out",view_application:"Opened application",view_document:"Opened document",download_documents:"Downloaded all documents",view_printable:"Opened printable application",
   update_application:"Updated application",export_csv:"Exported CSV",password_change:"Changed own password",staff_created:"Added staff",staff_updated:"Updated staff",staff_removed:"Removed staff",import_records:"Imported applications"};
 function actLabel(a){return ACT[a]||a}
 function actTarget(e){return[e.ref,e.doc,e.detail].filter(Boolean).join(" · ")}
@@ -343,6 +357,7 @@ function renderDetail(r){
   String(f["Documents Submitted"]||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)docs.push({key:l.slice(0,i).trim(),name:l.slice(i+1).trim()})});
   if(!docs.some(function(d){return d.key==="signature"}))docs.push({key:"signature",name:"Signature"});
   var name=(rows.filter(function(x){return x.ref===ref})[0]||{}).name||f["Company Name"]||f["Signatory Name"]||ref;
+  var dbase="/.netlify/functions/get-document?ref="+encodeURIComponent(ref);
   var pdf="/.netlify/functions/"+(kind==="individual"?"application":kind)+"-pdf?ref="+encodeURIComponent(ref);
   var skip={"Status":1,"Notes":1,"View Application":1,"Documents Submitted":1,"Document Links":1,"Reference":1};
   var keys=Object.keys(f).filter(function(k){return!skip[k]&&f[k]!==""});
@@ -350,9 +365,9 @@ function renderDetail(r){
    '<div class="hdrow" style="margin-bottom:14px"><div><h2>'+esc(name)+'</h2><div class="muted"><span class="mono">'+esc(ref)+'</span> · <span class="tag">'+esc(kind)+'</span> · received '+esc(when(r.savedAt))+'</div></div>'+
    '<div><span class="pill '+esc(slug(cur))+'">'+esc(cur)+'</span></div></div>'+
    '<div class="dgrid"><div>'+
-     '<div class="card"><h3>Documents</h3><div class="docs">'+
+     '<div class="card"><div class="chead"><h3>Documents</h3><a class="btn ghost" href="'+dbase+'&all=1" title="Download every document for this application as one .zip">Download all (.zip)</a></div><div class="docs">'+
        (kind==="diaspora"?"":'<a class="doc" href="'+pdf+'" target="_blank">'+ICON.print.replace('width="16" height="16"','')+'<span>Printable application</span></a>')+
-       docs.map(function(d){return'<a class="doc" href="/.netlify/functions/get-document?ref='+encodeURIComponent(ref)+'&doc='+encodeURIComponent(d.key)+'" target="_blank">'+(d.key==="signature"?ICON.pen:ICON.file)+'<span title="'+esc(d.name||d.key)+'">'+esc(d.name||d.key)+'</span></a>'}).join("")+'</div></div>'+
+       docs.map(function(d){var u=dbase+'&doc='+encodeURIComponent(d.key);return'<div class="docwrap"><a class="doc" href="'+u+'" target="_blank" data-view="'+esc(d.key)+'" data-name="'+esc(d.name||d.key)+'">'+(d.key==="signature"?ICON.pen:ICON.file)+'<span title="'+esc(d.name||d.key)+'">'+esc(d.name||d.key)+'</span></a><a class="dlbtn" href="'+u+'&download=1" title="Download" aria-label="Download '+esc(d.name||d.key)+'">'+ICON.dl+'</a></div>'}).join("")+'</div></div>'+
      '<div class="card"><h3>Application details</h3><div class="kv">'+keys.map(function(k){var v=String(f[k]);return'<div class="it'+(v.length>70||v.indexOf("\n")>-1?" long":"")+'"><div class="k">'+esc(k)+'</div><div class="v copy" title="Click to copy" data-c="'+esc(v)+'">'+esc(v)+'</div></div>'}).join("")+'</div></div>'+
    '</div><aside class="side"><div class="card"><h3>Review</h3>'+
      '<div class="field"><label class="lbl" for="ds">Status</label><select id="ds">'+statuses.map(function(s){return'<option'+(s===cur?" selected":"")+'>'+esc(s)+'</option>'}).join("")+'</select></div>'+
@@ -361,6 +376,7 @@ function renderDetail(r){
      (r.audit&&r.audit.length?'<ul class="tl">'+r.audit.slice().reverse().map(function(a){return'<li><b>'+esc(a.change)+'</b><br>'+esc(a.by)+' · '+esc(when(a.at))+'</li>'}).join("")+'</ul>':'<p class="muted" style="margin:14px 0 0;font-size:12.5px">No changes recorded yet.</p>')+
    '</div></aside></div>';
   $("#back").onclick=function(e){e.preventDefault();showList()};
+  $$("[data-view]").forEach(function(a){a.onclick=function(e){if(e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;e.preventDefault();openViewer(dbase+"&doc="+encodeURIComponent(a.dataset.view),a.dataset.name)}});
   if(me.role==="admin"){
     var hc=document.createElement("div");hc.className="card";hc.innerHTML='<h3>Access history</h3><div class="sk" style="margin:8px 0"></div>';
     app.querySelector(".dgrid > div").appendChild(hc);
@@ -375,6 +391,23 @@ function renderDetail(r){
       rows.forEach(function(x){if(x.ref===ref)x.status=j.record.fields.Status||"New"});toast("Saved");renderDetail(j.record);
     }).catch(function(e){busy(b,false);guard(e)});
   };
+}
+
+/* ── Document viewer ── */
+function openViewer(url,name){
+  var old=$("#vw");if(old)old.remove();
+  var isPdf=/\.pdf$/i.test(name||"");
+  var w=document.createElement("div");w.id="vw";w.className="vw";w.setAttribute("role","dialog");w.setAttribute("aria-label","Document viewer");
+  w.innerHTML='<div class="vw-bar"><b>'+esc(name||"Document")+'</b><a href="'+url+'&download=1">Download</a><a href="'+url+'" target="_blank">Open in new tab</a><button type="button" id="vwx">Close</button></div><div class="vw-body" id="vwb"></div>';
+  document.body.appendChild(w);
+  var body=$("#vwb"),src=url+"&log=1";
+  if(isPdf){var f=document.createElement("iframe");f.src=src;f.title=name||"Document";body.appendChild(f)}
+  else{var im=new Image();im.alt=name||"Document";im.onerror=function(){body.innerHTML='<div class="nope">This file can\'t be previewed here. Use <b>Download</b> above.</div>'};im.src=src;body.appendChild(im)}
+  var close=function(){w.remove();document.removeEventListener("keydown",esc_)};
+  var esc_=function(e){if(e.key==="Escape")close()};
+  document.addEventListener("keydown",esc_);
+  $("#vwx").onclick=close;w.addEventListener("click",function(e){if(e.target===w)close()});
+  $("#vwx").focus();
 }
 
 /* ── Staff ── */
