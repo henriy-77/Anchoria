@@ -112,12 +112,12 @@ exports.handler = async (event) => {
     if (!REF_RE.test(ref)) return json(400, { error: "Invalid reference" });
     const r = await saveApplication("minor", AIRTABLE_TABLE, ref, fields);
     if (r.exists) return json(409, { error: "This reference has already been submitted" });
-    if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
+    if (!r.saved) { console.error("Save failed for", ref, "-", r.detail); return json(502, { error: "Failed to save application" }); }
     console.log("minor application saved:", ref, "airtable:", r.airtable);
-    return json(200, { success: true, reference: ref, airtable: r.airtable, airtableId: r.airtableId , uploadToken: signUploadToken(ref) });
+    return json(200, { success: true, reference: ref, uploadToken: signUploadToken(ref) });
   } catch (err) {
     console.error("Function error:", err);
-    return json(500, { error: "Internal server error", detail: err.message });
+    return json(500, { error: "Internal server error" });
   }
 };
 
