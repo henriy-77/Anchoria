@@ -7,23 +7,16 @@
  */
 
 const { saveApplication } = require("./lib/records");
-const { REF_RE, overLimit } = require("./lib/guard");
+const { REF_RE, overLimit, signUploadToken, sameOrigin } = require("./lib/guard");
 const TABLE = "Diaspora IPO Applications"; // label only — Airtable is not used for this form
 const OFFER_PRICE = 525;
 
 exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: cors(), body: "" };
-  }
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: cors(), body: "Method Not Allowed" };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const SHARED_SECRET = process.env.SHARED_SECRET;
-  const incomingSecret = event.headers["x-shared-secret"] || "";
-  if (SHARED_SECRET && incomingSecret !== SHARED_SECRET) {
-    return json(401, { error: "Unauthorized" });
-  }
+  if (!sameOrigin(event)) return json(403, { error: "Cross-site requests are not allowed" });
 
   if (await overLimit("submit", event, 20, 3600)) return json(429, { error: "Too many submissions from your network. Please try again later." });
 
@@ -116,7 +109,7 @@ exports.handler = async (event) => {
     if (r.exists) return json(409, { error: "This reference has already been submitted" });
     if (!r.saved) return json(502, { error: "Failed to save application", detail: r.detail });
     console.log("nominee-structure application saved:", ref, category);
-    return json(200, { success: true, reference: ref });
+    return json(200, { success: true, reference: ref , uploadToken: signUploadToken(ref) });
   } catch (err) {
     console.error("Function error:", err);
     return json(500, { error: "Internal server error", detail: err.message });
@@ -124,12 +117,5 @@ exports.handler = async (event) => {
 };
 
 function json(status, body) {
-  return { statusCode: status, headers: { "Content-Type": "application/json", ...cors() }, body: JSON.stringify(body) };
-}
-function cors() {
-  return {
-    "Access-Control-Allow-Origin":  "*",
-    "Access-Control-Allow-Headers": "Content-Type, X-Shared-Secret",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
+  return { statusCode: status, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }

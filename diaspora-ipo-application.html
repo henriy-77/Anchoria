@@ -585,7 +585,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
    * ================================================================ */
   var ENDPOINT_URL  = "/.netlify/functions/submit-diaspora";
   var UPLOAD_URL    = "/.netlify/functions/upload-document";
-  var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";   // matches SHARED_SECRET env var
+  var uploadToken = null;   // issued by the server when the application is saved; authorises this applicant's uploads
 
   var OFFER_PRICE = 525;           // ₦ per Offer Share
   var UNIT_STEP   = 10;            // units in multiples of 10
@@ -918,7 +918,7 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
   function uploadOne(ref, key, name, dataUrl, attempt) {
     return fetch(UPLOAD_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+      headers: { "Content-Type": "application/json", "X-Upload-Token": uploadToken || "" },
       body: JSON.stringify({ ref: ref, key: key, name: name, data: dataUrl })
     }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); })
       .catch(function (err) {
@@ -970,14 +970,15 @@ input[readonly]{background:var(--paper);color:var(--ink);font-weight:700;}
     busy(true, "Submitting…");
     fetch(ENDPOINT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(buildPayload(ref))
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (body) {
         if (!r.ok) throw new Error(body && body.error ? body.error : "Server responded " + r.status);
         return body;
       });
-    }).then(function () {
+    }).then(function (saved) {
+      uploadToken = (saved && saved.uploadToken) || null;
       pendingRef = ref; pendingKeys = null;     // saved: from here on, only uploads are retried
       finish(ref);
     }).catch(function (err) {

@@ -29,4 +29,43 @@ async function overLimit(bucket, event, limit, windowSec) {
   }
 }
 
-module.exports = { REF_RE, KEY_RE, overLimit, clientIp };
+/* ── Upload token ──────────────────────────────────────────────────────────────
+ * A browser can never hold a secret, so uploads are authorised per application instead:
+ * submitting an application returns a token bound to that reference that expires after
+ * 2 hours. Only the person who just submitted it holds the token. Signed with
+ * UPLOAD_SECRET (or SESSION_SECRET) — never shipped in page source.
+ */
+const TOKEN_TTL_MS = 2 * 60 * 60 * 1000;
+const tokenSecret = () => process.env.UPLOAD_SECRET || process.env.SESSION_SECRET || "";
+const tokenSig = (ref, exp) => crypto.createHmac("sha256", tokenSecret()).update(`upload|${ref}|${exp}`).digest("base64url");
+
+function signUploadToken(ref) {
+  if (tokenSecret().length < 16) return null;
+  const exp = Date.now() + TOKEN_TTL_MS;
+  return `${exp}.${tokenSig(ref, exp)}`;
+}
+function verifyUploadToken(ref, token) {
+  if (tokenSecret().length < 16) return false;
+  const [exp, sig] = String(token || "").split(".");
+  if (!exp || !sig || !(Number(exp) > Date.now())) return false;
+  const want = Buffer.from(tokenSig(ref, exp)), got = Buffer.from(sig);
+  return want.length === got.length && crypto.timingSafeEqual(want, got);
+}
+
+/* ── Same-origin enforcement ───────────────────────────────────────────────────
+ * The forms live on the same origin as these endpoints, so no other website has any
+ * business calling them from a browser. Rejects cross-site browser requests; requests
+ * with no Origin header (non-browser clients) are left to the token / validation checks.
+ */
+function sameOrigin(event) {
+  const h = event.headers || {};
+  if (String(h["sec-fetch-site"] || "").toLowerCase() === "cross-site") return false;
+  const origin = h.origin;
+  if (!origin || origin === "null") return !origin;
+  let oh; try { oh = new URL(origin).host; } catch { return false; }
+  const extra = String(process.env.ALLOWED_ORIGINS || "").split(",").map((x) => x.trim()).filter(Boolean);
+  const host = String(h["x-forwarded-host"] || h.host || "").split(",")[0].trim();
+  return oh === host || extra.some((e) => { try { return new URL(e).host === oh; } catch { return false; } });
+}
+
+module.exports = { REF_RE, KEY_RE, overLimit, clientIp, signUploadToken, verifyUploadToken, sameOrigin };
