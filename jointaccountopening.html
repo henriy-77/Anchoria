@@ -13,7 +13,6 @@
   → Site configuration → Environment variables):
     AIRTABLE_TOKEN   — Airtable Personal Access Token
     AIRTABLE_BASE_ID — e.g. appXXXXXXXXXXXXXX
-    SHARED_SECRET    — random string, matches the constant below
 
   See README.md for the Airtable table schema and full setup guide.
   ================================================================
@@ -1185,18 +1184,17 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
    * The function writes to Airtable using server-side env vars so
    * the Airtable token is never exposed to the browser.
    *
-   * Set SHARED_SECRET to any random string (≥ 32 chars) and add
-   * the SAME value as SHARED_SECRET in Netlify → Environment vars.
+   * Uploads are authorised by a short-lived token the server returns when the application is saved.
    * Also set AIRTABLE_TOKEN and AIRTABLE_BASE_ID there.
    * ================================================================ */
   var ENDPOINT_URL  = "/.netlify/functions/submit-joint";
-  var SHARED_SECRET = "anch0r14-s3cur3-secret-2026";
 
   /* ================================================================
    * CONSTANTS
    * ================================================================ */
   var STEPS = 6;
   var MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB (keeps base64 body under Netlify's 6 MB limit)
+  var uploadToken = null; // issued by the server when the application is saved; authorises this applicant's uploads
   var pendingUploadRef = null; // set when a record is saved but its uploads still need to finish/retry
   var pendingFailedKeys = null; // which doc keys still need (re)uploading — avoids re-sending already-successful files
 
@@ -2051,7 +2049,6 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
     return Promise.resolve(Object.assign({}, fields, {
       reference: ref,
       source: leadSource,
-      sharedSecret: SHARED_SECRET,
       submittedAt: new Date().toISOString(),
       documents: docs,
       signature: {
@@ -2111,8 +2108,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       fetch(ENDPOINT_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-Shared-Secret": SHARED_SECRET
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       })
@@ -2122,7 +2118,8 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
           return body;
         });
       })
-      .then(function () {
+      .then(function (saved) {
+        uploadToken = (saved && saved.uploadToken) || null;
         // Record saved. Now upload the documents and only show success once they land.
         btn.querySelector(".btn-label").textContent = "Uploading documents…";
         finishUploads(ref, btn);
@@ -2201,7 +2198,7 @@ hr.rule{grid-column:1/-1;border:0;border-top:1px solid var(--line);margin:6px 0 
       return readAsDataURL(item.file).then(function (dataUrl) {
         return fetch("/.netlify/functions/upload-document", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Shared-Secret": SHARED_SECRET },
+          headers: { "Content-Type": "application/json", "X-Upload-Token": uploadToken || "" },
           body: JSON.stringify({ ref: ref, key: item.key, name: item.name, data: dataUrl })
         }).then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
