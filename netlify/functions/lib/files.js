@@ -21,8 +21,12 @@ function detect(buf) {
 }
 
 // Markup / script payloads hidden inside an "image" (polyglot files), and active content in PDFs.
-const IMAGE_BAD = /<\s*script|<\?php|<%|<\s*html|<\s*svg|<\s*iframe|<\s*object|<\s*embed|javascript\s*:|onerror\s*=|onload\s*=/i;
-const PDF_BAD   = /\/(JavaScript|JS|Launch|OpenAction|AA|EmbeddedFile|RichMedia|XFA|SubmitForm|ImportData)(?![A-Za-z])/;
+// These scan raw binary, so every token must be long enough not to occur by chance in compressed
+// pixel/stream data: "<%" matched most photos over ~1 MB, and "/JS" alone matched large scans.
+// /OpenAction and /AA are left out because ordinary PDFs use them to set the opening view; an
+// actual script action still needs /JavaScript or a /JS value, which are caught.
+const IMAGE_BAD = /<\s*script|<\?php|<\s*html|<\s*svg[\s/>]|<\s*iframe|<\s*object|<\s*embed|javascript\s*:|onerror\s*=|onload\s*=/i;
+const PDF_BAD   = /\/(JavaScript|Launch|EmbeddedFile|RichMedia|SubmitForm|ImportData)(?![A-Za-z])|\/XFA\s*(?:\[|\d+\s+\d+\s+R)|\/JS\s*(?:\(|<[\s0-9A-Fa-f]|\d+\s+\d+\s+R)/;
 
 /**
  * Returns { ok:true, mime, name } with a safe stored name, or { ok:false, status, error }.
